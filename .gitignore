@@ -447,3 +447,12 @@ output/playwright/
 # Generated PDF previews
 output/pdf/
 tmp/pdfs/
+
+# Team 11: keys and launch scripts (AGENTS.md 8)
+code-kmu.ps1
+code-kmu.sh
+*.pem
+*.key
+.aws/
+credentials.json
+secrets.json

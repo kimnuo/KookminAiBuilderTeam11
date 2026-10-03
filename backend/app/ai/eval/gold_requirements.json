@@ -1,0 +1,487 @@
+{
+ "note": "Claude 초안, 사람 확인 전, 프롬프트 작성자가 같은 표본을 봤으므로 표본 안 점수. evidence 는 원문(eval/.cache 본문과 제목) 글자 그대로이며 공백을 빼고 기계 대조했다. 본문의 담당자 이름·전화·이메일은 옮기지 않았다.",
+ "collectedAt": "2026-10-03",
+ "rules": "optional=true 는 판단이 갈리는 항목이다. 못 맞혀도 재현율에서 빼고, 맞히면 정밀도에서 오답으로 치지 않는다. alt 는 서류 이름으로 인정하는 다른 표기다. 표본은 eval/.cache 20건 중 제출 정보·서류가 본문에 적힌 8건이다.",
+ "items": [
+  {
+   "id": "kmu-11-12214",
+   "title": "서울 시립 양천 거점형 우리동네키움센터,  서울형 키즈카페 종사자 공개모집-긴급  (육아휴직 대체직-주임 5급)",
+   "url": "https://www.kookmin.ac.kr/user/kmuNews/notice/11/12214/view.do",
+   "postedAt": "2026-08-11",
+   "confirmed": false,
+   "note": "Claude 초안, 사람 확인 전, 프롬프트 작성자가 같은 표본을 봤으므로 표본 안 점수",
+   "memo": "지원시 서류와 최종합격자 서류를 condition 으로 나눴다. 경력증명서 줄의 국민연금·건강보험 확인서는 '포함 필수'라 따로 셌다. 이력서는 양식 안내 줄에만 나와 optional. 출신학교명은 '기재 금지'라 school 을 넣지 않았다. certificates 는 응시원서에 적는지 공고에 없어 optional. 이름 근거의 홍길동은 공고에 적힌 예시 이름이다.",
+   "expected": {
+    "fields": [
+     {
+      "key": "name",
+      "required": true,
+      "evidence": "[거점형키움센터 지원(육아휴직대체직1)_홍길동(이름)]"
+     },
+     {
+      "key": "phone",
+      "required": true,
+      "evidence": "응시원서 등에 주소 및 휴대전화번호를 반드시 기재하여 주시기 바랍니다."
+     },
+     {
+      "key": "other",
+      "label": "주소",
+      "required": true,
+      "evidence": "응시원서 등에 주소 및 휴대전화번호를 반드시 기재하여 주시기 바랍니다."
+     },
+     {
+      "key": "certificates",
+      "required": true,
+      "evidence": "자격증 사본(개인정보 처리 후 제출)",
+      "optional": true
+     }
+    ],
+    "documents": [
+     {
+      "name": "응시원서",
+      "condition": "지원시",
+      "evidence": "응시원서(응시지원서, 자기소개서 포함) (붙임1, 붙임 2)",
+      "alt": [
+       "응시지원서"
+      ]
+     },
+     {
+      "name": "자기소개서",
+      "condition": "지원시",
+      "evidence": "응시원서(응시지원서, 자기소개서 포함) (붙임1, 붙임 2)"
+     },
+     {
+      "name": "자격증 사본",
+      "condition": "지원시",
+      "evidence": "자격증 사본(개인정보 처리 후 제출)",
+      "alt": [
+       "자격증"
+      ]
+     },
+     {
+      "name": "개인정보동의서",
+      "condition": "지원시",
+      "evidence": "개인정보동의서(붙임 3)",
+      "alt": [
+       "개인정보수집이용동의서"
+      ]
+     },
+     {
+      "name": "이력서",
+      "condition": null,
+      "evidence": "응시원서, 이력서 및 자기소개서, 개인정보수집이용동의서는 공고문에 첨부된 양식을 출력하여 사용",
+      "optional": true
+     },
+     {
+      "name": "졸업증명서",
+      "condition": "최종합격자",
+      "evidence": "최종학교/학위 졸업증명서"
+     },
+     {
+      "name": "경력증명서",
+      "condition": "최종합격자",
+      "evidence": "경력증명서(국민연금 가입자 가입증명 및 국민건강보험료 자격득실 확인서 포함 필수/"
+     },
+     {
+      "name": "국민연금 가입자 가입증명",
+      "condition": "최종합격자",
+      "evidence": "경력증명서(국민연금 가입자 가입증명 및 국민건강보험료 자격득실 확인서 포함 필수/"
+     },
+     {
+      "name": "국민건강보험료 자격득실 확인서",
+      "condition": "최종합격자",
+      "evidence": "경력증명서(국민연금 가입자 가입증명 및 국민건강보험료 자격득실 확인서 포함 필수/",
+      "alt": [
+       "자격득실 확인서"
+      ]
+     },
+     {
+      "name": "주민등록등본",
+      "condition": "최종합격자",
+      "evidence": "주민등록등본 / 초본"
+     },
+     {
+      "name": "채용신체검사서",
+      "condition": "최종합격자",
+      "evidence": "채용신체검사서(정신질환, 마약중독여부 포함)"
+     },
+     {
+      "name": "결핵 및 잠복결핵 검진 결과서",
+      "condition": "최종합격자",
+      "evidence": "결핵 및 잠복결핵 검진 결과서",
+      "alt": [
+       "검진 결과서"
+      ]
+     },
+     {
+      "name": "장애인 증명서",
+      "condition": "최종합격자, 해당자에 한함",
+      "evidence": "장애인 증명서, 보훈 증명서(해당자에 한함)"
+     },
+     {
+      "name": "보훈 증명서",
+      "condition": "최종합격자, 해당자에 한함",
+      "evidence": "장애인 증명서, 보훈 증명서(해당자에 한함)"
+     },
+     {
+      "name": "결격사유조회를 위한 개인정보 활용 동의서",
+      "condition": "최종합격자",
+      "evidence": "결격사유조회를 위한 개인정보 활용 동의서(센터 양식)",
+      "alt": [
+       "개인정보 활용 동의서"
+      ]
+     },
+     {
+      "name": "사업자등록증",
+      "condition": "경력을 증명하지 못한 경우",
+      "evidence": "사업자등록증, 법인등기부등본, 건강보험자격득실확인서(국민건강보험공단 발급)",
+      "optional": true
+     },
+     {
+      "name": "법인등기부등본",
+      "condition": "경력을 증명하지 못한 경우",
+      "evidence": "사업자등록증, 법인등기부등본, 건강보험자격득실확인서(국민건강보험공단 발급)",
+      "optional": true
+     },
+     {
+      "name": "건강보험자격득실확인서",
+      "condition": "경력을 증명하지 못한 경우",
+      "evidence": "사업자등록증, 법인등기부등본, 건강보험자격득실확인서(국민건강보험공단 발급)",
+      "optional": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "kmu-11-12274",
+   "title": "시립 양천 거점형 우리동네키움센터,  서울형 키즈카페 종사자 공개모집 공고(주임 5급)",
+   "url": "https://www.kookmin.ac.kr/user/kmuNews/notice/11/12274/view.do",
+   "postedAt": "2026-08-25",
+   "confirmed": false,
+   "note": "Claude 초안, 사람 확인 전, 프롬프트 작성자가 같은 표본을 봤으므로 표본 안 점수",
+   "memo": "지원시 서류와 최종합격자 서류를 condition 으로 나눴다. 경력증명서 줄의 국민연금·건강보험 확인서는 '포함 필수'라 따로 셌다. 이력서는 양식 안내 줄에만 나와 optional. 출신학교명은 '기재 금지'라 school 을 넣지 않았다. certificates 는 응시원서에 적는지 공고에 없어 optional. 이름 근거의 홍길동은 공고에 적힌 예시 이름이다. kmu-11-12214 와 거의 같은 본문이라 이 묶음이 점수에서 두 번 센다.",
+   "expected": {
+    "fields": [
+     {
+      "key": "name",
+      "required": true,
+      "evidence": "[시립양천거점형키움센터 지원_홍길동(이름)]"
+     },
+     {
+      "key": "phone",
+      "required": true,
+      "evidence": "응시원서 등에 주소 및 휴대전화번호를 반드시 기재하여 주시기 바랍니다."
+     },
+     {
+      "key": "other",
+      "label": "주소",
+      "required": true,
+      "evidence": "응시원서 등에 주소 및 휴대전화번호를 반드시 기재하여 주시기 바랍니다."
+     },
+     {
+      "key": "certificates",
+      "required": true,
+      "evidence": "자격증 사본(개인정보 처리 후 제출)",
+      "optional": true
+     }
+    ],
+    "documents": [
+     {
+      "name": "응시원서",
+      "condition": "지원시",
+      "evidence": "응시원서(응시지원서, 자기소개서 포함) (붙임1, 붙임 2)",
+      "alt": [
+       "응시지원서"
+      ]
+     },
+     {
+      "name": "자기소개서",
+      "condition": "지원시",
+      "evidence": "응시원서(응시지원서, 자기소개서 포함) (붙임1, 붙임 2)"
+     },
+     {
+      "name": "자격증 사본",
+      "condition": "지원시",
+      "evidence": "자격증 사본(개인정보 처리 후 제출)",
+      "alt": [
+       "자격증"
+      ]
+     },
+     {
+      "name": "개인정보동의서",
+      "condition": "지원시",
+      "evidence": "개인정보동의서(붙임 3)",
+      "alt": [
+       "개인정보수집이용동의서"
+      ]
+     },
+     {
+      "name": "이력서",
+      "condition": null,
+      "evidence": "응시원서, 이력서 및 자기소개서, 개인정보수집이용동의서는 공고문에 첨부된 양식을 출력하여 사용",
+      "optional": true
+     },
+     {
+      "name": "졸업증명서",
+      "condition": "최종합격자",
+      "evidence": "최종학교/학위 졸업증명서"
+     },
+     {
+      "name": "경력증명서",
+      "condition": "최종합격자",
+      "evidence": "경력증명서(국민연금 가입자 가입증명 및 국민건강보험료 자격득실 확인서 포함 필수/"
+     },
+     {
+      "name": "국민연금 가입자 가입증명",
+      "condition": "최종합격자",
+      "evidence": "경력증명서(국민연금 가입자 가입증명 및 국민건강보험료 자격득실 확인서 포함 필수/"
+     },
+     {
+      "name": "국민건강보험료 자격득실 확인서",
+      "condition": "최종합격자",
+      "evidence": "경력증명서(국민연금 가입자 가입증명 및 국민건강보험료 자격득실 확인서 포함 필수/",
+      "alt": [
+       "자격득실 확인서"
+      ]
+     },
+     {
+      "name": "주민등록등본",
+      "condition": "최종합격자",
+      "evidence": "주민등록등본 / 초본"
+     },
+     {
+      "name": "채용신체검사서",
+      "condition": "최종합격자",
+      "evidence": "채용신체검사서(정신질환, 마약중독여부 포함)"
+     },
+     {
+      "name": "결핵 및 잠복결핵 검진 결과서",
+      "condition": "최종합격자",
+      "evidence": "결핵 및 잠복결핵 검진 결과서",
+      "alt": [
+       "검진 결과서"
+      ]
+     },
+     {
+      "name": "장애인 증명서",
+      "condition": "최종합격자, 해당자에 한함",
+      "evidence": "장애인 증명서, 보훈 증명서(해당자에 한함)"
+     },
+     {
+      "name": "보훈 증명서",
+      "condition": "최종합격자, 해당자에 한함",
+      "evidence": "장애인 증명서, 보훈 증명서(해당자에 한함)"
+     },
+     {
+      "name": "결격사유조회를 위한 개인정보 활용 동의서",
+      "condition": "최종합격자",
+      "evidence": "결격사유조회를 위한 개인정보 활용 동의서(센터 양식)",
+      "alt": [
+       "개인정보 활용 동의서"
+      ]
+     },
+     {
+      "name": "사업자등록증",
+      "condition": "경력을 증명하지 못한 경우",
+      "evidence": "사업자등록증, 법인등기부등본, 건강보험자격득실확인서(국민건강보험공단 발급)",
+      "optional": true
+     },
+     {
+      "name": "법인등기부등본",
+      "condition": "경력을 증명하지 못한 경우",
+      "evidence": "사업자등록증, 법인등기부등본, 건강보험자격득실확인서(국민건강보험공단 발급)",
+      "optional": true
+     },
+     {
+      "name": "건강보험자격득실확인서",
+      "condition": "경력을 증명하지 못한 경우",
+      "evidence": "사업자등록증, 법인등기부등본, 건강보험자격득실확인서(국민건강보험공단 발급)",
+      "optional": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "kmu-11-12453",
+   "title": "[YNC&S] AI 영상·이미지 제작 계약직 채용 안내(~10.12.)",
+   "url": "https://www.kookmin.ac.kr/user/kmuNews/notice/11/12453/view.do",
+   "postedAt": "2026-10-02",
+   "confirmed": false,
+   "note": "Claude 초안, 사람 확인 전, 프롬프트 작성자가 같은 표본을 봤으므로 표본 안 점수",
+   "memo": "포트폴리오는 링크가 아니라 영상 파일로 보여 서류로 넣었다. portfolioUrl 필드로 내도 틀린 건 아니라 optional. 지원서 제출처 이메일은 넣지 않는다.",
+   "expected": {
+    "fields": [
+     {
+      "key": "portfolioUrl",
+      "required": true,
+      "evidence": "제출 서류: 이력서 및 포트폴리오(짧은 영상 또는 감각적인 AI 영상, 실사 위주)",
+      "optional": true
+     }
+    ],
+    "documents": [
+     {
+      "name": "이력서",
+      "condition": null,
+      "evidence": "제출 서류: 이력서 및 포트폴리오(짧은 영상 또는 감각적인 AI 영상, 실사 위주)"
+     },
+     {
+      "name": "포트폴리오",
+      "condition": null,
+      "evidence": "제출 서류: 이력서 및 포트폴리오(짧은 영상 또는 감각적인 AI 영상, 실사 위주)"
+     }
+    ]
+   }
+  },
+  {
+   "id": "kmu-4-12441",
+   "title": "[현장실습지원센터] 2026학년도 동계 한국항공우주산업(KAI) 현장실습 기계공학부 학생 모집(~10/15)",
+   "url": "https://www.kookmin.ac.kr/user/kmuNews/notice/4/12441/view.do",
+   "postedAt": "2026-10-01",
+   "confirmed": false,
+   "note": "Claude 초안, 사람 확인 전, 프롬프트 작성자가 같은 표본을 봤으므로 표본 안 점수",
+   "memo": "학기·전공·평점(기계공학부, 3.8)은 지원 자격이라 필드에 넣지 않았다. 어학성적은 '제출'이라 서류로 넣고 certificates 필드는 optional.",
+   "expected": {
+    "fields": [
+     {
+      "key": "certificates",
+      "required": true,
+      "evidence": "(어학성적) 공인 어학성적 제출 : 토스 130/오픽 IM2 이상",
+      "optional": true
+     }
+    ],
+    "documents": [
+     {
+      "name": "이력서",
+      "condition": null,
+      "evidence": "1) 이력서"
+     },
+     {
+      "name": "자기소개서",
+      "condition": null,
+      "evidence": "2) 자기소개서"
+     },
+     {
+      "name": "공인 어학성적",
+      "condition": "토스 130/오픽 IM2 이상",
+      "evidence": "(어학성적) 공인 어학성적 제출 : 토스 130/오픽 IM2 이상",
+      "alt": [
+       "어학성적"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "kmu-7-12385",
+   "title": "2026년 제2학기 윤영문화재단 장학생 선발 공고(문화예술 분야 우대)",
+   "url": "https://www.kookmin.ac.kr/user/kmuNews/notice/7/12385/view.do",
+   "postedAt": "2026-09-15",
+   "confirmed": false,
+   "note": "Claude 초안, 사람 확인 전, 프롬프트 작성자가 같은 표본을 봤으므로 표본 안 점수",
+   "memo": "서류 목록은 장학신청 화면에만 있다. 신청서는 '서명란에 날인 필수' 한 줄로만 추정했다. 장학증서 수여식·감사 편지는 합격 뒤 일이라 넣지 않았다.",
+   "expected": {
+    "fields": [
+     {
+      "key": "studentId",
+      "required": true,
+      "evidence": "제목양식: 윤영문화재단(학번, 이름)"
+     },
+     {
+      "key": "name",
+      "required": true,
+      "evidence": "제목양식: 윤영문화재단(학번, 이름)"
+     }
+    ],
+    "documents": [
+     {
+      "name": "신청서",
+      "condition": null,
+      "evidence": "신청서상 서명란에 날인 필수"
+     }
+    ]
+   }
+  },
+  {
+   "id": "kmu-7-12387",
+   "title": "2026년도 SL이충곤재단 장학금 신청 안내(공학계열)(생활비성 장학금)",
+   "url": "https://www.kookmin.ac.kr/user/kmuNews/notice/7/12387/view.do",
+   "postedAt": "2026-09-15",
+   "confirmed": false,
+   "note": "Claude 초안, 사람 확인 전, 프롬프트 작성자가 같은 표본을 봤으므로 표본 안 점수",
+   "memo": "kmu-7-12385 와 거의 같은 본문. 신청서는 '서명란에 날인 필수' 한 줄로만 추정했다.",
+   "expected": {
+    "fields": [
+     {
+      "key": "studentId",
+      "required": true,
+      "evidence": "제목양식: SL이충곤재단(학번, 이름)"
+     },
+     {
+      "key": "name",
+      "required": true,
+      "evidence": "제목양식: SL이충곤재단(학번, 이름)"
+     }
+    ],
+    "documents": [
+     {
+      "name": "신청서",
+      "condition": null,
+      "evidence": "신청서상 서명란에 날인 필수"
+     }
+    ]
+   }
+  },
+  {
+   "id": "kmu-9-12423",
+   "title": "2026 제4회 SB 스타트업 네트워킹 페스티벌 : AI 기반 지역문제 해결 해커톤 참가자 모집",
+   "url": "https://www.kookmin.ac.kr/user/kmuNews/notice/9/12423/view.do",
+   "postedAt": "2026-09-28",
+   "confirmed": false,
+   "note": "Claude 초안, 사람 확인 전, 프롬프트 작성자가 같은 표본을 봤으므로 표본 안 점수",
+   "memo": "성북구 소재 대학·거주·나이는 지원 자격이라 필드에 넣지 않았다. 구글폼 문항은 공고에 없다.",
+   "expected": {
+    "fields": [],
+    "documents": [
+     {
+      "name": "신청서",
+      "condition": null,
+      "evidence": "구글폼 작성 및 신청서 등 제출"
+     }
+    ]
+   }
+  },
+  {
+   "id": "kmu-6-12421",
+   "title": "[앵커사업단] 「생성형 AI를 활용한 데이터 분석 실무」 강좌 개설 관련 안내 (수강료 무료)",
+   "url": "https://www.kookmin.ac.kr/user/kmuNews/notice/6/12421/view.do",
+   "postedAt": "2026-09-28",
+   "confirmed": false,
+   "note": "Claude 초안, 사람 확인 전, 프롬프트 작성자가 같은 표본을 봤으므로 표본 안 점수",
+   "memo": "신분증은 내는 게 아니라 개강일에 보여 주는 것이라 경계 사례다. 생년월일·거주지는 신분증으로 확인한다는 말뿐이라 optional. 구글 계정은 준비물로 봤다.",
+   "expected": {
+    "fields": [
+     {
+      "key": "birthDate",
+      "required": true,
+      "evidence": "생년월일 및 거주지 확인을 위해 신분증 확인이 진행되오니",
+      "optional": true
+     },
+     {
+      "key": "other",
+      "label": "거주지",
+      "required": true,
+      "evidence": "생년월일 및 거주지 확인을 위해 신분증 확인이 진행되오니",
+      "optional": true
+     }
+    ],
+    "documents": [
+     {
+      "name": "신분증",
+      "condition": "개강일 지참",
+      "evidence": "반드시 신분증을 지참해 주시기 바랍니다"
+     }
+    ]
+   }
+  }
+ ]
+}
