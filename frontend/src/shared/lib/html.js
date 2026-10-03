@@ -1,3 +1,5 @@
+import { icon } from '../ui/icons.js';
+
 export function escapeHtml(value = '') {
   return String(value).replace(
     /[&<>"']/g,
@@ -24,5 +26,5 @@ export function safeUrl(value) {
 export function originalLink(notice) {
   const url = safeUrl(notice.url);
   if (!url) return '<p>원문 주소를 확인할 수 없어요.</p>';
-  return `<a class="primary-link" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">원문 보기 ↗</a>`;
+  return `<a class="primary-link" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">원문 보기 ${icon('arrow-up-right')}</a>`;
 }

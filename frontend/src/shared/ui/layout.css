@@ -2,104 +2,132 @@
   min-height: 100vh;
 }
 .main-content {
-  margin-left: 238px;
-  max-width: 1600px;
-  padding: 0 56px 72px;
+  margin-left: 220px;
+  max-width: 1440px;
+  padding: 0 48px 64px;
 }
 .topbar {
-  height: 72px;
-  border-bottom: 1px solid #eceef3;
+  min-height: 76px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-.breadcrumb {
-  font-size: 11px;
-  color: #a1a6b2;
+.workspace-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--secondary);
 }
-.breadcrumb span {
-  padding: 0 10px;
-  color: #c6c8d0;
+.service-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.service-label .icon {
+  width: 18px;
+  height: 18px;
 }
 .welcome-row {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  padding: 40px 0 34px;
+  gap: 20px;
+  padding: 28px 0 36px;
 }
 .eyebrow {
-  color: #989eae;
-  letter-spacing: 1.2px;
-  font-size: 9px;
-  font-weight: 700;
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 500;
   margin: 0 0 12px;
 }
 .welcome-row h1 {
-  font-size: 27px;
-  letter-spacing: -1.3px;
+  font-size: 36px;
+  letter-spacing: -1.4px;
+  line-height: 1.3;
   margin: 0;
-  font-weight: 700;
+  font-weight: 750;
+  word-break: keep-all;
 }
 .welcome-row h1 em {
   font-style: normal;
-  color: #7565dc;
+  color: var(--ink);
 }
 .subheading {
-  font-size: 12px;
-  color: #959baa;
-  margin: 10px 0 0;
+  font-size: 16px;
+  color: var(--muted);
+  margin: 14px 0 0;
+  word-break: keep-all;
 }
 .refresh-button {
-  height: 36px;
-  padding: 0 14px;
-  border: 1px solid #e6e8ef;
-  background: #fff;
-  border-radius: 9px;
-  color: #62697b;
-  font-size: 11px;
+  min-height: 48px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 0;
+  background: #e5e8eb;
+  border-radius: var(--control-radius);
+  color: var(--secondary);
+  font-size: 15px;
   font-weight: 600;
-  box-shadow: 0 2px 6px #252a3a06;
+  transition: background 0.16s;
 }
-.refresh-button span {
-  font-size: 16px;
-  margin-right: 7px;
-  color: #7665dc;
+.refresh-button:hover {
+  background: #dfe3e7;
 }
-@media (max-width: 1060px) {
+@media (min-width: 1700px) {
   .main-content {
-    padding: 0 32px 55px;
-  }
-  .main-content {
-    margin-left: 205px;
+    margin-inline: auto;
+    padding-left: 268px;
+    max-width: 1660px;
   }
 }
-@media (max-width: 760px) {
+@media (max-width: 1100px) {
+  .main-content {
+    padding: 0 28px 48px;
+  }
+}
+@media (max-width: 800px) {
   .main-content {
     margin-left: 0;
-    padding: 0 18px 45px;
+    padding: 0 20px 40px;
   }
   .topbar {
-    height: 53px;
+    display: none;
   }
   .welcome-row {
-    padding: 28px 0 24px;
-    align-items: flex-start;
+    padding: 24px 0 32px;
+    align-items: center;
+    gap: 12px;
+  }
+  .eyebrow {
+    font-size: 14px;
+    margin-bottom: 8px;
   }
   .welcome-row h1 {
-    font-size: 21px;
+    font-size: 28px;
+    letter-spacing: -1px;
   }
   .subheading {
-    font-size: 10px;
-    max-width: 240px;
+    font-size: 15px;
     line-height: 1.6;
+    max-width: 260px;
   }
   .refresh-button {
-    font-size: 0;
-    width: 35px;
+    width: 48px;
     padding: 0;
+    font-size: 0;
+    background: var(--surface);
   }
-  .refresh-button span {
-    font-size: 17px;
-    margin: 0;
+}
+@media (max-width: 360px) {
+  .main-content {
+    padding-inline: 16px;
+  }
+  .welcome-row h1 {
+    font-size: 26px;
   }
 }

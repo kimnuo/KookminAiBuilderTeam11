@@ -1,42 +1,45 @@
 .status-message {
-  font-size: 10px;
-  color: #8b91a0;
-  background: #fff;
-  border: 1px solid #eceef3;
-  border-radius: 8px;
-  padding: 10px 12px;
-  margin: 0 0 10px;
+  font-size: 14px;
+  color: var(--muted);
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin: 0 0 16px;
+  line-height: 1.6;
 }
 .status-message.error {
-  color: #c96666;
-  border-color: #f2dada;
-  background: #fffafa;
+  color: var(--red);
+  background: var(--red-soft);
 }
 .empty-state {
-  padding: 52px 15px;
-  background: #fff;
-  border: 1px dashed #e4e6ed;
-  border-radius: 12px;
+  padding: 56px 24px;
+  background: var(--surface);
+  border-radius: var(--card-radius);
   text-align: center;
-  color: #818898;
 }
 .empty-icon {
-  width: 35px;
-  height: 35px;
-  border-radius: 11px;
-  background: #f4f2ff;
-  color: #796adc;
+  width: 64px;
+  height: 64px;
+  border-radius: 22px;
+  background: var(--background);
+  color: #8b95a1;
   display: grid;
   place-items: center;
-  margin: 0 auto 11px;
-  font-size: 20px;
+  margin: 0 auto 20px;
+}
+.empty-icon .icon {
+  width: 30px;
+  height: 30px;
 }
 .empty-state strong {
-  font-size: 11px;
-  color: #5b6171;
+  font-size: 18px;
+  color: var(--secondary);
+  font-weight: 600;
 }
 .empty-state p {
-  font-size: 10px;
-  color: #a0a5b0;
-  margin: 7px 0;
+  font-size: 15px;
+  color: var(--muted);
+  margin: 10px 0 0;
+  line-height: 1.7;
+  word-break: keep-all;
 }

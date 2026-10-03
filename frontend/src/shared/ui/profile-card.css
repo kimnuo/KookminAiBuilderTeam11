@@ -1,101 +1,87 @@
 .right-rail {
-  padding-top: 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 .profile-card {
-  background: #28243d;
-  border-radius: 13px;
-  padding: 19px 17px;
-  color: white;
-  min-height: 228px;
-  position: relative;
-  overflow: hidden;
-}
-.profile-card:after {
-  content: '';
-  position: absolute;
-  width: 150px;
-  height: 150px;
-  border: 1px solid #ffffff12;
-  border-radius: 50%;
-  right: -67px;
-  top: 84px;
-  box-shadow:
-    0 0 0 18px #ffffff08,
-    0 0 0 36px #ffffff05;
+  background: var(--surface);
+  border-radius: var(--card-radius);
+  padding: 28px 24px;
 }
 .card-label {
   display: flex;
   align-items: center;
-  gap: 6px;
-  color: #c3b9ff;
-  font-size: 9px;
+  gap: 10px;
+  color: var(--secondary);
+  font-size: 14px;
   font-weight: 600;
 }
-.sparkle {
-  color: #ad9eff;
-  font-size: 13px;
+.profile-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  color: var(--blue-strong);
+  border-radius: 14px;
+  background: var(--blue-soft);
 }
 .profile-card h3 {
-  font-size: 16px;
-  line-height: 1.5;
-  letter-spacing: -0.4px;
-  margin: 18px 0 8px;
+  font-size: 23px;
+  line-height: 1.4;
+  letter-spacing: -0.6px;
+  margin: 20px 0 12px;
+  font-weight: 700;
 }
 .profile-card > p {
-  font-size: 9px;
+  font-size: 15px;
   line-height: 1.7;
-  color: #bbb9c8;
+  color: var(--muted);
   margin: 0;
-  max-width: 180px;
+  word-break: keep-all;
 }
 .tag-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
-  margin-top: 13px;
-  position: relative;
-  z-index: 1;
+  gap: 6px;
+  margin-top: 20px;
 }
 .profile-tag {
-  background: #ffffff16;
-  border: 1px solid #ffffff15;
-  color: #ddd8ff;
-  border-radius: 5px;
-  padding: 5px 7px;
-  font-size: 9px;
+  background: var(--blue-soft);
+  color: var(--blue-strong);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 14px;
+  font-weight: 500;
 }
 .muted-tag {
-  color: #a19eae;
-  font-size: 9px;
+  color: var(--muted);
+  font-size: 14px;
 }
 .text-link {
-  display: inline-flex;
-  gap: 8px;
-  margin-top: 14px;
-  color: #c7bdff;
-  font-size: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  margin-top: 20px;
+  color: var(--blue-strong);
+  font-size: 15px;
+  font-weight: 600;
   text-decoration: none;
-  position: relative;
-  z-index: 1;
 }
-@media (max-width: 760px) {
-  .right-rail {
-    order: 2;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    padding-top: 0;
-  }
+.text-link .icon {
+  width: 18px;
+  height: 18px;
+}
+@media (max-width: 1100px) and (min-width: 801px) {
   .profile-card {
-    min-height: 0;
-    grid-row: span 2;
+    padding: 24px 20px;
   }
 }
-@media (max-width: 440px) {
+@media (max-width: 800px) {
   .right-rail {
-    grid-template-columns: 1fr;
+    gap: 12px;
   }
   .profile-card {
-    grid-row: auto;
+    padding: 24px;
   }
 }

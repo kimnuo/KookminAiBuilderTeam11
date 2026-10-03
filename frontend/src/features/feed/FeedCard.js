@@ -1,5 +1,6 @@
 import { escapeHtml, originalLink } from '../../shared/lib/html.js';
 import { deadlineLabel } from '../../shared/lib/deadline.js';
+import { icon } from '../../shared/ui/icons.js';
 import {
   noticeAi,
   summaries,
@@ -10,26 +11,35 @@ import {
 
 export function feedCard(notice, sort) {
   const ai = noticeAi(notice);
-  const deadline = deadlineLabel(ai?.deadline);
-  const summary = summaries(notice);
   const reasons = recommendationReasons(notice);
   const failed = notice.ai?.status === 'failed';
   return `<article class="notice-card" ${failed ? '' : `tabindex="0" role="button" data-id="${escapeHtml(notice.id)}" aria-label="${escapeHtml(notice.title)} 상세 보기"`}>
-    <div class="card-top"><span class="source-dot"></span>
-      <span>${escapeHtml(notice.source?.name || '출처 확인')}</span><span>·</span>
-      <span>${escapeHtml(notice.postedAt || '')}</span>
-      ${ai ? `<span class="category-pill">${escapeHtml(categoriesFor(notice)[0] || '공지')}</span><span class="deadline ${deadline.className}">${escapeHtml(deadline.label)}</span>` : ''}
-    </div>
+    ${cardHeader(notice, ai)}
     <h3>${escapeHtml(notice.title)}</h3>
-    ${failed ? originalLink(notice) : summaryMarkup(summary, ai)}
-    ${sort === 'recommend' && reasons.length ? `<div class="reason"><span>✳</span>${escapeHtml(reasons[0])}</div>` : ''}
-    <div class="card-footer"><span>${escapeHtml(notice.department || notice.source?.group || '')}</span>
-      <span class="tags">${tagsFor(notice)
-        .slice(0, 3)
-        .map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`)
-        .join('')}</span>
-    </div>
+    ${failed ? originalLink(notice) : summaryMarkup(summaries(notice), ai)}
+    ${sort === 'recommend' && reasons.length ? `<div class="reason">${icon('check-circle')}${escapeHtml(reasons[0])}</div>` : ''}
+    ${cardFooter(notice, failed)}
   </article>`;
+}
+
+function cardHeader(notice, ai) {
+  const deadline = deadlineLabel(ai?.deadline);
+  return `<div class="card-top">
+    <span class="source-icon">${icon('document')}</span>
+    <div class="source-meta"><span class="source-name">${escapeHtml(notice.source?.name || '출처 확인')}</span><span class="source-date">${escapeHtml(notice.postedAt || '')}</span></div>
+    ${ai ? `<span class="deadline ${deadline.className}">${escapeHtml(deadline.label)}</span>` : ''}
+  </div>`;
+}
+
+function cardFooter(notice, failed) {
+  const category = categoriesFor(notice)[0];
+  const tags = tagsFor(notice).slice(0, 2);
+  return `<div class="card-footer"><div class="card-meta">
+    ${category ? `<span class="category-pill">${escapeHtml(category)}</span>` : ''}
+    <span>${escapeHtml(notice.department || notice.source?.group || '')}</span>
+    <span class="tags">${tags.map((tag) => `<span class="tag">#${escapeHtml(tag)}</span>`).join('')}</span>
+    </div>${failed ? '' : `<span class="card-open">자세히 보기 ${icon('chevron-right')}</span>`}
+  </div>`;
 }
 
 function summaryMarkup(summary, ai) {

@@ -1,51 +1,56 @@
 .requirements {
   display: grid;
-  gap: 8px;
+  gap: 12px;
 }
 .requirement-row {
-  background: #f8f8fb;
-  border-radius: 8px;
-  padding: 10px 11px;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 8px;
-  align-items: center;
+  background: var(--background);
+  border-radius: 16px;
+  padding: 18px 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
 }
 .requirement-description {
   min-width: 0;
+  flex: 1;
 }
 .requirement-description strong {
-  font-size: 11px;
-  color: #4a5060;
+  font-size: 16px;
+  color: var(--ink);
   font-weight: 600;
 }
 .requirement-kind {
-  font-size: 9px;
-  color: #7463dc;
-  margin-left: 5px;
+  display: inline-block;
+  font-size: 12px;
+  color: var(--blue-strong);
+  margin-left: 6px;
+  font-weight: 500;
 }
 .requirement-evidence {
-  font-size: 9px;
-  color: #a0a5b0;
-  margin-top: 4px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin-top: 10px;
+  overflow-wrap: anywhere;
 }
 .requirement-value {
-  font-size: 11px;
-  color: #777f90;
+  font-size: 15px;
+  color: var(--secondary);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
-  margin-top: 7px;
-}
-.copy-button {
-  border: 1px solid #e6e7ed;
-  background: #fff;
-  color: #7463dc;
-  padding: 6px 9px;
-  border-radius: 6px;
-  font-size: 10px;
+  margin-top: 10px;
+  line-height: 1.7;
 }
 .missing-value {
-  color: #b0b4be;
-  font-size: 10px;
-  margin-top: 7px;
+  color: var(--muted);
+  font-size: 14px;
+  margin-top: 10px;
+}
+@media (max-width: 360px) {
+  .requirement-row {
+    flex-wrap: wrap;
+  }
+  .requirement-description {
+    flex-basis: 100%;
+  }
 }

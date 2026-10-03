@@ -1,103 +1,161 @@
 .notice-list {
   display: grid;
-  gap: 10px;
+  gap: 16px;
 }
 .notice-card {
-  background: #fff;
-  border: 1px solid #eceef3;
-  border-radius: 12px;
-  padding: 16px 17px 14px;
+  background: var(--surface);
+  border-radius: var(--card-radius);
+  padding: 24px;
   transition:
-    border-color 0.15s,
-    box-shadow 0.15s;
+    background 0.16s,
+    transform 0.16s;
+}
+.notice-card[data-id] {
   cursor: pointer;
 }
-.notice-card:hover {
-  border-color: #d8d2ff;
-  box-shadow: 0 6px 18px #3a2d8410;
+.notice-card[data-id]:hover {
+  background: #fcfdff;
+}
+.notice-card[data-id]:active {
+  transform: scale(0.99);
 }
 .card-top {
   display: flex;
   align-items: center;
-  gap: 7px;
-  color: #9298a7;
-  font-size: 9px;
+  gap: 12px;
 }
-.source-dot {
-  width: 5px;
-  height: 5px;
-  background: #998be8;
-  border-radius: 50%;
+.source-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  background: var(--blue-soft);
+  color: var(--blue-strong);
 }
-.category-pill {
-  background: #f2f0ff;
-  color: #7464d4;
-  padding: 4px 7px;
-  border-radius: 5px;
-  font-size: 9px;
+.source-meta {
+  flex: 1;
+  min-width: 0;
+}
+.source-name {
+  display: block;
+  color: var(--secondary);
+  font-size: 14px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.source-date {
+  color: var(--muted);
+  font-size: 13px;
 }
 .deadline {
-  margin-left: auto;
-  color: #f08073;
-  font-size: 10px;
-  font-weight: 700;
+  flex-shrink: 0;
+  color: var(--red);
+  background: var(--red-soft);
+  padding: 6px 9px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
 }
 .deadline.no-deadline {
-  color: #a1a6b2;
+  color: var(--muted);
+  background: var(--background);
 }
 .notice-card h3 {
-  font-size: 13px;
-  letter-spacing: -0.3px;
-  line-height: 1.55;
-  margin: 10px 0 7px;
+  font-size: 20px;
+  letter-spacing: -0.5px;
+  line-height: 1.5;
+  margin: 18px 0 10px;
   font-weight: 700;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
-.summary {
-  font-size: 10px;
-  line-height: 1.7;
-  color: #828999;
-  margin: 0;
-}
-.reason {
+.category-pill {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  margin-top: 11px;
-  padding: 6px 8px;
+  background: var(--background);
+  color: var(--secondary);
+  padding: 4px 8px;
   border-radius: 6px;
-  background: #f7f5ff;
-  color: #7768d1;
-  font-size: 9px;
+  font-size: 12px;
+  font-weight: 500;
 }
-.reason-icon {
-  font-size: 10px;
+.summary {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--muted);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.reason {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 18px;
+  padding: 12px 14px;
+  border-radius: var(--control-radius);
+  background: var(--blue-soft);
+  color: var(--blue-strong);
+  font-size: 14px;
+  line-height: 1.5;
+  word-break: keep-all;
+}
+.reason .icon {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
 }
 .card-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 12px;
-  padding-top: 9px;
-  border-top: 1px solid #f2f3f6;
-  color: #a0a5b1;
-  font-size: 9px;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #f2f4f6;
+  font-size: 13px;
+  color: var(--muted);
+}
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 .tags {
   display: flex;
-  gap: 5px;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 .tag {
-  background: #f6f7fa;
-  border-radius: 5px;
-  padding: 4px 6px;
-  color: #8c92a1;
-  font-size: 9px;
+  color: var(--muted);
+  font-size: 13px;
 }
-@media (max-width: 440px) {
+.card-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--secondary);
+  font-size: 14px;
+  font-weight: 500;
+}
+.card-open .icon {
+  width: 16px;
+  height: 16px;
+}
+@media (max-width: 800px) {
+  .notice-list {
+    gap: 12px;
+  }
   .notice-card {
-    padding: 14px;
+    padding: 22px 20px;
+  }
+  .notice-card h3 {
+    font-size: 19px;
   }
   .deadline {
-    font-size: 9px;
+    font-size: 12px;
   }
 }

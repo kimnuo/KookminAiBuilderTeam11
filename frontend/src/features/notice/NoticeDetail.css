@@ -8,108 +8,140 @@
   width: 100%;
   height: 100%;
   margin: 0;
-  padding: 20px;
+  padding: 24px;
 }
 .modal-backdrop[open] {
   display: grid;
   place-items: center;
 }
 .modal-backdrop::backdrop {
-  background: #17172988;
-  backdrop-filter: blur(3px);
+  background: #191f2873;
 }
 .detail-dialog {
   position: relative;
-  background: #fff;
-  border-radius: 16px;
+  background: var(--surface);
+  border-radius: 28px;
   width: min(680px, 100%);
-  max-height: min(88vh, 820px);
+  max-height: min(90dvh, 880px);
   overflow: auto;
-  padding: 32px 36px;
-  box-shadow: 0 25px 90px #13112633;
+  padding: 36px 32px 24px;
+  box-shadow: 0 16px 64px #191f281f;
+  overscroll-behavior: contain;
 }
 .close-button {
   position: absolute;
-  right: 17px;
-  top: 13px;
+  right: 20px;
+  top: 20px;
   border: 0;
-  background: #f5f5f8;
-  width: 30px;
-  height: 30px;
-  border-radius: 9px;
-  color: #767b89;
-  font-size: 22px;
+  background: var(--background);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: var(--muted);
+  display: grid;
+  place-items: center;
 }
 .detail-meta {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   align-items: center;
-  color: #9197a5;
-  font-size: 10px;
-  margin: 5px 0 14px;
+  flex-wrap: wrap;
+  padding-right: 40px;
+  color: var(--muted);
+  font-size: 14px;
+  margin: 4px 0 16px;
 }
 .detail-dialog h2 {
-  font-size: 21px;
-  line-height: 1.5;
-  letter-spacing: -0.7px;
-  margin: 0 30px 12px 0;
+  font-size: 27px;
+  line-height: 1.4;
+  letter-spacing: -0.8px;
+  margin: 0 24px 16px 0;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 .detail-summary {
-  font-size: 12px;
-  line-height: 1.8;
-  color: #72798a;
-  margin: 12px 0 18px;
+  font-size: 16px;
+  line-height: 1.85;
+  color: var(--secondary);
+  margin: 20px 0 24px;
 }
 .detail-section {
-  border-top: 1px solid #eff0f4;
-  padding: 17px 0;
+  border-top: 1px solid var(--line);
+  padding: 24px 0;
 }
 .detail-section h3 {
-  font-size: 11px;
-  margin: 0 0 10px;
+  font-size: 18px;
+  margin: 0 0 12px;
+  font-weight: 700;
 }
 .detail-section p {
-  font-size: 11px;
-  color: #717889;
+  font-size: 16px;
+  color: var(--secondary);
   line-height: 1.75;
   margin: 0;
 }
 .evidence {
-  display: inline-block;
-  margin-top: 7px;
-  background: #fff9e9;
-  color: #a17c2e;
-  border-radius: 5px;
-  padding: 6px 8px;
-  font-size: 10px;
+  display: block;
+  margin-top: 12px;
+  background: var(--background);
+  color: var(--muted);
+  border-radius: var(--control-radius);
+  padding: 14px 16px;
+  font-size: 14px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
 }
 .detail-actions {
   display: flex;
-  gap: 9px;
-  margin-top: 19px;
+  margin-top: 4px;
+  padding: 16px 0 4px;
+  background: var(--surface);
+  position: sticky;
+  bottom: -24px;
 }
-.primary-link {
-  display: inline-block;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 10px;
-  text-decoration: none;
-  border: 0;
+.detail-actions .primary-link {
+  width: 100%;
 }
-.primary-link {
-  background: #7463dc;
-  color: #fff;
+.detail-section .local-note {
+  margin-bottom: 16px;
+  color: var(--muted);
+  font-size: 14px;
 }
-.local-note {
-  margin-bottom: 12px !important;
-  color: #8990a1 !important;
-  font-size: 10px !important;
-}
-@media (max-width: 760px) {
+@media (max-width: 800px) {
+  .modal-backdrop {
+    padding: 0;
+  }
+  .modal-backdrop[open] {
+    place-items: end center;
+  }
   .detail-dialog {
-    padding: 27px 21px;
+    width: 100%;
+    max-height: calc(100dvh - 56px);
+    border-radius: 28px 28px 0 0;
+    padding: 32px 24px calc(24px + env(safe-area-inset-bottom));
+    box-shadow: none;
+  }
+  .detail-dialog::before {
+    content: '';
+    display: block;
+    width: 36px;
+    height: 4px;
+    border-radius: 4px;
+    background: #d1d6db;
+    margin: -20px auto 28px;
+  }
+  .close-button {
+    top: 22px;
+    right: 20px;
   }
   .detail-dialog h2 {
-    font-size: 17px;
+    font-size: 24px;
+  }
+  .detail-meta {
+    font-size: 13px;
+    margin-top: 8px;
+  }
+  .detail-actions {
+    padding-bottom: calc(8px + env(safe-area-inset-bottom));
   }
 }
