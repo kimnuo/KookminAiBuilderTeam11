@@ -26,7 +26,9 @@ class _HistoryPageState extends State<HistoryPage> {
   @override
   void initState() {
     super.initState();
-    ProfileStore.load().then((h) => setState(() => _h = h));
+    ProfileStore.load().then((h) {
+      if (mounted) setState(() => _h = h);
+    });
   }
 
   List<String> _titles(List<Map<String, dynamic>> l) =>

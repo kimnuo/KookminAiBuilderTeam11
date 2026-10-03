@@ -38,7 +38,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
     try {
       await task();
     } catch (_) {
-      setState(() => _error = '처리하지 못했어요. 잠시 후 다시 시도해 주세요.');
+      if (mounted) setState(() => _error = '처리하지 못했어요. 잠시 후 다시 시도해 주세요.');
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -53,6 +53,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
         final text = await PdfTextExtractor.extract(
           await files.first.readAsBytes(),
         );
+        if (!mounted) return;
         if (text.isEmpty) {
           setState(() => _error = '글자를 읽을 수 없는 PDF예요(스캔 이미지일 수 있어요). '
               '이력을 직접 입력해 주세요.');

@@ -13,8 +13,8 @@ class WelcomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: const SafeArea(
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(24, 96, 24, 0),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(24, 96, 24, 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

@@ -38,6 +38,7 @@ class _ApplicantInfoPageState extends State<ApplicantInfoPage> {
   void initState() {
     super.initState();
     ApplicantStore.load().then((info) {
+      if (!mounted) return;
       for (final e in _controllers.entries) {
         e.value.text = info[e.key] ?? '';
       }

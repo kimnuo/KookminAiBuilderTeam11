@@ -1,18 +1,12 @@
-// 온보딩 관심 분야(Catalog.categories, PRD 10절)를 피드 카드(noticeGroups의 id)로 옮긴다.
-// 분야 목록이나 카드가 바뀌면 이 표도 같이 고친다. 빠진 칸은 test/interest_seed_test.dart가 잡는다.
-const interestGroupIds = <String, List<String>>{
-  '학사': ['academic', 'graduation'],
-  '장학': ['scholarship'],
-  '공모전·행사': ['activity'],
-  '채용·인턴': ['career'],
-  '특강·교육': ['activity'],
-  '국제교류': ['activity'],
-  '봉사': ['activity'],
-  '생활·시설': ['academic'],
-  '시스템': ['other'],
-  '기타': ['other'],
-};
+import 'catalog.dart';
+import 'feed_config.dart';
 
-Set<String> feedGroupIdsFor(Iterable<String> categories) => <String>{
-  for (final c in categories) ...?interestGroupIds[c],
-};
+// 온보딩 관심 분야(Catalog.categories)를 이름이 같은 피드 카드(noticeGroups)의 id로 옮긴다.
+// 예전 이름으로 저장된 값도 서비스 분류로 바꿔서 찾는다.
+Set<String> feedGroupIdsFor(Iterable<String> categories) {
+  final wanted = Catalog.serviceCategories(categories);
+  return {
+    for (final g in noticeGroups)
+      if (wanted.contains(g.label)) g.id,
+  };
+}

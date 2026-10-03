@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:kmu_notice/shared/lib/app_config.dart';
 
@@ -14,12 +15,37 @@ class ApiException implements Exception {
 }
 
 class ApiClient {
+  static const _tokenKey = 'auth.token';
   static String? token;
+
+  // 새로고침해도 로그인이 풀리지 않게 토큰을 이 기기에 둔다.
+  static Future<void> restoreToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    token = prefs.getString(_tokenKey);
+  }
+
+  static Future<void> setToken(String? value) async {
+    token = value;
+    final prefs = await SharedPreferences.getInstance();
+    if (value == null) {
+      await prefs.remove(_tokenKey);
+    } else {
+      await prefs.setString(_tokenKey, value);
+    }
+  }
 
   static Map<String, String> get _headers => {
         'Content-Type': 'application/json',
         if (token != null) 'Authorization': 'Bearer $token',
       };
+
+  static Future<Map<String, dynamic>> get(String path) async {
+    final res = await http.get(
+      Uri.parse('${AppConfig.apiBaseUrl}$path'),
+      headers: _headers,
+    );
+    return _decode(res);
+  }
 
   static Future<Map<String, dynamic>> post(
     String path,
@@ -41,14 +67,6 @@ class ApiClient {
       Uri.parse('${AppConfig.apiBaseUrl}$path'),
       headers: _headers,
       body: jsonEncode(body),
-    );
-    return _decode(res);
-  }
-
-  static Future<Map<String, dynamic>> get(String path) async {
-    final res = await http.get(
-      Uri.parse('${AppConfig.apiBaseUrl}$path'),
-      headers: _headers,
     );
     return _decode(res);
   }

@@ -50,6 +50,6 @@ void main() {
 
     await fillFields(tester, ['login_user', 'testpass123']);
     await tapText(tester, '로그인');
-    expect(find.text('피드 화면 자리 (프론트 B)'), findsOneWidget);
+    expect(find.text('모든 카테고리'), findsOneWidget);
   });
 }

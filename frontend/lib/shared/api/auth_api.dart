@@ -6,7 +6,8 @@ import 'mock_auth.dart';
 
 class AuthApi {
   // 로그인 상태. mock과 서버 모드 모두 여기서 켜고 끈다. 화면은 이 값을 듣고 다시 그린다.
-  static final loggedIn = ValueNotifier<bool>(false);
+  // 처음 읽을 때 main()의 ApiClient.restoreToken()이 되살린 토큰이 있으면 로그인 상태로 시작한다.
+  static final loggedIn = ValueNotifier<bool>(ApiClient.token != null);
   static bool get isLoggedIn => loggedIn.value;
 
   // 닉네임이 이미 있으면 서버는 409를 준다.
@@ -35,20 +36,24 @@ class AuthApi {
       'nickname': nickname,
       'password': password,
     });
-    ApiClient.token = res['token'] as String?;
+    await ApiClient.setToken(res['token'] as String?);
     return res['id'] as String;
   }
 
+  // 서버 로그아웃이 실패해도 이 기기의 토큰은 지운다.
   static Future<void> logout() async {
-    if (!AppConfig.useMock) await ApiClient.post('/api/auth/logout', {});
-    ApiClient.token = null;
-    loggedIn.value = false;
+    try {
+      if (!AppConfig.useMock) await ApiClient.post('/api/auth/logout', {});
+    } finally {
+      await ApiClient.setToken(null);
+      loggedIn.value = false;
+    }
   }
 
-  // 서버에 있는 내 데이터를 모두 지운다.
+  // 서버에 있는 내 데이터를 모두 지운다. 실패하면 토큰을 남겨 다시 시도할 수 있게 한다.
   static Future<void> deleteMe() async {
     if (!AppConfig.useMock) await ApiClient.delete('/api/me');
-    ApiClient.token = null;
+    await ApiClient.setToken(null);
     loggedIn.value = false;
   }
 

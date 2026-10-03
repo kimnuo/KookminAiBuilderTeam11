@@ -7,7 +7,6 @@ import 'package:kmu_notice/app/router.dart';
 import 'package:kmu_notice/features/feed/feed_controller.dart';
 import 'package:kmu_notice/shared/api/notice_api.dart';
 import 'package:kmu_notice/shared/lib/catalog.dart';
-import 'package:kmu_notice/shared/lib/feed_config.dart';
 import 'package:kmu_notice/shared/lib/interest_groups.dart';
 import 'package:kmu_notice/shared/lib/interest_store.dart';
 import 'package:kmu_notice/shared/lib/routes.dart';
@@ -16,11 +15,17 @@ import 'test_helpers.dart';
 
 void main() {
   test('모든 관심 분야가 실제 피드 카드로 이어진다', () {
-    final ids = noticeGroups.map((g) => g.id).toSet();
     for (final c in Catalog.categories) {
-      expect(interestGroupIds[c], isNotEmpty, reason: c);
-      expect(ids, containsAll(interestGroupIds[c]!), reason: c);
+      expect(feedGroupIdsFor([c]), hasLength(1), reason: c);
     }
+  });
+
+  test('예전 분야 이름도 서비스 분류로 바꿔서 이어진다', () {
+    expect(feedGroupIdsFor(['채용·인턴', '공모전·행사', '시스템']), {
+      'career',
+      'activity',
+      'other',
+    });
   });
 
   test('온보딩에서 고른 분야가 피드 첫 선택값이 되고 한 번만 깔린다', () async {

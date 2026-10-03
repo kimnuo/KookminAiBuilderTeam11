@@ -38,11 +38,12 @@ class _SignupPageState extends State<SignupPage> {
       await AuthApi.signup(_nickname.text.trim(), _password.text);
       if (mounted) context.go(Routes.consent);
     } on ApiException catch (e) {
+      if (!mounted) return;
       setState(() => e.statusCode == 409
           ? _nicknameError = '이미 사용 중인 닉네임이에요.'
           : _formError = '가입하지 못했어요. 잠시 후 다시 시도해 주세요.');
     } catch (_) {
-      setState(() => _formError = '서버에 연결하지 못했어요.');
+      if (mounted) setState(() => _formError = '서버에 연결하지 못했어요.');
     } finally {
       if (mounted) setState(() => _loading = false);
     }

@@ -41,10 +41,13 @@ final appRouter = GoRouter(
       builder: (_, _) => const HistoryPage(),
     ),
     GoRoute(path: Routes.portfolio, builder: (_, _) => const PortfolioPage()),
+    // 분석 결과는 화면 사이에서만 넘긴다. 새로고침으로 결과가 없으면 PDF 고르기로 돌아간다.
     GoRoute(
       path: Routes.portfolioReview,
-      builder: (_, state) =>
-          PortfolioReviewPage(analysis: state.extra! as ProfileAnalysis),
+      builder: (_, state) => switch (state.extra) {
+        final ProfileAnalysis analysis => PortfolioReviewPage(analysis: analysis),
+        _ => const PortfolioPage(),
+      },
     ),
     GoRoute(
       path: Routes.applicantInfo,
