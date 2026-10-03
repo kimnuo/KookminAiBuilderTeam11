@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 class FeedConfig {
   static const requestTimeout = Duration(seconds: 20);
   static const pageSize = 8;
+  // 백엔드 POLL_INTERVAL_MIN 기본값(backend/app/core/config.py)과 맞춘다
+  static const collectMinutes = 10;
   static const detailDialogWidth = 820.0;
   static const detailDialogHeight = 720.0;
   static const detailDialogRatio = .82;

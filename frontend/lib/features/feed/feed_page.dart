@@ -9,6 +9,7 @@ import 'dashboard_header.dart';
 import 'feed_toolbar.dart';
 import 'category_grid.dart';
 import 'category_dialog.dart';
+import 'intro_band.dart';
 import 'site_footer.dart';
 
 class FeedPage extends StatefulWidget {
@@ -21,6 +22,7 @@ class FeedPage extends StatefulWidget {
 class _FeedPageState extends State<FeedPage> {
   final _controller = FeedController();
   int _homeVersion = 0;
+  bool _intro = true;
   @override
   void initState() {
     super.initState();
@@ -54,8 +56,20 @@ class _FeedPageState extends State<FeedPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        DashboardHeader(compact: compact, onHome: _home),
+        DashboardHeader(
+          compact: compact,
+          onHome: _home,
+          notices: _controller.notices,
+        ),
         SizedBox(height: compact ? 8 : 20),
+        if (_intro) ...[
+          IntroBand(
+            compact: compact,
+            maxHeight: _introHeight(size),
+            onClose: () => setState(() => _intro = false),
+          ),
+          SizedBox(height: compact ? 8 : 12),
+        ],
         FeedToolbar(
           key: ValueKey(_homeVersion),
           controller: _controller,
@@ -69,6 +83,14 @@ class _FeedPageState extends State<FeedPage> {
         SiteFooter(notices: _controller.notices, compact: compact),
       ],
     );
+  }
+
+  // 소개 띠는 카테고리 칸(Expanded) 위에 놓여, 띠가 쓴 만큼 칸이 줄어든다.
+  // 화면이 낮을수록 띠 상한을 낮춰 칸이 너무 작아지지 않게 한다.
+  double _introHeight(BoxConstraints size) {
+    if (size.maxHeight < 600) return 44;
+    if (size.maxWidth < 680) return 88;
+    return size.maxHeight < 800 ? 76 : 96;
   }
 
   void _home() {
