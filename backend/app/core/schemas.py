@@ -112,7 +112,7 @@ class Situation(ApiModel):
     """나의 상황. 저장하지 않는다. 이름·학번·연락처는 받지 않는다."""
 
     major: str | None = Field(None, examples=["소프트웨어학부"])
-    year: int | None = Field(None, ge=1, le=6, examples=[4])
+    year: int | None = Field(None, ge=0, le=6, examples=[4])  # 0 = 졸업생 (화면이 0 으로 보낸다)
     status: str | None = Field(None, examples=["재학"])  # 재학, 휴학, 졸업예정 …
     graduating: bool = False  # 이번 학기 졸업 예정
     interests: list[str] = Field([], examples=[["취업", "장학"]])  # CATEGORIES 중에서
@@ -172,7 +172,7 @@ class Subscription(ApiModel):
     """구독 설정(나의 상황). 화면 온보딩이 PUT 으로 보낸다. 이름·연락처·학번은 받지 않는다."""
 
     major: str | None = None
-    year: int | None = Field(None, ge=1, le=6)
+    year: int | None = Field(None, ge=0, le=6)  # 0 = 졸업생 (화면이 0 으로 보낸다)
     categories: list[str] = []
     keywords: list[str] = []
     tags: list[str] = []

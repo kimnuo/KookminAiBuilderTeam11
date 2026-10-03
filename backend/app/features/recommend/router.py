@@ -35,5 +35,6 @@ def with_subscription(request: RecommendRequest, authorization: str | None) -> R
         return request
     situation = request.situation
     if situation.major is None and situation.year is None and not situation.interests:
-        situation = Situation(major=sub.major, year=sub.year, status="재학", interests=sub.categories)
+        status = "졸업생" if sub.year == 0 else "재학"  # 구독의 year 0 은 졸업생
+        situation = Situation(major=sub.major, year=sub.year, status=status, interests=sub.categories)
     return request.model_copy(update={"situation": situation, "tags": request.tags or sub.tags})
