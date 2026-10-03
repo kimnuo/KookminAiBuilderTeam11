@@ -159,3 +159,28 @@
     font-size: 12px;
   }
 }
+.fit-line {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.fit-chance {
+  font-weight: 700;
+}
+.fit-chance.high {
+  color: var(--blue-strong);
+}
+.fit-chance.mid {
+  color: var(--secondary);
+}
+.fit-chance.low {
+  color: var(--muted);
+}
+.fit-reason {
+  color: var(--muted);
+  word-break: keep-all;
+}

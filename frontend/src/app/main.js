@@ -24,7 +24,7 @@ const feed = createFeedPage({
   getUserId: () => readLocalObject(config.sessionKey).userId,
   onRender: (counts) => renderProfileCard(counts),
 });
-bindProfileTagToggles(() => feed.render());
+bindProfileTagToggles(() => feed.tagsChanged());
 window.addEventListener('storage', (event) => {
   if (event.key === config.profileKey || event.key === null) renderProfileCard();
   if (event.key === config.sessionKey || event.key === null) feed.refresh();

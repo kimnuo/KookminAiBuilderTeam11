@@ -2,7 +2,8 @@ import { config } from '../../shared/config.js';
 import { getFeed, getSources } from '../../shared/api/api-client.js';
 import { escapeHtml } from '../../shared/lib/html.js';
 import { filterNotices } from '../../shared/lib/notice-data.js';
-import { activeTags, rankByTags, tagCounts, withTags } from '../../shared/lib/profile-tags.js';
+import { activeTags, tagCounts, withTags } from '../../shared/lib/profile-tags.js';
+import { loadFits, rankByFit, withFits } from '../../shared/lib/recommend.js';
 import { feedCard } from './FeedCard.js';
 
 class FeedPage {
@@ -16,6 +17,7 @@ class FeedPage {
     this.category = /** @type {HTMLSelectElement} */ (document.getElementById('category-filter'));
     this.source = /** @type {HTMLSelectElement} */ (document.getElementById('source-filter'));
     this.state = { notices: [], sort: this.sortInput.value, version: 0, controller: null };
+    this.fit = { values: {}, controller: null, timer: 0 };
     this.sourceVersion = 0;
     this.list.addEventListener('click', (event) => this.select(event));
     this.list.addEventListener('keydown', (event) => this.select(event));
@@ -34,14 +36,14 @@ class FeedPage {
   render() {
     const tags = activeTags();
     // 켜진 태그를 글마다 먼저 적어 둔다. 마감순에서도 카드에 겹친 태그가 보이게.
-    const tagged = withTags(this.state.notices, tags);
+    const tagged = withFits(withTags(this.state.notices, tags), this.fit.values);
     const filtered = filterNotices(tagged, {
       query: this.query.value,
       category: this.category.value,
       source: this.source.value,
       sort: this.state.sort,
     });
-    const items = this.state.sort === 'recommend' ? rankByTags(filtered, tags) : filtered;
+    const items = this.state.sort === 'recommend' ? rankByFit(filtered) : filtered;
     document.getElementById('result-count').textContent = String(items.length);
     this.list.innerHTML = items.map((item) => feedCard(item, this.state.sort)).join('');
     document.getElementById('empty-state').hidden = items.length > 0;
@@ -70,6 +72,7 @@ class FeedPage {
       state.sort = sort;
       this.render();
       this.status('');
+      this.refreshFits();
     } catch (error) {
       if (version !== state.version || error.name === 'AbortError') return;
       this.sortInput.value = state.sort;
@@ -78,6 +81,32 @@ class FeedPage {
     } finally {
       if (version === state.version) this.list.setAttribute('aria-busy', 'false');
     }
+  }
+
+  /** 공지마다 될 가능성과 근거 한 줄을 받아 온다. 못 받아도 피드는 그대로 보인다. */
+  async refreshFits() {
+    const version = this.state.version;
+    this.fit.controller?.abort();
+    this.fit.controller = new AbortController();
+    try {
+      const values = await loadFits(
+        this.state.notices.map((item) => item.id),
+        activeTags(),
+        this.fit.controller.signal,
+      );
+      if (version !== this.state.version) return;
+      this.fit.values = values;
+      this.render();
+    } catch {
+      // 적합도는 덤이라, 실패하면 조용히 넘어간다
+    }
+  }
+
+  /** 태그를 켜고 끄면 겹침은 바로, 적합도는 그치고 잠시 뒤에 다시 계산한다. */
+  tagsChanged() {
+    this.render();
+    clearTimeout(this.fit.timer);
+    this.fit.timer = setTimeout(() => this.refreshFits(), 700);
   }
 
   async loadSources() {

@@ -15,11 +15,22 @@ export function feedCard(notice, sort) {
   const failed = notice.ai?.status === 'failed';
   return `<article class="notice-card" ${failed ? '' : `tabindex="0" role="button" data-id="${escapeHtml(notice.id)}" aria-label="${escapeHtml(notice.title)} 상세 보기"`}>
     ${cardHeader(notice, ai)}
+    ${fitLine(notice)}
     <h3>${escapeHtml(notice.title)}</h3>
     ${failed ? originalLink(notice) : summaryMarkup(summaries(notice), ai)}
     ${sort === 'recommend' && reasons.length ? `<div class="reason">${icon('check-circle')}${escapeHtml(reasons[0])}</div>` : ''}
     ${cardFooter(notice, failed)}
   </article>`;
+}
+
+/** 제목 위 한 줄: AI 가 본 될 가능성과 추천 근거 */
+function fitLine(notice) {
+  const fit = notice.fit;
+  if (!fit || !Number.isFinite(fit.chance)) return '';
+  const level = fit.chance >= 70 ? 'high' : fit.chance >= 40 ? 'mid' : 'low';
+  return `<p class="fit-line"><span class="fit-chance ${level}">합격 가능성 ${fit.chance}%</span>${
+    fit.reason ? `<span class="fit-reason">${escapeHtml(fit.reason)}</span>` : ''
+  }</p>`;
 }
 
 function cardHeader(notice, ai) {
