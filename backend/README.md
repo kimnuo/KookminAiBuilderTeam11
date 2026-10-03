@@ -48,6 +48,7 @@ python3 -m venv .venv
 | GET | `/api/categories` | 분류 6개 (고정): 학사·생활, 졸업, 장학, 취업, 행사·대외활동, 기타 |
 | GET | `/api/sources` | 출처 목록 |
 | GET | `/api/notices?category=&source=&q=&actionRequired=&cursor=` | 목록, 최신순 20건씩. `nextCursor` 를 그대로 다시 보내면 다음 쪽 |
+| GET | `/api/feed?sort=recommend\|deadline` | 피드 화면용 전체 목록 (페이지 없음). recommend 는 지금 최신순 |
 | GET | `/api/notices/{id}` | **한 페이지 요약** (목록 항목과 같은 형식) |
 | POST | `/api/briefing` | **나의 상황**에서 반드시 볼 글 |
 | POST | `/api/admin/poll-now` | 지금 수집 (백그라운드, 바로 응답) |

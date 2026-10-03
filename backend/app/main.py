@@ -10,6 +10,7 @@ from app.core.config import CORS_ORIGINS
 from app.db import store
 from app.features.admin.router import router as admin_router
 from app.features.briefing.router import router as briefing_router
+from app.features.feed.router import router as feed_router
 from app.features.notices.router import router as notices_router
 from app.jobs import scheduler
 
@@ -38,7 +39,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-for router in (notices_router, briefing_router, admin_router):
+for router in (notices_router, feed_router, briefing_router, admin_router):
     app.include_router(router, prefix="/api")
 
 
