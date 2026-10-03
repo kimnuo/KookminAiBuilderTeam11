@@ -4,6 +4,7 @@
   추천 이유(recommendationReasons)를 붙인다. 설정이 없으면 최신순이다
 - deadline: 마감 가까운 순, 마감 모르는 글은 뒤에서 최신순
 - 어느 순서든 **만료(마감 지난) 글과 지난해 글은 아래로 내린다** (app/core/ordering)
+- 같은 글이 두 출처에 올라온 것은 하나만 보낸다 (app/core/dedupe)
 """
 
 from typing import Literal
@@ -11,6 +12,7 @@ from typing import Literal
 from fastapi import APIRouter, Header, Query
 
 from app.collectors.common import now_kst
+from app.core.dedupe import unique
 from app.core.ordering import by_deadline, newest_first
 from app.core.schemas import NoticePage, Subscription
 from app.db import store
@@ -27,7 +29,7 @@ def get_feed(
     user_id: str | None = Query(None, alias="userId", description="지금은 쓰지 않음 (토큰으로 본다)"),
     authorization: str | None = Header(None),
 ) -> NoticePage:
-    notices = store.all_notices()
+    notices = unique(store.all_notices())  # 같은 글이 두 출처에 올라온 것은 하나로
     today = now_kst().date()
     notices.sort(key=by_deadline(today) if sort == "deadline" else newest_first)
     subscription = _subscription(authorization)

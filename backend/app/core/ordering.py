@@ -1,7 +1,9 @@
 """공용 정렬 키. 같은 입력이면 같은 순서가 나와야 한다 (PRD 3절).
 
-정렬 규칙 (사용자 지시, 2026-10-03): **① 만료 안 된 것 먼저, ② 올해 글 먼저**, 그다음 기존 기준.
-지난 마감·지난해 글이 위로 올라오던 문제를 코드로 막는다. 판단은 전부 코드가 하고 AI 는 점수만 준다.
+정렬 규칙 (사용자 지시 + 팀 QA, 2026-10-03):
+**① 만료 안 된 것 → ② 올해 글 → ③ 관심 분야에 맞는 글 → ④ AI 추천도 → ⑤ 최신순.**
+지난 마감·지난해 글이 위로 올라오고, 관심 분야 밖 글이 1위로 오던 문제를 코드로 막는다.
+판단·줄 세우기는 전부 코드가 하고 AI 는 점수만 준다 (지침서 7절).
 """
 
 from datetime import date
@@ -35,10 +37,20 @@ def is_expired(n: Notice, today: date) -> bool:
 
 
 def year_tier(n: Notice, today: date) -> int:
-    """올해 글은 0, 지난해는 1, 그 전해는 2… 날짜를 모르면 맨 뒤 묶음."""
+    """올해 글은 0, 지난해는 1, 그 전해는 2…
+
+    게시일이 없는 고정 공지(학사공지에 여러 건 있다)는 마감이 아직 남아 있으면 지금 글로 본다.
+    그렇지 않으면 맨 뒤 묶음 — 날짜를 모른다고 올해 글보다 위로 올리지는 않는다.
+    """
     if n.posted_at is None:
-        return UNKNOWN_YEAR_TIER
+        deadline = deadline_of(n)
+        return 0 if deadline and deadline >= today else UNKNOWN_YEAR_TIER
     return max(0, min(UNKNOWN_YEAR_TIER - 1, today.year - n.posted_at.year))
+
+
+def matches_interest(n: Notice, interests: set[str]) -> bool:
+    """내가 고른 관심 분야(categories)에 이 공지가 들어가나."""
+    return bool(interests) and bool(set(n.categories) & interests)
 
 
 def fresh_first(n: Notice, today: date) -> tuple:
@@ -46,12 +58,17 @@ def fresh_first(n: Notice, today: date) -> tuple:
     return (is_expired(n, today), year_tier(n, today))
 
 
-def by_recommend(today: date):
-    """추천순: 만료 안 된 것 → 올해 글 → AI 추천도 높은 순 → 최신순."""
+def by_recommend(today: date, interests: set[str] | None = None):
+    """추천순: 만료 안 된 것 → 올해 글 → 관심 분야 일치 → AI 추천도 높은 순 → 최신순.
+
+    관심 분야를 AI 추천도보다 앞에 둔다 (팀 QA 2026-10-03: 분야를 「행사」로 바꿔도 1위가
+    취업 글이었다). 분야를 안 고른 사람에게는 이 단계가 없는 것과 같다.
+    """
+    chosen = interests or set()
 
     def key(n: Notice) -> tuple:
         priority = n.fit.priority if n.fit else -1
-        return (*fresh_first(n, today), -priority, *newest_first(n))
+        return (*fresh_first(n, today), not matches_interest(n, chosen), -priority, *newest_first(n))
 
     return key
 

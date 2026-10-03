@@ -204,7 +204,7 @@ def fits_of(notices: list[Notice], subscription: Subscription) -> dict[str, Fit]
         situation=Situation(
             major=subscription.major,
             year=subscription.year,
-            status="재학",
+            status="졸업생" if subscription.year == 0 else "재학",
             interests=subscription.categories,
         ),
         tags=subscription.tags,

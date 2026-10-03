@@ -1,7 +1,7 @@
 """피드 개인 맞춤: 로그인한 사람의 구독 설정(나의 상황)으로 순서와 추천 이유를 붙인다.
 
-- 추천순은 **① 만료 안 된 것 → ② 올해 글 → ③ AI 추천도(priority) 높은 순 → ④ 최신순**이다
-  (사용자 지시 2026-10-03: 지난 마감·몇 해 전 글이 추천 위로 올라오던 문제). 점수를 매기는 일만 AI 가 하고, 거르고 줄 세우는 것은 코드가 한다
+- 추천순은 **① 만료 안 된 것 → ② 올해 글 → ③ 관심 분야 일치 → ④ AI 추천도 → ⑤ 최신순**이다
+  (사용자 지시·팀 QA 2026-10-03: 지난 마감·몇 해 전 글이 위로 오고, 관심 분야 밖 글이 1위로 오던 문제). 점수를 매기는 일만 AI 가 하고, 거르고 줄 세우는 것은 코드가 한다
 - chance 는 (나의 상황 + 공지) 로 캐시해서, 같은 사람이 다시 열면 AI 를 부르지 않는다
 - 글이 많으면 코드 점수 상위 FEED_FIT_LIMIT 건만 AI 에게 묻는다 (첫 화면이 느려지지 않게)
 - 구독 설정이 없으면(로그인 전) 최신순 그대로 둔다
@@ -35,7 +35,7 @@ def personalize(notices: list[Notice], subscription: Subscription) -> list[Notic
     fits = fits_for(ordered, subscription)
     for notice in ordered:
         notice.fit = fits.get(notice.id)
-    ordered.sort(key=by_recommend(now_kst().date()))
+    ordered.sort(key=by_recommend(now_kst().date(), set(subscription.categories)))
     return ordered
 
 

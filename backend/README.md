@@ -21,12 +21,15 @@ python3 -m venv .venv
 | `POLL_INTERVAL_MIN` | 10 | 주기 수집 간격(분). 0 이면 끔 |
 | `POLL_ON_STARTUP` | 0 | 1 이면 서버 켜자마자 수집 |
 | `NEW_PER_SOURCE` | 8 | 한 번에 출처마다 새로 처리할 최대 글 수 |
+| `KMU_AI_BASE_URL` | https://ai.cs.kookmin.ac.kr | 학교 AI 게이트웨이 (추천 적합도·지원 준비) |
+| `KMU_AI_API_KEY` | (없음) | 게이트웨이 키. `backend/.env` 에만 두고 레포에 올리지 않는다 |
+| `KMU_AI_MODEL` | claude-haiku-4-5 | `claude-opus-5` 도 쓸 수 있다 |
+| `LLM_COMMAND` | claude | 요약에 쓰는 CLI |
 | `LLM_MODEL` | sonnet | 요약용 (개발 서버 Claude 구독 CLI) |
-| `LLM_API_BASE` | https://ai.cs.kookmin.ac.kr/v1 | 추천 적합도용 학교 AI 게이트웨이 |
-| `LLM_API_KEY` | (없음) | 위 게이트웨이 키. `backend/.env` 에 둔다. 레포에 올리지 않는다 |
-| `LLM_API_MODEL` | claude-haiku-4-5 | `claude-opus-5` 도 쓸 수 있다 |
+| `LLM_TIMEOUT_SEC` | 180 | 요약 한 번의 제한 시간(초) |
 | `LLM_CONCURRENCY` | 3 | 동시에 돌릴 AI 요약 수 |
-| `CORS_ORIGINS` | * | 쉼표로 구분 |
+| `ADMIN_TOKEN` | (없음) | `/api/admin/poll-now`·`/redigest` 열쇠. 비어 있으면 그 두 개는 503 |
+| `CORS_ORIGINS` | * | 쉼표로 구분 (공백은 무시한다) |
 | `DB_PATH` | backend/data/app.db | |
 
 ## 출처 (6개)

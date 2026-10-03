@@ -1,5 +1,6 @@
 """공지 조회 로직: 필터와 정렬 (판단은 코드가 한다)."""
 
+from app.core.dedupe import unique
 from app.core.ordering import newest_first
 from app.core.paging import paginate
 from app.core.schemas import Notice, NoticePage
@@ -19,7 +20,7 @@ def list_notices(
     cursor: str | None,
 ) -> NoticePage:
     notices = [
-        n for n in store.all_notices()
+        n for n in unique(store.all_notices())
         if _matches(n, category=category, source=source, q=q, action_required=action_required)
     ]
     notices.sort(key=newest_first)
