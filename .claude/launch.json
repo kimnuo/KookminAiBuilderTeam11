@@ -3,9 +3,11 @@
   "configurations": [
     {
       "name": "flutter-web-preview",
-      "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "5173", "--directory", "frontend/build/web"],
-      "port": 5173
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "frontend/scripts/dev-server.py"
+      ],
+      "port": 4173
     }
   ]
 }

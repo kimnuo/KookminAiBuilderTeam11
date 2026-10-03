@@ -13,10 +13,14 @@ import 'package:kmu_notice/features/profile/portfolio_review_page.dart';
 import 'package:kmu_notice/features/profile/profile_analysis.dart';
 import 'package:kmu_notice/features/profile/settings_page.dart';
 import 'package:kmu_notice/shared/lib/routes.dart';
-import 'feed_placeholder_page.dart';
+
+import 'package:kmu_notice/features/feed/feed_page.dart';
+import 'package:kmu_notice/features/notice/notice_page.dart';
+import 'package:kmu_notice/features/apply_helper/apply_panel.dart';
+import 'package:kmu_notice/shared/lib/feed_config.dart';
 
 final appRouter = GoRouter(
-  initialLocation: Routes.welcome,
+  initialLocation: '${Routes.feed}${FeedConfig.demo ? '?demo=1' : ''}',
   routes: [
     GoRoute(path: Routes.welcome, builder: (_, _) => const WelcomePage()),
     GoRoute(path: Routes.signup, builder: (_, _) => const SignupPage()),
@@ -47,7 +51,18 @@ final appRouter = GoRouter(
     GoRoute(path: Routes.settings, builder: (_, _) => const SettingsPage()),
     GoRoute(
       path: Routes.feed,
-      builder: (_, _) => const FeedPlaceholderPage(),
+      builder: (context, _) => FeedPage(
+        onNotice: (n) => context.push(
+          '/notice/${Uri.encodeComponent(n.id)}${FeedConfig.demo ? '?demo=1' : ''}',
+        ),
+      ),
+    ),
+    GoRoute(
+      path: '/notice/:id',
+      builder: (_, state) => NoticePage(
+        id: state.pathParameters['id']!,
+        preparation: (notice) => ApplyPanel(notice: notice),
+      ),
     ),
   ],
 );

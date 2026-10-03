@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
+import 'package:kmu_notice/shared/api/notice_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:kmu_notice/app/router.dart';
@@ -8,6 +11,11 @@ import 'package:kmu_notice/shared/lib/routes.dart';
 
 Future<void> pumpApp(WidgetTester tester) async {
   SharedPreferences.setMockInitialValues({});
+  NoticeApi.client = MockClient((_) async => http.Response('[]', 200));
+  addTearDown(() {
+    NoticeApi.client.close();
+    NoticeApi.client = http.Client();
+  });
   tester.view.physicalSize = const Size(1080, 2400);
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.reset);

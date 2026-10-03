@@ -1,0 +1,84 @@
+[
+  {
+    "id": "demo-sw-seminar",
+    "title": "SW대학 졸업 프로젝트 설명회 안내",
+    "source": {
+      "id": "demo-sw-college",
+      "name": "국민대 SW대학",
+      "group": "국민대학교"
+    },
+    "url": "https://example.com/?demo=demo-sw-seminar",
+    "postedAt": "2026-10-03",
+    "department": "국민대 SW대학",
+    "ai": {
+      "status": "done",
+      "categories": [
+        "학사"
+      ],
+      "tags": [
+        "개발",
+        "연구"
+      ],
+      "summary": [
+        "졸업 프로젝트를 준비하는 학생을 위한 설명회예요.",
+        "주제 선정과 팀 구성 방법을 안내해요.",
+        "학과와 학년을 입력해 사전 신청해 주세요."
+      ],
+      "deadline": {
+        "date": "2026-10-07",
+        "time": "18:00",
+        "evidence": "[가상 공고] 신청은 2026-10-07 18:00까지 접수합니다."
+      },
+      "audience": {
+        "years": [],
+        "majors": [],
+        "text": "재학생 (가상 조건)"
+      },
+      "apply": "온라인 신청서에 필요 정보와 서류를 제출해 주세요. (가상 신청 방법)"
+    },
+    "recommendationReasons": [
+      "가상 프로필의 관심 분야에 맞는 소식이에요."
+    ]
+  },
+  {
+    "id": "demo-supporters",
+    "title": "대학생 디지털 서비스 서포터즈 모집",
+    "source": {
+      "id": "demo-external",
+      "name": "대외활동 정보",
+      "group": "외부"
+    },
+    "url": "https://example.com/?demo=demo-supporters",
+    "postedAt": "2026-10-03",
+    "department": "대외활동 정보",
+    "ai": {
+      "status": "done",
+      "categories": [
+        "기타"
+      ],
+      "tags": [
+        "기획·창업",
+        "마케팅·홍보"
+      ],
+      "summary": [
+        "새로운 디지털 서비스를 체험하고 의견을 나누는 대외활동이에요.",
+        "콘텐츠 기획과 온라인 홍보 활동에 참여해요.",
+        "지원 동기와 관심 분야를 신청서에 작성해 주세요."
+      ],
+      "deadline": {
+        "date": "2026-10-15",
+        "time": "18:00",
+        "evidence": "[가상 공고] 신청은 2026-10-15 18:00까지 접수합니다."
+      },
+      "audience": {
+        "years": [],
+        "majors": [],
+        "text": "재학생 (가상 조건)"
+      },
+      "apply": "온라인 신청서에 필요 정보와 서류를 제출해 주세요. (가상 신청 방법)"
+    },
+    "recommendationReasons": [
+      "가상 프로필의 관심 분야에 맞는 소식이에요."
+    ]
+  }
+]
