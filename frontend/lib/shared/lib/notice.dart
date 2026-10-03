@@ -1,3 +1,4 @@
+import 'feed_config.dart';
 import 'notice_view.dart';
 import 'notice_media_data.dart';
 import 'digest_items.dart';
@@ -35,11 +36,10 @@ class Notice {
   String get department => json['department']?.toString() ?? '';
   Map<String, dynamic> get source => mapValue(json['source']);
   String get sourceId => source['id']?.toString() ?? '';
-  String get sourceName {
-    final name = source['name']?.toString() ?? '출처 미상';
-    final group = source['group']?.toString();
-    return name == '공지사항' && group != null ? '$group · $name' : name;
-  }
+  String get sourceName =>
+      FeedConfig.sourceLabels[sourceId] ??
+      source['name']?.toString() ??
+      '출처 미상';
 
   Map<String, dynamic> get ai =>
       mapValue(json['ai'])['status'] == 'done' ? mapValue(json['ai']) : {};
