@@ -1,0 +1,126 @@
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: 238px;
+  background: #fff;
+  border-right: 1px solid #eff0f4;
+  padding: 28px 18px;
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 10px;
+  color: #222638;
+  text-decoration: none;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.7px;
+}
+.brand-mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  background: #7665df;
+  color: white;
+  display: grid;
+  place-items: center;
+  font-size: 17px;
+}
+.nav-caption {
+  font-size: 10px;
+  color: #b0b4c0;
+  font-weight: 700;
+  letter-spacing: 1.35px;
+  margin: 48px 12px 13px;
+}
+.nav-item {
+  height: 44px;
+  border-radius: 10px;
+  padding: 0 13px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: #747b8d;
+  font-size: 13px;
+  font-weight: 600;
+  margin: 3px 0;
+}
+.nav-item.active {
+  color: #6757ce;
+  background: #f1efff;
+}
+.nav-icon {
+  font-size: 17px;
+  width: 17px;
+  text-align: center;
+}
+.sidebar-bottom {
+  margin-top: auto;
+  border-top: 1px solid #f0f1f5;
+  padding: 18px 3px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #eeeaff;
+  color: #6555ce;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+.sidebar-bottom strong,
+.sidebar-bottom small {
+  display: block;
+}
+.sidebar-bottom strong {
+  font-size: 12px;
+}
+.sidebar-bottom small {
+  font-size: 10px;
+  color: #9da2af;
+  margin-top: 3px;
+}
+.dots {
+  margin-left: auto;
+  color: #9fa4af;
+  font-size: 19px;
+}
+@media (max-width: 1060px) {
+  .sidebar {
+    width: 205px;
+  }
+}
+@media (max-width: 760px) {
+  .sidebar {
+    position: static;
+    width: auto;
+    height: 57px;
+    padding: 0 17px;
+    flex-direction: row;
+    align-items: center;
+    border-right: 0;
+    border-bottom: 1px solid #eff0f4;
+  }
+  .brand {
+    font-size: 16px;
+  }
+  .brand-mark {
+    width: 27px;
+    height: 27px;
+  }
+  .nav-caption,
+  .sidebar nav,
+  .sidebar-bottom {
+    display: none;
+  }
+}

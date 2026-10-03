@@ -1,0 +1,101 @@
+.right-rail {
+  padding-top: 3px;
+}
+.profile-card {
+  background: #28243d;
+  border-radius: 13px;
+  padding: 19px 17px;
+  color: white;
+  min-height: 228px;
+  position: relative;
+  overflow: hidden;
+}
+.profile-card:after {
+  content: '';
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  border: 1px solid #ffffff12;
+  border-radius: 50%;
+  right: -67px;
+  top: 84px;
+  box-shadow:
+    0 0 0 18px #ffffff08,
+    0 0 0 36px #ffffff05;
+}
+.card-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #c3b9ff;
+  font-size: 9px;
+  font-weight: 600;
+}
+.sparkle {
+  color: #ad9eff;
+  font-size: 13px;
+}
+.profile-card h3 {
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: -0.4px;
+  margin: 18px 0 8px;
+}
+.profile-card > p {
+  font-size: 9px;
+  line-height: 1.7;
+  color: #bbb9c8;
+  margin: 0;
+  max-width: 180px;
+}
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 13px;
+  position: relative;
+  z-index: 1;
+}
+.profile-tag {
+  background: #ffffff16;
+  border: 1px solid #ffffff15;
+  color: #ddd8ff;
+  border-radius: 5px;
+  padding: 5px 7px;
+  font-size: 9px;
+}
+.muted-tag {
+  color: #a19eae;
+  font-size: 9px;
+}
+.text-link {
+  display: inline-flex;
+  gap: 8px;
+  margin-top: 14px;
+  color: #c7bdff;
+  font-size: 9px;
+  text-decoration: none;
+  position: relative;
+  z-index: 1;
+}
+@media (max-width: 760px) {
+  .right-rail {
+    order: 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding-top: 0;
+  }
+  .profile-card {
+    min-height: 0;
+    grid-row: span 2;
+  }
+}
+@media (max-width: 440px) {
+  .right-rail {
+    grid-template-columns: 1fr;
+  }
+  .profile-card {
+    grid-row: auto;
+  }
+}

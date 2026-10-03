@@ -1,0 +1,42 @@
+.status-message {
+  font-size: 10px;
+  color: #8b91a0;
+  background: #fff;
+  border: 1px solid #eceef3;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 0 0 10px;
+}
+.status-message.error {
+  color: #c96666;
+  border-color: #f2dada;
+  background: #fffafa;
+}
+.empty-state {
+  padding: 52px 15px;
+  background: #fff;
+  border: 1px dashed #e4e6ed;
+  border-radius: 12px;
+  text-align: center;
+  color: #818898;
+}
+.empty-icon {
+  width: 35px;
+  height: 35px;
+  border-radius: 11px;
+  background: #f4f2ff;
+  color: #796adc;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 11px;
+  font-size: 20px;
+}
+.empty-state strong {
+  font-size: 11px;
+  color: #5b6171;
+}
+.empty-state p {
+  font-size: 10px;
+  color: #a0a5b0;
+  margin: 7px 0;
+}

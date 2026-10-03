@@ -1,0 +1,115 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  border: 0;
+  background: transparent;
+  max-width: none;
+  max-height: none;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 20px;
+}
+.modal-backdrop[open] {
+  display: grid;
+  place-items: center;
+}
+.modal-backdrop::backdrop {
+  background: #17172988;
+  backdrop-filter: blur(3px);
+}
+.detail-dialog {
+  position: relative;
+  background: #fff;
+  border-radius: 16px;
+  width: min(680px, 100%);
+  max-height: min(88vh, 820px);
+  overflow: auto;
+  padding: 32px 36px;
+  box-shadow: 0 25px 90px #13112633;
+}
+.close-button {
+  position: absolute;
+  right: 17px;
+  top: 13px;
+  border: 0;
+  background: #f5f5f8;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  color: #767b89;
+  font-size: 22px;
+}
+.detail-meta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: #9197a5;
+  font-size: 10px;
+  margin: 5px 0 14px;
+}
+.detail-dialog h2 {
+  font-size: 21px;
+  line-height: 1.5;
+  letter-spacing: -0.7px;
+  margin: 0 30px 12px 0;
+}
+.detail-summary {
+  font-size: 12px;
+  line-height: 1.8;
+  color: #72798a;
+  margin: 12px 0 18px;
+}
+.detail-section {
+  border-top: 1px solid #eff0f4;
+  padding: 17px 0;
+}
+.detail-section h3 {
+  font-size: 11px;
+  margin: 0 0 10px;
+}
+.detail-section p {
+  font-size: 11px;
+  color: #717889;
+  line-height: 1.75;
+  margin: 0;
+}
+.evidence {
+  display: inline-block;
+  margin-top: 7px;
+  background: #fff9e9;
+  color: #a17c2e;
+  border-radius: 5px;
+  padding: 6px 8px;
+  font-size: 10px;
+}
+.detail-actions {
+  display: flex;
+  gap: 9px;
+  margin-top: 19px;
+}
+.primary-link {
+  display: inline-block;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 10px;
+  text-decoration: none;
+  border: 0;
+}
+.primary-link {
+  background: #7463dc;
+  color: #fff;
+}
+.local-note {
+  margin-bottom: 12px !important;
+  color: #8990a1 !important;
+  font-size: 10px !important;
+}
+@media (max-width: 760px) {
+  .detail-dialog {
+    padding: 27px 21px;
+  }
+  .detail-dialog h2 {
+    font-size: 17px;
+  }
+}
