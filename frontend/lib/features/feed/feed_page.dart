@@ -9,6 +9,7 @@ import 'dashboard_header.dart';
 import 'feed_toolbar.dart';
 import 'category_grid.dart';
 import 'category_dialog.dart';
+import 'site_footer.dart';
 
 class FeedPage extends StatefulWidget {
   const FeedPage({super.key, required this.onNotice});
@@ -65,6 +66,7 @@ class _FeedPageState extends State<FeedPage> {
         const SizedBox(height: 8),
         Expanded(child: _content()),
         const SizedBox(height: 8),
+        SiteFooter(notices: _controller.notices, compact: compact),
       ],
     );
   }
