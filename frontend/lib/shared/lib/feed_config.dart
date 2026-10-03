@@ -28,7 +28,9 @@ class FeedConfig {
     'sw중심대학': 'sw사업단',
     '국민대학교': '국민대',
   };
-  static bool get demo => Uri.base.queryParameters['demo'] == '1';
+  static bool get demo =>
+      Uri.base.queryParameters['demo'] == '1' ||
+      Uri.tryParse(Uri.base.fragment)?.queryParameters['demo'] == '1';
 }
 
 class NoticeGroup {
