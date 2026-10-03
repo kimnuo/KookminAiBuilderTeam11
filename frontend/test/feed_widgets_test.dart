@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:kmu_notice/features/feed/feed_page.dart';
 import 'package:kmu_notice/shared/api/notice_api.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'support/notice_fixture.dart';
 
@@ -58,6 +59,7 @@ void _homeTest() {
 }
 
 Future<void> _pump(WidgetTester tester, Size size) async {
+  SharedPreferences.setMockInitialValues({});
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);

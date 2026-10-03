@@ -35,6 +35,7 @@ class CategoryTile extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onOpen,
+          excludeFromSemantics: true,
           child: Padding(
             padding: EdgeInsets.all(tiny ? (size.maxHeight < 65 ? 4 : 8) : 14),
             child: _content(tiny),
@@ -62,6 +63,7 @@ class CategoryTile extends StatelessWidget {
     children: [
       Expanded(
         child: Semantics(
+          container: true,
           button: true,
           label: '${group.label} 전체 공고 보기',
           excludeSemantics: true,

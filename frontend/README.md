@@ -49,7 +49,7 @@ flutter run -d chrome --dart-define=USE_MOCK=true --dart-define=API_BASE_URL=htt
 
 ## 배포 설정
 
-현재 저장소에는 배포 도메인이 확정되어 있지 않습니다. 확정된 API 주소를 환경변수로 지정해 빌드합니다. 가입·온보딩까지 서버 API가 연결되고 검증되면 `USE_MOCK=false`로 변경합니다. `USE_MOCK=true` 빌드도 `?demo=1`이 없으면 공고는 실제 API를 사용합니다.
+웹 배포 주소는 `https://kmu-notice-demo.vercel.app`입니다. API 배포 주소는 저장소에 아직 확정되어 있지 않으므로, 확정된 API 주소를 환경변수로 지정해 빌드합니다. 가입·온보딩까지 서버 API가 연결되고 검증되면 `USE_MOCK=false`로 변경합니다. `USE_MOCK=true` 빌드도 `?demo=1`이 없으면 공고는 실제 API를 사용합니다.
 
 ```bash
 export KNO_API_BASE_URL=https://api.example.com # 확정된 실제 주소로 교체
