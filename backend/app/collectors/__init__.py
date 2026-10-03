@@ -2,7 +2,7 @@
 
 from types import ModuleType
 
-from app.collectors import cs_rss, kmu_board, sw_bulletin
+from app.collectors import cs_rss, inthiswork, jasoseol, kmu_board, sw_bulletin
 from app.collectors.common import Detail
 from app.core.config import find_source
 from app.core.schemas import Notice
@@ -11,6 +11,8 @@ _MODULES: dict[str, ModuleType] = {
     "kmu_board": kmu_board,
     "sw_bulletin": sw_bulletin,
     "cs_rss": cs_rss,
+    "jasoseol": jasoseol,
+    "inthiswork": inthiswork,
 }
 
 

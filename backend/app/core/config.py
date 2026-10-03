@@ -2,6 +2,7 @@
 
 import json
 import os
+import re
 from pathlib import Path
 
 BACKEND_DIR = Path(__file__).resolve().parents[2]
@@ -69,6 +70,27 @@ KMU_BASE_URL = "https://www.kookmin.ac.kr"
 SW_BASE_URL = "https://software.kookmin.ac.kr"
 CS_BASE_URL = "https://cs.kookmin.ac.kr"
 
+# 교외 채용·대외활동 사이트 (공개 API). 조사 결과는 02-아이디에이션/백엔드-요구사항.md
+JASOSEOL_BASE_URL = "https://jasoseol.com"
+JASOSEOL_MAX_PAGES = 3  # per_page=100, 진행 중 공고가 300건 안팎이다
+# 소프트웨어·AI·하드웨어 직무 코드 (GET /api/v1/duty-groups)
+JASOSEOL_DUTY_IDS = set(range(160, 183)) | {219, 220, 221, 222, 224}
+JASOSEOL_UNDERGRAD = {
+    "모두 지원 가능", "대학생 전체", "3학년 1학기", "3학년 2학기", "4학년 1학기", "마지막 학기",
+}
+
+JASOSEOL_BROAD_DUTIES = 15  # 직무를 이보다 많이 적은 공고(대기업 공채)는 글자로 한 번 더 본다
+
+INTHISWORK_BASE_URL = "https://inthiswork.com"
+INTHISWORK_CLOSED_CATEGORY = 191700169  # ▶마감/비공개
+# IT개발, 데이터분석, 전기전자, 반도체, 게임, PM·서비스기획
+INTHISWORK_TAGS = [191700187, 191700191, 191700281, 191700312, 191700302, 191700271]
+TECH_RE = re.compile(
+    r"개발|소프트웨어|SW|백엔드|프론트|서버|앱|웹|임베디드|펌웨어|하드웨어|반도체|회로|제어"
+    r"|AI|인공지능|머신러닝|딥러닝|LLM|데이터|클라우드|보안|전산|코딩|해커톤|알고리즘",
+    re.IGNORECASE,
+)
+
 # 분류 (해서 확정 2026-10-03). 글 하나에 여러 개 붙을 수 있다
 CATEGORIES = ["학사·생활", "졸업", "장학", "취업", "행사·대외활동", "기타"]
 
@@ -93,6 +115,12 @@ SOURCES = [
      "board": "jobs", "defaultCategory": "취업"},
     {"id": "cs-event", "name": "SW 특강 및 행사", "group": "소프트웨어융합대학", "kind": "cs_rss",
      "board": "event", "defaultCategory": "행사·대외활동"},
+    {"id": "jasoseol", "name": "신입 채용", "group": "자소설닷컴", "kind": "jasoseol",
+     "defaultCategory": "취업"},
+    {"id": "itw-job", "name": "신입·인턴 채용", "group": "인디스워크", "kind": "inthiswork",
+     "category": 191700167, "tagFilter": True, "defaultCategory": "취업"},
+    {"id": "itw-activity", "name": "교육·대외활동", "group": "인디스워크", "kind": "inthiswork",
+     "category": 191700345, "defaultCategory": "행사·대외활동"},
 ]
 
 
@@ -102,6 +130,10 @@ def source_list_url(source: dict) -> str:
         return f"{KMU_BASE_URL}/user/kmuNews/notice/{source['board']}/index.do"
     if kind == "sw_bulletin":
         return f"{SW_BASE_URL}{source['path']}?articleLimit=20"
+    if kind == "jasoseol":
+        return f"{JASOSEOL_BASE_URL}/recruit"
+    if kind == "inthiswork":
+        return f"{INTHISWORK_BASE_URL}/?cat={source['category']}"
     return f"{CS_BASE_URL}/news/{source['board']}/rss"
 
 
