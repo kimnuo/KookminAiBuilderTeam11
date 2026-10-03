@@ -116,3 +116,22 @@ class BriefingItem(ApiModel):
 class Briefing(ApiModel):
     generated_at: datetime
     items: list[BriefingItem]
+
+
+class RecommendRequest(ApiModel):
+    """추천 적합도 요청. 상황은 저장하지 않는다. 이름·학번·연락처는 받지 않는다."""
+
+    situation: Situation
+    tags: list[str] = Field([], examples=[["AI·데이터", "개발"]])  # 켜 둔 관심 분야 태그
+    notice_ids: list[str] = []
+
+
+class Recommendation(ApiModel):
+    notice_id: str
+    chance: int = Field(ge=0, le=100)  # 지원했을 때 될 가능성 (AI 판단)
+    reason: str  # 추천 근거 한 줄
+
+
+class RecommendResponse(ApiModel):
+    model: str
+    items: list[Recommendation]

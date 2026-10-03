@@ -21,7 +21,10 @@ python3 -m venv .venv
 | `POLL_INTERVAL_MIN` | 10 | 주기 수집 간격(분). 0 이면 끔 |
 | `POLL_ON_STARTUP` | 0 | 1 이면 서버 켜자마자 수집 |
 | `NEW_PER_SOURCE` | 8 | 한 번에 출처마다 새로 처리할 최대 글 수 |
-| `LLM_MODEL` | sonnet | |
+| `LLM_MODEL` | sonnet | 요약용 (개발 서버 Claude 구독 CLI) |
+| `LLM_API_BASE` | https://ai.cs.kookmin.ac.kr/v1 | 추천 적합도용 학교 AI 게이트웨이 |
+| `LLM_API_KEY` | (없음) | 위 게이트웨이 키. `backend/.env` 에 둔다. 레포에 올리지 않는다 |
+| `LLM_API_MODEL` | claude-haiku-4-5 | `claude-opus-5` 도 쓸 수 있다 |
 | `LLM_CONCURRENCY` | 3 | 동시에 돌릴 AI 요약 수 |
 | `CORS_ORIGINS` | * | 쉼표로 구분 |
 | `DB_PATH` | backend/data/app.db | |
@@ -51,6 +54,7 @@ python3 -m venv .venv
 | GET | `/api/feed?sort=recommend\|deadline` | 피드 화면용 전체 목록 (페이지 없음). recommend 는 지금 최신순 |
 | GET | `/api/notices/{id}` | **한 페이지 요약** (목록 항목과 같은 형식) |
 | POST | `/api/briefing` | **나의 상황**에서 반드시 볼 글 |
+| POST | `/api/recommend` | 공지마다 **될 가능성(0~100)** 과 **추천 근거 한 줄**. 상황은 저장하지 않는다 |
 | POST | `/api/admin/poll-now` | 지금 수집 (백그라운드, 바로 응답) |
 | POST | `/api/admin/redigest` | 저장된 글 전부 다시 요약 (프롬프트를 바꿨을 때) |
 | GET | `/api/admin/poll-status` | 수집 진행 상황 |
@@ -133,3 +137,19 @@ app/
 ├─ db/                SQLite 저장소
 └─ features/          notices, briefing, admin (router·service)
 ```
+
+### 추천 적합도 (POST /api/recommend)
+
+```json
+{ "situation": { "major": "소프트웨어학부", "year": 3, "status": "재학", "interests": ["장학"] },
+  "tags": ["AI·데이터"], "noticeIds": ["kmu-academic-12465"] }
+```
+
+```json
+{ "model": "claude-haiku-4-5",
+  "items": [{ "noticeId": "kmu-academic-12465", "chance": 5, "reason": "3학년은 7차 학기가 아니므로 자격 미충족" }] }
+```
+
+- `chance` 는 **지원·신청했을 때 될 가능성**(0~100). 화면은 제목 위에 한 줄로 보여 준다
+- 같은 상황·같은 글이면 다시 묻지 않는다 (DB 캐시). 상황은 해시로만 남기고 저장하지 않는다
+- 어떤 글을 어떤 순서로 보여 줄지는 화면이 정한다. AI 는 해석만 한다 (지침서 7절)

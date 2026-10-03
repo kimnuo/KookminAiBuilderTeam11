@@ -4,6 +4,23 @@ import os
 from pathlib import Path
 
 BACKEND_DIR = Path(__file__).resolve().parents[2]
+
+
+def _load_env_file() -> None:
+    """backend/.env 를 읽어 환경 변수로 넣는다 (이미 있는 값은 그대로 둔다). 키는 레포에 올리지 않는다."""
+    path = BACKEND_DIR / ".env"
+    if not path.is_file():
+        return
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        os.environ.setdefault(key.strip(), value.strip().strip("'\""))
+
+
+_load_env_file()
+
 REPO_DIR = BACKEND_DIR.parent
 DATA_DIR = BACKEND_DIR / "data"  # .gitignore 됨
 DB_PATH = Path(os.getenv("DB_PATH", DATA_DIR / "app.db"))
@@ -28,6 +45,13 @@ LLM_MODEL = os.getenv("LLM_MODEL", "sonnet")
 LLM_TIMEOUT_SEC = int(os.getenv("LLM_TIMEOUT_SEC", "180"))
 LLM_CONCURRENCY = int(os.getenv("LLM_CONCURRENCY", "3"))
 LLM_INPUT_MAX_CHARS = 30_000
+
+# 학교 AI 게이트웨이 (키는 backend/.env 의 LLM_API_KEY). 추천 적합도 계산에 쓴다
+LLM_API_BASE = os.getenv("LLM_API_BASE", "https://ai.cs.kookmin.ac.kr/v1")
+LLM_API_KEY = os.getenv("LLM_API_KEY", "")
+LLM_API_MODEL = os.getenv("LLM_API_MODEL", "claude-haiku-4-5")
+RECOMMEND_BATCH = 8  # 한 번 호출에 넣는 공지 수
+RECOMMEND_MAX = 40  # 한 요청에서 다룰 최대 공지 수
 
 PAGE_SIZE = 20
 CORS_ORIGINS = os.getenv("CORS_ORIGINS", "*").split(",")

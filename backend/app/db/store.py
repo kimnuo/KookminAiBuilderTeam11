@@ -21,6 +21,14 @@ CREATE TABLE IF NOT EXISTS notices (
     updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_notices_source ON notices(source_id);
+
+CREATE TABLE IF NOT EXISTS recommendations (
+    cache_key TEXT PRIMARY KEY,
+    notice_id TEXT NOT NULL,
+    chance INTEGER NOT NULL,
+    reason TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
 """
 
 
@@ -85,3 +93,25 @@ def counts() -> dict[str, int]:
     with closing(_connect()) as conn:
         rows = conn.execute("SELECT digest_status, COUNT(*) FROM notices GROUP BY 1").fetchall()
     return dict(rows)
+
+
+def cached_recommendations(keys: list[str]) -> dict[str, tuple[int, str]]:
+    """같은 상황·같은 글이면 AI 를 다시 부르지 않는다 (지침서 7절)."""
+    if not keys:
+        return {}
+    marks = ",".join("?" * len(keys))
+    with closing(_connect()) as conn:
+        rows = conn.execute(
+            f"SELECT cache_key, chance, reason FROM recommendations WHERE cache_key IN ({marks})",
+            keys,
+        ).fetchall()
+    return {k: (c, r) for k, c, r in rows}
+
+
+def save_recommendations(rows: list[tuple[str, str, int, str]]) -> None:
+    with closing(_connect()) as conn, conn:
+        conn.executemany(
+            "INSERT INTO recommendations (cache_key, notice_id, chance, reason) VALUES (?, ?, ?, ?) "
+            "ON CONFLICT(cache_key) DO UPDATE SET chance=excluded.chance, reason=excluded.reason",
+            rows,
+        )
