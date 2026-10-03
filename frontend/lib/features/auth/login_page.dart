@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:kmu_notice/shared/api/api_client.dart';
 import 'package:kmu_notice/shared/api/auth_api.dart';
+import 'package:kmu_notice/shared/lib/feed_path.dart';
 import 'package:kmu_notice/shared/lib/routes.dart';
 import 'package:kmu_notice/shared/ui/app_colors.dart';
 import 'package:kmu_notice/shared/ui/app_text_field.dart';
@@ -30,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
     });
     try {
       await AuthApi.login(_nickname.text.trim(), _password.text);
-      if (mounted) context.go(Routes.feed);
+      if (mounted) context.go(feedPath);
     } on ApiException catch (e) {
       if (!mounted) return;
       setState(() => _error = e.statusCode == 401

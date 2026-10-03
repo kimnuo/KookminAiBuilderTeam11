@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:kmu_notice/shared/lib/feed_path.dart';
 import 'package:kmu_notice/shared/lib/routes.dart';
 import 'package:kmu_notice/shared/ui/app_colors.dart';
 import 'package:kmu_notice/shared/ui/bottom_cta.dart';
@@ -60,7 +61,7 @@ class WelcomePage extends StatelessWidget {
             ),
           ),
           TextButton(
-            onPressed: () => context.go(Routes.feed),
+            onPressed: () => context.go(feedPath),
             child: const Text(
               '로그인 없이 둘러볼게요',
               style: TextStyle(fontSize: 14, color: AppColors.grey500),
