@@ -13,8 +13,11 @@ class Fit {
 class RecommendApi {
   /// 나의 상황(학과·학년·분야·태그)은 서버가 구독 설정에서 읽는다.
   /// 이름·연락처·학번은 보내지도 저장하지도 않는다 (지침서 8절).
+  /// 로그인 전에는 맞춰 볼 내 정보가 없어서 묻지 않는다.
   static Future<Map<String, Fit>> fits(List<String> noticeIds) async {
-    if (AppConfig.useMock || noticeIds.isEmpty) return {};
+    if (AppConfig.useMock || noticeIds.isEmpty || ApiClient.token == null) {
+      return {};
+    }
     final res = await ApiClient.post('/api/recommend', {'noticeIds': noticeIds});
     final items = res['items'];
     if (items is! List) return {};
