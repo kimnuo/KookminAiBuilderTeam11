@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:kmu_notice/shared/api/auth_api.dart';
 import 'package:kmu_notice/shared/lib/applicant_store.dart';
+import 'package:kmu_notice/shared/lib/interest_store.dart';
 import 'package:kmu_notice/shared/lib/routes.dart';
 import 'package:kmu_notice/shared/ui/app_colors.dart';
 import 'profile_store.dart';
@@ -11,10 +12,16 @@ import 'settings_tile.dart';
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
+  // 서버 로그아웃이 실패해도 이 기기에서는 로그아웃된다(토큰은 AuthApi가 지운다).
   Future<void> _logout(BuildContext context) async {
-    await AuthApi.logout();
+    try {
+      await AuthApi.logout();
+    } catch (_) {}
     if (context.mounted) context.go(Routes.welcome);
   }
+
+  void _toast(BuildContext context, String message) =>
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
 
   Future<void> _withdraw(BuildContext context) async {
     final ok = await showDialog<bool>(
@@ -35,9 +42,15 @@ class SettingsPage extends StatelessWidget {
       ),
     );
     if (ok != true) return;
-    await AuthApi.deleteMe();
+    try {
+      await AuthApi.deleteMe();
+    } catch (_) {
+      if (context.mounted) _toast(context, '탈퇴하지 못했어요. 잠시 후 다시 시도해 주세요.');
+      return;
+    }
     await ProfileStore.clear();
     await ApplicantStore.clear();
+    await InterestStore.clear();
     if (context.mounted) context.go(Routes.welcome);
   }
 

@@ -10,7 +10,7 @@ class AuthApi {
       'nickname': nickname,
       'password': password,
     });
-    ApiClient.token = res['token'] as String?;
+    await ApiClient.setToken(res['token'] as String?);
     return res['id'] as String;
   }
 
@@ -20,19 +20,23 @@ class AuthApi {
       'nickname': nickname,
       'password': password,
     });
-    ApiClient.token = res['token'] as String?;
+    await ApiClient.setToken(res['token'] as String?);
     return res['id'] as String;
   }
 
+  // 서버 로그아웃이 실패해도 이 기기의 토큰은 지운다.
   static Future<void> logout() async {
-    if (!AppConfig.useMock) await ApiClient.post('/api/auth/logout', {});
-    ApiClient.token = null;
+    try {
+      if (!AppConfig.useMock) await ApiClient.post('/api/auth/logout', {});
+    } finally {
+      await ApiClient.setToken(null);
+    }
   }
 
-  // 서버에 있는 내 데이터를 모두 지운다.
+  // 서버에 있는 내 데이터를 모두 지운다. 실패하면 토큰을 남겨 다시 시도할 수 있게 한다.
   static Future<void> deleteMe() async {
     if (!AppConfig.useMock) await ApiClient.delete('/api/me');
-    ApiClient.token = null;
+    await ApiClient.setToken(null);
   }
 
   static Future<void> recordConsent({required bool portfolio}) async {

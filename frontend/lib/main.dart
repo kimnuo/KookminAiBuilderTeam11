@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
 import 'app/router.dart';
+import 'shared/api/api_client.dart';
 import 'shared/ui/app_theme.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb) WidgetsBinding.instance.ensureSemantics();
+  await ApiClient.restoreToken();
   runApp(const KmuNoticeApp());
 }
 

@@ -32,11 +32,12 @@ class _LoginPageState extends State<LoginPage> {
       await AuthApi.login(_nickname.text.trim(), _password.text);
       if (mounted) context.go(Routes.feed);
     } on ApiException catch (e) {
+      if (!mounted) return;
       setState(() => _error = e.statusCode == 401
           ? '닉네임 또는 비밀번호가 맞지 않아요.'
           : '로그인하지 못했어요. 잠시 후 다시 시도해 주세요.');
     } catch (_) {
-      setState(() => _error = '서버에 연결하지 못했어요.');
+      if (mounted) setState(() => _error = '서버에 연결하지 못했어요.');
     } finally {
       if (mounted) setState(() => _loading = false);
     }

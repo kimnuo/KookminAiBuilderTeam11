@@ -7,6 +7,7 @@ import 'package:kmu_notice/shared/api/profile_api.dart';
 import 'package:kmu_notice/shared/lib/routes.dart';
 import 'package:kmu_notice/shared/ui/app_colors.dart';
 import 'package:kmu_notice/shared/ui/consent_check_row.dart';
+import 'package:kmu_notice/shared/ui/mascot_guide.dart';
 import 'package:kmu_notice/shared/ui/step_scaffold.dart';
 import 'info_box.dart';
 import 'masked_preview.dart';
@@ -37,7 +38,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
     try {
       await task();
     } catch (_) {
-      setState(() => _error = '처리하지 못했어요. 잠시 후 다시 시도해 주세요.');
+      if (mounted) setState(() => _error = '처리하지 못했어요. 잠시 후 다시 시도해 주세요.');
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -52,6 +53,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
         final text = await PdfTextExtractor.extract(
           await files.first.readAsBytes(),
         );
+        if (!mounted) return;
         if (text.isEmpty) {
           setState(() => _error = '글자를 읽을 수 없는 PDF예요(스캔 이미지일 수 있어요). '
               '이력을 직접 입력해 주세요.');
@@ -76,6 +78,10 @@ class _PortfolioPageState extends State<PortfolioPage> {
   Widget build(BuildContext context) {
     final masked = _masked;
     return StepScaffold(
+      guide: const MascotGuide(
+        '연락처와 학번은 보내기 전에 이 기기에서 가려요.',
+        mood: KnoMood.reading,
+      ),
       title: masked == null ? '포트폴리오 PDF로\n이력을 채워 드릴게요' : '이 내용으로\n분석할까요?',
       ctaLabel: masked == null ? 'PDF 고르기' : '분석하기',
       ctaLoading: _busy,

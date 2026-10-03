@@ -1,17 +1,25 @@
-// PRD 10절 분야 목록, 6-1절 태그 목록(초안). 팀이 확정하면 여기만 고친다.
+// 관심 분야는 서버가 내보내는 서비스 분류 6개(backend/app/ai/config/categories.json의 service).
+// 태그는 PRD 6-1절 초안. 팀이 확정하면 여기만 고친다.
 class Catalog {
-  static const categories = [
-    '학사',
-    '장학',
-    '공모전·행사',
-    '채용·인턴',
-    '특강·교육',
-    '국제교류',
-    '봉사',
-    '생활·시설',
-    '시스템',
-    '기타',
-  ];
+  static const categories = ['학사·생활', '졸업', '장학', '취업', '행사·대외활동', '기타'];
+
+  // AI 내부 분류(PRD 10절 10개)를 서비스 분류로 바꾸는 표. 서버 serviceMap과 같게 둔다.
+  static const _legacyCategories = {
+    '학사': '학사·생활',
+    '공모전·행사': '행사·대외활동',
+    '채용·인턴': '취업',
+    '특강·교육': '행사·대외활동',
+    '국제교류': '행사·대외활동',
+    '봉사': '행사·대외활동',
+    '생활·시설': '학사·생활',
+    '시스템': '기타',
+  };
+
+  static Set<String> serviceCategories(Iterable<String> values) => {
+        for (final v in values)
+          if (categories.contains(_legacyCategories[v] ?? v))
+            _legacyCategories[v] ?? v,
+      };
 
   static const tags = [
     '개발',

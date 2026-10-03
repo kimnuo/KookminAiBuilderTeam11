@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:kmu_notice/shared/lib/catalog.dart';
 import 'package:kmu_notice/shared/lib/routes.dart';
+import 'package:kmu_notice/shared/ui/mascot_guide.dart';
 import 'package:kmu_notice/shared/ui/select_chip.dart';
 import 'package:kmu_notice/shared/ui/step_scaffold.dart';
 import 'onboarding_draft.dart';
@@ -28,6 +29,9 @@ class _MajorYearPageState extends State<MajorYearPage> {
   @override
   Widget build(BuildContext context) {
     return StepScaffold(
+      guide: const MascotGuide(
+        '학과와 학년을 알려 주시면\n해당하는 공지부터 골라 볼게요.',
+      ),
       title: '학과와 학년을\n알려 주세요',
       subtitle: '나에게 해당하는 공지를 먼저 보여 드려요.',
       ctaLabel: '다음',
