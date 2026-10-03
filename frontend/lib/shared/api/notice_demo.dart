@@ -16,10 +16,15 @@ class NoticeDemo {
     final offset = koreaToday().difference(
       DateTime.parse('${raw.first['postedAt']}T00:00:00Z'),
     );
-    return raw.map((j) => _shift(j, offset)).toList();
+    final media = mapValue(await read('media'));
+    return raw.map((j) => _shift(j, offset, mapValue(media[j['id']]))).toList();
   }
 
-  static Notice _shift(Map<String, dynamic> raw, Duration offset) {
+  static Notice _shift(
+    Map<String, dynamic> raw,
+    Duration offset,
+    Map<String, dynamic> media,
+  ) {
     final j = Map<String, dynamic>.from(raw);
     final ai = mapValue(j['ai']);
     final d = mapValue(ai['deadline']);
@@ -35,6 +40,7 @@ class NoticeDemo {
     }
     j['postedAt'] = koreaToday().toIso8601String().substring(0, 10);
     j['ai'] = ai;
+    j['previewMedia'] = media;
     return Notice(j);
   }
 }

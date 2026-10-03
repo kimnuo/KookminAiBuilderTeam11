@@ -10,8 +10,14 @@ import 'package:kmu_notice/shared/lib/open_original.dart';
 import 'notice_content.dart';
 
 class NoticePage extends StatefulWidget {
-  const NoticePage({super.key, required this.id, required this.preparation});
+  const NoticePage({
+    super.key,
+    required this.id,
+    required this.preparation,
+    this.onClose,
+  });
   final String id;
+  final VoidCallback? onClose;
   final Widget Function(Notice) preparation;
   @override
   State<NoticePage> createState() => _NoticePageState();
@@ -28,16 +34,7 @@ class _NoticePageState extends State<NoticePage> {
   @override
   Widget build(BuildContext context) => Scaffold(
     backgroundColor: const Color(0xFFF5F7FA),
-    appBar: AppBar(
-      title: const Text('크노 · 공고 상세'),
-      leading: IconButton(
-        tooltip: '대시보드로 돌아가기',
-        icon: const Icon(Icons.arrow_back_rounded),
-        onPressed: () => context.canPop()
-            ? context.pop()
-            : context.go('${Routes.feed}${FeedConfig.demo ? '?demo=1' : ''}'),
-      ),
-    ),
+    appBar: _header(),
     body: FutureBuilder(
       future: _notice,
       builder: (_, snapshot) {
@@ -49,6 +46,36 @@ class _NoticePageState extends State<NoticePage> {
         return _content(notice);
       },
     ),
+  );
+
+  AppBar _header() => AppBar(
+    title: const Text(
+      '크노 · 공고 상세',
+      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+    ),
+    automaticallyImplyLeading: false,
+    leading: widget.onClose != null
+        ? null
+        : IconButton(
+            tooltip: '대시보드로 돌아가기',
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => context.canPop()
+                ? context.pop()
+                : context.go(
+                    '${Routes.feed}${FeedConfig.demo ? '?demo=1' : ''}',
+                  ),
+          ),
+    actions: [
+      if (widget.onClose != null)
+        Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: IconButton(
+            tooltip: '닫기',
+            onPressed: widget.onClose,
+            icon: const Icon(Icons.close_rounded),
+          ),
+        ),
+    ],
   );
 
   Widget _content(Notice notice) {

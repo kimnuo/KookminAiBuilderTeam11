@@ -3,6 +3,13 @@ import 'package:flutter/material.dart';
 class FeedConfig {
   static const requestTimeout = Duration(seconds: 20);
   static const pageSize = 8;
+  static const detailDialogWidth = 820.0;
+  static const detailDialogHeight = 720.0;
+  static const detailDialogRatio = .82;
+  static const previewCount = 3;
+  static const previewRowHeight = 42.0;
+  static const compactPreviewRowHeight = 28.0;
+  static const sortOptions = {'recommend': '추천 순', 'deadline': '마감 임박 순'};
   static const koreaOffset = Duration(hours: 9);
   static const demoFiles = ['notices', 'more-notices', 'campus-notices'];
   static const fieldLabels = {
@@ -52,42 +59,18 @@ class NoticeGroup {
 
 const noticeGroups = [
   NoticeGroup(
-    'sw-college',
-    '국민대 SW대학',
+    'academic',
+    '학사·생활',
     Icons.school_rounded,
     Color(0xFF3182F6),
-    sources: ['cs.kookmin.ac.kr', 'SW대학', '소프트웨어융합대학', '소프트웨어대학'],
+    categories: ['학사·생활'],
   ),
   NoticeGroup(
-    'sw-project',
-    'SW사업단',
-    Icons.auto_awesome_rounded,
+    'graduation',
+    '졸업',
+    Icons.school_rounded,
     Color(0xFF7355DC),
-    sources: ['SW사업단', '소프트웨어중심대학', 'SW중심대학', 'SW교육센터'],
-  ),
-  NoticeGroup(
-    'competition',
-    '공모전',
-    Icons.emoji_events_rounded,
-    Color(0xFFE69B23),
-    categories: ['공모전·행사'],
-    keywords: ['공모전', '경진대회'],
-    exclude: ['서포터즈', '홍보대사', '대외활동', '기자단'],
-  ),
-  NoticeGroup(
-    'volunteer',
-    '봉사활동',
-    Icons.volunteer_activism_rounded,
-    Color(0xFFDE6484),
-    categories: ['봉사'],
-    keywords: ['봉사활동', '봉사단'],
-  ),
-  NoticeGroup(
-    'activity',
-    '대외활동',
-    Icons.explore_rounded,
-    Color(0xFF27A1A5),
-    keywords: ['대외활동', '서포터즈', '홍보대사', '기자단'],
+    categories: ['졸업'],
   ),
   NoticeGroup(
     'scholarship',
@@ -95,29 +78,26 @@ const noticeGroups = [
     Icons.savings_rounded,
     Color(0xFF31A875),
     categories: ['장학'],
-    keywords: ['장학금', '장학생'],
   ),
   NoticeGroup(
     'career',
-    '취업·인턴',
+    '취업',
     Icons.work_rounded,
     Color(0xFF5979BE),
-    categories: ['채용·인턴'],
-    keywords: ['인턴', '채용'],
+    categories: ['취업'],
   ),
   NoticeGroup(
-    'education',
-    '학사·교육',
-    Icons.menu_book_rounded,
-    Color(0xFF7E77BD),
-    categories: ['학사', '특강·교육'],
+    'activity',
+    '행사·대외활동',
+    Icons.emoji_events_rounded,
+    Color(0xFFE69B23),
+    categories: ['행사·대외활동'],
   ),
   NoticeGroup(
-    'global',
-    '국제교류',
-    Icons.public_rounded,
-    Color(0xFF43A6CE),
-    categories: ['국제교류'],
+    'other',
+    '기타',
+    Icons.widgets_rounded,
+    Color(0xFF80909F),
+    categories: ['기타'],
   ),
-  NoticeGroup('other', '기타 소식', Icons.widgets_rounded, Color(0xFF80909F)),
 ];

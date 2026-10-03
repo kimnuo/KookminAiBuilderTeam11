@@ -30,6 +30,7 @@ bool matchesSearch(Notice n, String query) {
   final text = normalizeSearch(
     [
       n.title,
+      n.json['originalTitle']?.toString() ?? '',
       n.sourceName,
       n.department,
       n.audience ?? '',
