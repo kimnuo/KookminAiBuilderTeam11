@@ -8,11 +8,12 @@ import {
   recommendationReasons,
   categoriesFor,
 } from '../../shared/lib/notice-data.js';
+import { digestSections, originalTitle } from './digestSections.js';
 
 function detailMarkup(notice) {
   const ai = noticeAi(notice);
   const meta = `<div class="detail-meta"><span>${escapeHtml(notice.source?.name || '출처 확인')}</span><span>${escapeHtml(notice.postedAt || '')}</span></div>`;
-  const title = `<h2 id="detail-title">${escapeHtml(notice.title)}</h2>`;
+  const title = `<h2 id="detail-title">${escapeHtml(notice.title)}</h2>${originalTitle(notice)}`;
   const link = `<div class="detail-actions">${originalLink(notice)}</div>`;
   if (!ai)
     return `${meta}${title}${notice.ai?.status === 'failed' ? '' : '<p class="detail-summary">AI가 공고를 정리하고 있어요.</p>'}${link}`;
@@ -22,10 +23,14 @@ function detailMarkup(notice) {
     <p class="detail-summary">${summaries(notice).map(escapeHtml).join('<br />') || '요약을 확인할 수 없어요.'}</p>
     ${reasons.length ? `<div class="reason">${icon('check-circle')}${escapeHtml(reasons[0])}</div>` : ''}
     ${section('마감일', deadline ? `${deadline.date}${deadline.time ? ` ${deadline.time}` : ' (시각은 원문 확인)'}` : '원문 확인', deadline?.evidence)}
-    ${section('신청 방법', ai.apply || '원문에서 확인해 주세요.')}
-    ${ai.audience?.text ? section('지원 대상', ai.audience.text) : ''}
-    <section class="detail-section"><h3>지원 준비</h3><p class="local-note">내 값은 이 기기에서만 읽으며 서버로 보내지 않아요.</p><div id="requirements-content" role="status">필요 항목을 불러오고 있어요.</div></section>
+    ${notice.digest ? digestSections(notice) : legacySections(ai)}
     ${link}`;
+}
+
+function legacySections(ai) {
+  return `${section('신청 방법', ai.apply || '원문에서 확인해 주세요.')}
+    ${ai.audience?.text ? section('지원 대상', ai.audience.text) : ''}
+    <section class="detail-section"><h3>지원 준비</h3><p class="local-note">내 값은 이 기기에서만 읽으며 서버로 보내지 않아요.</p><div id="requirements-content" role="status">필요 항목을 불러오고 있어요.</div></section>`;
 }
 
 function section(title, value, evidence = null) {

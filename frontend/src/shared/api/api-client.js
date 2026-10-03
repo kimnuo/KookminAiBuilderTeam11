@@ -1,6 +1,7 @@
 import { config } from '../config.js';
 import { isDemoMode } from '../lib/demo-mode.js';
 import { requestDemo } from './demo-client.js';
+import { toView } from '../lib/digest-view.js';
 
 async function request(path, signal) {
   if (isDemoMode()) return requestDemo(path, signal);
@@ -23,7 +24,7 @@ export async function getFeed(sort, userId, signal) {
   const query = new URLSearchParams({ sort });
   if (typeof userId === 'string' && userId.trim()) query.set('userId', userId);
   const data = await request(`/feed?${query}`, signal);
-  const items = listResponse(data, 'notices');
+  const items = listResponse(data, 'notices').map(toView);
   return items.filter(
     (item) => item && typeof item.id === 'string' && typeof item.title === 'string',
   );
@@ -37,7 +38,7 @@ export async function getSources(signal) {
 }
 
 export async function getNotice(id, signal) {
-  const data = await request(`/notices/${encodeURIComponent(id)}`, signal);
+  const data = toView(await request(`/notices/${encodeURIComponent(id)}`, signal));
   if (!data || data.id !== id || typeof data.title !== 'string')
     throw new Error('공고 응답 형식을 확인할 수 없어요.');
   return data;

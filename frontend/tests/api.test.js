@@ -12,8 +12,8 @@ test('API 요청에는 sort/userId/id만 넣고 지원 개인정보를 보내지
   try {
     await getFeed('recommend', 'test-user', undefined);
     await getRequirements('test-only', undefined);
-    assert.equal(calls[0].url, '/api/feed?sort=recommend&userId=test-user');
-    assert.equal(calls[1].url, '/api/notices/test-only/requirements');
+    assert.equal(calls[0].url, './api/feed?sort=recommend&userId=test-user');
+    assert.equal(calls[1].url, './api/notices/test-only/requirements');
     assert.ok(calls.every((call) => !call.body && call.credentials === 'same-origin'));
     assert.ok(!JSON.stringify(calls).includes('phone'));
     assert.ok(!JSON.stringify(calls).includes('studentId'));

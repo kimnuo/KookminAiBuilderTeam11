@@ -1,13 +1,16 @@
 export const config = {
-  apiBase: '/api',
-  demoBase: '/mock',
+  // 상대 경로: /proxy/{포트}/ 같은 하위 경로 뒤에서도 같은 출처로 동작한다
+  apiBase: './api',
+  demoBase: './mock',
   demoQueryKey: 'demo',
   profileKey: 'kmu.profile',
   sessionKey: 'kmu.session',
   timeZone: 'Asia/Seoul',
-  categories: [
+  // 백엔드 분류 (GET /api/categories)
+  categories: ['학사·생활', '졸업', '장학', '취업', '행사·대외활동', '기타'],
+  // 더미 미리보기(?demo=1) 자료가 쓰는 PRD v0.4 분류
+  demoCategories: [
     '학사',
-    '장학',
     '공모전·행사',
     '채용·인턴',
     '특강·교육',
@@ -15,7 +18,6 @@ export const config = {
     '봉사',
     '생활·시설',
     '시스템',
-    '기타',
   ],
   tags: [
     '개발',

@@ -127,3 +127,26 @@
     font-size: 13px;
   }
 }
+
+.digest-list {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 10px;
+}
+
+.digest-list .evidence {
+  display: block;
+  margin-top: 4px;
+}
+
+.digest-muted {
+  color: var(--muted);
+  font-size: 0.9em;
+}
+
+.detail-original {
+  margin: -4px 0 12px;
+  color: var(--muted);
+  font-size: 0.95em;
+}

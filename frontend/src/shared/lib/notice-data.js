@@ -23,7 +23,8 @@ export function recommendationReasons(notice) {
 
 export function categoriesFor(notice) {
   const values = noticeAi(notice)?.categories;
-  return Array.isArray(values) ? values.filter((item) => config.categories.includes(item)) : [];
+  const known = [...config.categories, ...config.demoCategories];
+  return Array.isArray(values) ? values.filter((item) => known.includes(item)) : [];
 }
 
 export function tagsFor(notice) {
@@ -37,6 +38,7 @@ export function filterNotices(notices, filters, now = new Date()) {
     const ai = noticeAi(notice);
     const text = [
       notice.title,
+      notice.originalTitle,
       notice.source?.name,
       ai?.apply,
       ...summaries(notice),
