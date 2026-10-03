@@ -12,6 +12,9 @@ class Notice {
     ...mapList(json['attachments']),
   ];
   Map<String, dynamic> get digest => mapValue(json['digest']);
+  Map<String, dynamic> get fit => mapValue(json['fit']);
+  int? get chance => (fit['chance'] as num?)?.round();
+  String get fitReason => fit['reason']?.toString() ?? '';
   String get postedAt => json['postedAt']?.toString() ?? '';
   String get department => json['department']?.toString() ?? '';
   Map<String, dynamic> get source => mapValue(json['source']);

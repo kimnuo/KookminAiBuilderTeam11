@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kmu_notice/shared/lib/notice.dart';
 import 'package:kmu_notice/shared/lib/notice_deadline.dart';
 import 'package:kmu_notice/shared/ui/app_colors.dart';
+import 'package:kmu_notice/shared/ui/fit_line.dart';
 
 class NoticeRow extends StatelessWidget {
   const NoticeRow({super.key, required this.notice, required this.onOpen});
@@ -16,11 +17,17 @@ class NoticeRow extends StatelessWidget {
     child: ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
       onTap: onOpen,
-      title: Text(
-        notice.title,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-        style: const TextStyle(fontWeight: FontWeight.w600),
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          FitLine(notice: notice),
+          Text(
+            notice.title,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
+        ],
       ),
       subtitle: Padding(
         padding: const EdgeInsets.only(top: 8),

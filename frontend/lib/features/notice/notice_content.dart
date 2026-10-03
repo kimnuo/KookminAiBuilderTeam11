@@ -4,6 +4,7 @@ import 'package:kmu_notice/shared/lib/notice.dart';
 import 'package:kmu_notice/shared/lib/notice_deadline.dart';
 import 'package:kmu_notice/shared/lib/notice_search.dart';
 import 'package:kmu_notice/shared/ui/app_colors.dart';
+import 'package:kmu_notice/shared/ui/fit_line.dart';
 
 import 'detail_section.dart';
 import 'notice_media.dart';
@@ -28,6 +29,7 @@ class NoticeContent extends StatelessWidget {
         ),
       ),
       const SizedBox(height: 14),
+      FitLine(notice: notice, fontSize: 13),
       SelectableText(
         notice.title,
         style: const TextStyle(
