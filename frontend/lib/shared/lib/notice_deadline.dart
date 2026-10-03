@@ -53,5 +53,8 @@ int compareDeadline(Notice a, Notice b) {
         : DateTime.parse('${d['date']}T${d['time'] ?? '23:59'}:00+09:00');
   }
 
+  // 마감 지난 글은 맨 아래로 (오름차순만 쓰면 2023년 마감이 맨 위로 올라온다, 2026-10-03)
+  final expiredA = deadlineExpired(a), expiredB = deadlineExpired(b);
+  if (expiredA != expiredB) return expiredA ? 1 : -1;
   return date(a).compareTo(date(b));
 }
