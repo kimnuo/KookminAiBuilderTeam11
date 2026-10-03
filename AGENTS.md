@@ -83,8 +83,8 @@ git merge main                 # 최신 main을 내 브랜치에 합친다
 ├─ CLAUDE.md               AGENTS.md를 불러온다
 ├─ docs/                   PRD, API 계약, 회의 메모
 ├─ mock/                   프론트용 가짜 데이터 (notices.json 등)
-├─ frontend/
-│  └─ src/
+├─ frontend/              Flutter 웹 (2026-10-03 JS 에서 바꿈)
+│  └─ lib/
 │     ├─ app/              라우팅, 진입점, 전역 설정만
 │     ├─ features/
 │     │  ├─ auth/          가입, 로그인, 동의
@@ -92,10 +92,10 @@ git merge main                 # 최신 main을 내 브랜치에 합친다
 │     │  ├─ profile/       내 이력, 내 지원 정보 (기기 저장)
 │     │  ├─ feed/          피드, 추천 순과 마감 순
 │     │  ├─ notice/        공지 상세
-│     │  └─ apply-helper/  지원 준비 패널
+│     │  └─ apply_helper/  지원 준비 패널
 │     └─ shared/
 │        ├─ ui/            버튼, 카드 같은 공용 컴포넌트
-│        ├─ api/           서버 호출 함수 (fetch는 여기서만)
+│        ├─ api/           서버 호출 함수 (http 호출은 여기서만)
 │        └─ lib/           날짜 포맷 같은 순수 함수
 └─ backend/
    └─ app/
@@ -125,10 +125,10 @@ git merge main                 # 최신 main을 내 브랜치에 합친다
 |---|---|
 | `backend/` (`ai/` 제외) | 해서 (백엔드) |
 | `mock/` | 해서 (제안) |
-| `frontend/src/features/auth/`, `onboarding/`, `profile/` | 택준 (프론트 A) |
-| `frontend/src/features/feed/`, `notice/`, `apply-helper/` | 민섭 (프론트 B) |
+| `frontend/lib/features/auth/`, `onboarding/`, `profile/` | 택준 (프론트 A) |
+| `frontend/lib/features/feed/`, `notice/`, `apply_helper/` | 민섭 (프론트 B) |
 | `backend/app/ai/`, `docs/` | 현찬 (제안) |
-| `frontend/src/shared/`, `frontend/src/app/` | 프론트 둘이 같이 (제안). 고치기 전에 서로 말한다 |
+| `frontend/lib/shared/`, `frontend/lib/app/` | 프론트 둘이 같이 (제안). 고치기 전에 서로 말한다 |
 
 - 자세한 일은 PRD 12절 표를 따른다. 남의 폴더를 고칠 때는 담당자에게 먼저 말한다.
 

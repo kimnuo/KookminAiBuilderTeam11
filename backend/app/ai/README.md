@@ -2,6 +2,8 @@
 
 공지 한 건을 LLM(학교 AI 게이트웨이 `ai.cs.kookmin.ac.kr`)으로 분류·요약·마감 추출한다. 분류·요약·마감은 `claude-opus-5`, 본문이 포스터 이미지뿐인 공지의 글자 읽기는 `claude-haiku-4-5` 가 맡는다(2026-10-03 기준 이 키로 쓸 수 있는 모델은 이 둘뿐이다). PRD 3절·10절·11절을 구현한다. 입력 형식이 PRD 10절과 다른 점은 아래 「입력 형식」에 적었다.
 
+**서버 연동 상태 (2026-10-03 제출 기준).** 해서의 백엔드는 자체 `digest.py` 로 요약하고, 이 모듈의 함수(enrich, poster, profile, requirements, recommend)는 아직 서버에서 부르지 않는다. 그래서 화면에 나오는 AI 결과는 이 모듈이 아니라 서버 digest 결과다. 이 모듈의 정확도는 아래 평가 스크립트로 따로 쟀다.
+
 ## 파일
 
 | 파일 | 하는 일 |
@@ -15,8 +17,8 @@
 | `llm_factory.py` | 평가 스크립트가 gateway / bedrock 을 고르는 곳 |
 | `dates.py` | 글 속 날짜 표기를 (연, 월, 일)로 읽는다. 범위는 끝 날짜만 마감으로 본다. 제목 규칙과 마감 근거 검사가 같이 쓴다 |
 | `cleaning.py` | LLM 값 정리(목록 밖·중복·빈 값 버림, 학년 숫자화) |
-| `mask.py`, `config/mask_patterns.json` | `mask_contacts(text) -> (가린 글, 가린 개수)`. 전화번호·이메일·학번 모양을 가린다. 패턴은 JSON 한 곳에 두고 프론트도 같은 파일을 읽는다 |
-| `mask_reference.js` | 프론트 참조 구현. 파이썬과 결과가 같은지 입력 39개와 PDF 3건으로 대조했다 |
+| `mask.py`, `config/mask_patterns.json` | `mask_contacts(text) -> (가린 글, 가린 개수)`. 전화번호·이메일·학번 모양을 가린다. 패턴은 JSON 한 곳에 둔다. Flutter 화면(`frontend/lib/features/profile/pii_masker.dart`)은 이 파일을 읽지 않고 자체 정규식을 쓴다. 두 쪽 결과가 같은지는 확인하지 않았다 |
+| `mask_reference.js` | 옛 JS 프론트용 참조 구현(지금 화면은 Flutter 라 쓰지 않는다). 파이썬과 결과가 같은지 입력 39개와 PDF 3건으로 대조했다 |
 | `profile.py`, `prompts/profile.md`, `schemas/profile.schema.json` | `extract_profile(masked_text, llm)` (P2). 근거 없는 항목 버림, 30자 미만이면 AI 안 부르고 status="no_text" |
 | `prompts/enrich.md` | 프롬프트 |
 | `schemas/notice_ai.schema.json` | LLM 출력 JSON 스키마 |
