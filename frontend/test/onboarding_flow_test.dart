@@ -32,7 +32,7 @@ void main() {
     await tapText(tester, 'AI·데이터');
     await tapText(tester, '저장하고 피드 보기');
     expect(find.text('크노'), findsOneWidget);
-    expect(find.text('모든 카테고리'), findsOneWidget);
+    expect(find.textContaining('2개 카테고리 선택'), findsOneWidget);
 
     final saved = await ProfileStore.load();
     expect(saved.tags, ['AI·데이터']);

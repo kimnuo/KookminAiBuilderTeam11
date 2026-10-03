@@ -66,6 +66,7 @@ flutter:
   assets:
     - assets/demo/
     - assets/demo/media/
+    - assets/mascot/
 
   fonts:
     - family: Pretendard

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:kmu_notice/shared/api/auth_api.dart';
 import 'package:kmu_notice/shared/lib/applicant_store.dart';
+import 'package:kmu_notice/shared/lib/interest_store.dart';
 import 'package:kmu_notice/shared/lib/routes.dart';
 import 'package:kmu_notice/shared/ui/app_colors.dart';
 import 'profile_store.dart';
@@ -38,6 +39,7 @@ class SettingsPage extends StatelessWidget {
     await AuthApi.deleteMe();
     await ProfileStore.clear();
     await ApplicantStore.clear();
+    await InterestStore.clear();
     if (context.mounted) context.go(Routes.welcome);
   }
 
