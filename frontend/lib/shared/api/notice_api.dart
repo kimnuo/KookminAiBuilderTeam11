@@ -10,10 +10,11 @@ import 'api_client.dart';
 import 'notice_demo.dart';
 
 class NoticeApi {
+  static http.Client client = http.Client();
   static final Map<String, Future<Map<String, dynamic>>> _requirements = {};
   static Future<dynamic> _get(String path) async {
     final uri = Uri.parse('${AppConfig.apiBaseUrl}/api$path');
-    final res = await http
+    final res = await client
         .get(
           uri,
           headers: {

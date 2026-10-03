@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:kmu_notice/features/profile/profile_store.dart';
+
 import 'test_helpers.dart';
 
 void main() {
@@ -26,7 +27,8 @@ void main() {
 
     await tapText(tester, 'AI·데이터');
     await tapText(tester, '저장하고 피드 보기');
-    expect(find.text('피드 화면 자리 (프론트 B)'), findsOneWidget);
+    expect(find.text('크노'), findsOneWidget);
+    expect(find.text('모든 카테고리'), findsOneWidget);
 
     final saved = await ProfileStore.load();
     expect(saved.tags, ['AI·데이터']);
