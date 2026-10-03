@@ -5,6 +5,7 @@ import 'package:kmu_notice/shared/api/subscription_api.dart';
 import 'package:kmu_notice/shared/lib/catalog.dart';
 import 'package:kmu_notice/shared/lib/interest_store.dart';
 import 'package:kmu_notice/shared/lib/routes.dart';
+import 'package:kmu_notice/shared/ui/app_colors.dart';
 import 'package:kmu_notice/shared/ui/mascot_guide.dart';
 import 'package:kmu_notice/shared/ui/select_chip.dart';
 import 'package:kmu_notice/shared/ui/step_scaffold.dart';
@@ -25,6 +26,7 @@ class _InterestsPageState extends State<InterestsPage> {
   List<String> _keywords = [];
   bool _parsing = false;
   bool _saving = false;
+  String? _error;
 
   @override
   void initState() {
@@ -32,29 +34,36 @@ class _InterestsPageState extends State<InterestsPage> {
     // 설정의 「관심 분야 바꾸기」로 다시 오면 저장해 둔 분야를 켜 둔다.
     InterestStore.load().then((saved) {
       if (!mounted) return;
-      setState(
-        () => _selected.addAll(saved.where(Catalog.categories.contains)),
-      );
+      setState(() => _selected.addAll(Catalog.serviceCategories(saved)));
     });
   }
 
   Future<void> _parse() async {
     if (_text.text.trim().isEmpty) return;
-    setState(() => _parsing = true);
+    setState(() {
+      _parsing = true;
+      _error = null;
+    });
     try {
       final res = await SubscriptionApi.parse(_text.text.trim());
       final cats = List<String>.from(res['categories'] ?? const []);
+      if (!mounted) return;
       setState(() {
-        _selected.addAll(cats.where(Catalog.categories.contains));
+        _selected.addAll(Catalog.serviceCategories(cats));
         _keywords = List<String>.from(res['keywords'] ?? const []);
       });
+    } catch (_) {
+      if (mounted) setState(() => _error = 'AI가 문장을 읽지 못했어요. 분야를 직접 골라 주세요.');
     } finally {
       if (mounted) setState(() => _parsing = false);
     }
   }
 
   Future<void> _save() async {
-    setState(() => _saving = true);
+    setState(() {
+      _saving = true;
+      _error = null;
+    });
     try {
       await InterestStore.save(_selected.toList());
       await SubscriptionApi.save(
@@ -64,6 +73,8 @@ class _InterestsPageState extends State<InterestsPage> {
         keywords: _keywords,
       );
       if (mounted) context.go(Routes.profileHistory);
+    } catch (_) {
+      if (mounted) setState(() => _error = '저장하지 못했어요. 잠시 후 다시 시도해 주세요.');
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -104,6 +115,10 @@ class _InterestsPageState extends State<InterestsPage> {
               ),
           ],
         ),
+        if (_error != null) ...[
+          const SizedBox(height: 16),
+          Text(_error!, style: const TextStyle(color: AppColors.danger)),
+        ],
       ],
     );
   }

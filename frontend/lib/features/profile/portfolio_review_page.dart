@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:kmu_notice/shared/lib/app_config.dart';
 import 'package:kmu_notice/shared/lib/routes.dart';
 import 'package:kmu_notice/shared/ui/select_chip.dart';
 import 'package:kmu_notice/shared/ui/step_scaffold.dart';
@@ -8,6 +9,7 @@ import 'profile_analysis.dart';
 import 'profile_store.dart';
 import 'review_item_card.dart';
 import 'section_title.dart';
+import 'warning_box.dart';
 
 class PortfolioReviewPage extends StatefulWidget {
   const PortfolioReviewPage({super.key, required this.analysis});
@@ -57,6 +59,10 @@ class _PortfolioReviewPageState extends State<PortfolioReviewPage> {
       ctaLoading: _saving,
       onCta: _save,
       children: [
+        if (AppConfig.useMock) ...[
+          const WarningBox('데모용 예시 결과예요. 올린 PDF 내용과 관계없이 항상 같은 결과가 나와요.'),
+          const SizedBox(height: 24),
+        ],
         if (a.tags.isNotEmpty) ...[
           const SectionTitle('추천 태그'),
           _chips(a.tags, _tags),

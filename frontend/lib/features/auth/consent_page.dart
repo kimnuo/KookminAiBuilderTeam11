@@ -18,12 +18,18 @@ class ConsentPage extends StatefulWidget {
 class _ConsentPageState extends State<ConsentPage> {
   bool _agreed = false;
   bool _loading = false;
+  String? _error;
 
   Future<void> _submit() async {
-    setState(() => _loading = true);
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
     try {
       await AuthApi.recordConsent(portfolio: false);
       if (mounted) context.go(Routes.onboardingMajor);
+    } catch (_) {
+      if (mounted) setState(() => _error = '동의를 저장하지 못했어요. 잠시 후 다시 시도해 주세요.');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -68,6 +74,8 @@ class _ConsentPageState extends State<ConsentPage> {
           checked: _agreed,
           onTap: () => setState(() => _agreed = !_agreed),
         ),
+        if (_error != null)
+          Text(_error!, style: const TextStyle(color: AppColors.danger)),
         const SizedBox(height: 8),
         TextButton(
           onPressed: () => context.go(Routes.feed),

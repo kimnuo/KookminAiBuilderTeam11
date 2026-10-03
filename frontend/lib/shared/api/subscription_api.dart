@@ -23,9 +23,17 @@ class SubscriptionApi {
     });
   }
 
+  // PUT은 구독 전체를 바꾸므로, 지금 구독을 읽어 태그만 바꿔서 보낸다.
+  // 읽지 못하면 학과·학년·분야를 지우지 않도록 보내지 않는다.
   static Future<void> saveTags(List<String> tags) async {
     if (AppConfig.useMock) return;
-    await _put({'tags': tags});
+    final Map<String, dynamic> current;
+    try {
+      current = await ApiClient.get('/api/subscriptions');
+    } catch (_) {
+      return;
+    }
+    await _put({...current, 'tags': tags});
   }
 
   // 백엔드에 /api/subscriptions가 아직 없다. 실패해도 온보딩을 막지 않는다.
@@ -42,7 +50,7 @@ class SubscriptionApi {
     if (AppConfig.useMock) {
       await Future.delayed(const Duration(milliseconds: 600));
       return {
-        'categories': ['공모전·행사', '장학'],
+        'categories': ['행사·대외활동', '장학'],
         'keywords': ['AI'],
         'year': null,
       };
