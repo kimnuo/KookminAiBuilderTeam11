@@ -77,6 +77,19 @@ class FeedController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void resetHome() {
+    query = '';
+    source = '';
+    selected.clear();
+    final reload = sort != 'recommend';
+    sort = 'recommend';
+    if (reload) {
+      load();
+    } else {
+      notifyListeners();
+    }
+  }
+
   @override
   void dispose() {
     _generation++;

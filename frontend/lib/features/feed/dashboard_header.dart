@@ -2,20 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:kmu_notice/shared/lib/routes.dart';
-import 'package:kmu_notice/shared/ui/app_colors.dart';
+
+import 'kno_home_button.dart';
 
 class DashboardHeader extends StatelessWidget {
-  const DashboardHeader({super.key, required this.compact});
+  const DashboardHeader({
+    super.key,
+    required this.compact,
+    required this.onHome,
+  });
   final bool compact;
+  final VoidCallback onHome;
   @override
   Widget build(BuildContext context) => Row(
     children: [
-      const Icon(Icons.blur_on_rounded, color: AppColors.primary, size: 30),
-      const SizedBox(width: 8),
-      const Text(
-        '크노',
-        style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700),
-      ),
+      KnoHomeButton(onPressed: onHome),
       if (!compact) ...[
         const SizedBox(width: 24),
         const Text(
