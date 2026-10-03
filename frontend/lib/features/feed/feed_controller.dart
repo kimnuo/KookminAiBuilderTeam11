@@ -45,15 +45,18 @@ class FeedController extends ChangeNotifier {
   }
 
   List<Notice> get visible {
+    final now = DateTime.now();
     final result = notices
         .where(
           (n) =>
               matchesSearch(n, query) &&
               (source.isEmpty || n.sourceId == source) &&
-              (sort != 'recommend' || !deadlineExpired(n)),
+              (sort != 'recommend' || !deadlineExpired(n, now: now)),
         )
         .toList();
-    if (sort == 'deadline') result.sort(compareDeadline);
+    if (sort == 'deadline') {
+      result.sort((a, b) => compareDeadline(a, b, now: now));
+    }
     return result;
   }
 

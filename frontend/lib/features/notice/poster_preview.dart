@@ -1,54 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:kmu_notice/shared/lib/feed_config.dart';
+
+import 'poster_dialog.dart';
+import 'poster_image.dart';
 
 class PosterPreview extends StatelessWidget {
-  const PosterPreview({super.key, required this.asset, required this.label});
-  final String asset, label;
+  const PosterPreview({super.key, required this.poster});
+  final Map<String, dynamic> poster;
   @override
-  Widget build(BuildContext context) => InkWell(
-    onTap: () => _zoom(context),
-    borderRadius: BorderRadius.circular(12),
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: Image.asset(
-        asset,
-        fit: BoxFit.contain,
-        semanticLabel: label,
-        errorBuilder: (_, _, _) => const Padding(
-          padding: EdgeInsets.all(16),
-          child: Text('포스터를 불러올 수 없어요.'),
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxHeight: FeedConfig.posterPreviewHeight,
+          ),
+          child: PosterImage(poster: poster),
         ),
       ),
-    ),
+      TextButton.icon(
+        onPressed: () => _zoom(context),
+        icon: const Icon(Icons.zoom_in_rounded, size: 18),
+        label: const Text('포스터 확대'),
+      ),
+    ],
   );
   void _zoom(BuildContext context) => showDialog<void>(
     context: context,
-    builder: (context) => Dialog(
-      clipBehavior: Clip.antiAlias,
-      child: SizedBox(
-        width: 650,
-        height: MediaQuery.sizeOf(context).height * .86,
-        child: Column(
-          children: [
-            Align(
-              alignment: Alignment.centerRight,
-              child: IconButton(
-                tooltip: '닫기',
-                onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.close_rounded),
-              ),
-            ),
-            Expanded(
-              child: InteractiveViewer(
-                child: Image.asset(
-                  asset,
-                  semanticLabel: label,
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
+    builder: (_) => PosterDialog(poster: poster),
   );
 }

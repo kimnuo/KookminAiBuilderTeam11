@@ -35,6 +35,7 @@ class CategoryTile extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onOpen,
+          excludeFromSemantics: true,
           child: Padding(
             padding: EdgeInsets.all(tiny ? (size.maxHeight < 65 ? 4 : 8) : 14),
             child: _content(tiny),
@@ -60,18 +61,16 @@ class CategoryTile extends StatelessWidget {
   );
   Widget _top(bool tiny) => Row(
     children: [
-      if (!tiny) ...[
-        Icon(group.icon, color: group.color, size: 22),
-        const SizedBox(width: 8),
-      ],
       Expanded(
-        child: Text(
-          group.label,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontSize: tiny ? 12 : 14,
-            fontWeight: FontWeight.w700,
+        child: Semantics(
+          container: true,
+          button: true,
+          label: '${group.label} 전체 공고 보기',
+          excludeSemantics: true,
+          child: InkWell(
+            onTap: onOpen,
+            borderRadius: BorderRadius.circular(8),
+            child: _title(tiny),
           ),
         ),
       ),
@@ -87,6 +86,29 @@ class CategoryTile extends StatelessWidget {
       ),
     ],
   );
+  Widget _title(bool tiny) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4),
+    child: Row(
+      children: [
+        if (!tiny) ...[
+          Icon(group.icon, color: group.color, size: 22),
+          const SizedBox(width: 8),
+        ],
+        Expanded(
+          child: Text(
+            group.label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: tiny ? 12 : 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+
   Widget _bottom(bool tiny) => Row(
     children: [
       Text(
@@ -97,17 +119,29 @@ class CategoryTile extends StatelessWidget {
           color: group.color,
         ),
       ),
-      const Spacer(),
-      if (!tiny)
-        const Text(
-          '더 보기',
-          style: TextStyle(fontSize: 11, color: AppColors.grey500),
-        ),
-      Icon(
-        Icons.chevron_right_rounded,
-        size: tiny ? 14 : 18,
-        color: AppColors.grey500,
-      ),
+      const SizedBox(width: 4),
+      Expanded(child: _openButton(tiny)),
     ],
+  );
+
+  Widget _openButton(bool tiny) => Align(
+    alignment: Alignment.centerRight,
+    child: SizedBox(
+      height: 28,
+      child: TextButton(
+        onPressed: onOpen,
+        style: TextButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          minimumSize: Size.zero,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          foregroundColor: group.color,
+          backgroundColor: group.color.withValues(alpha: .07),
+        ),
+        child: Text(
+          tiny ? '전체 보기 ›' : '전체 공고 보기 ›',
+          style: TextStyle(fontSize: tiny ? 10 : 11),
+        ),
+      ),
+    ),
   );
 }

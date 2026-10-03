@@ -55,15 +55,24 @@ class NoticeApi {
       if (FeedConfig.demo) {
         return mapValue((await NoticeDemo.read('requirements'))[id]);
       }
-      return mapValue(
-        await _get('/notices/${Uri.encodeComponent(id)}/requirements'),
-      );
+      return _serverRequirements(id);
     });
     try {
       return await request;
     } catch (_) {
       _requirements.remove(key);
       rethrow;
+    }
+  }
+
+  static Future<Map<String, dynamic>> _serverRequirements(String id) async {
+    try {
+      return mapValue(
+        await _get('/notices/${Uri.encodeComponent(id)}/requirements'),
+      );
+    } on ApiException catch (error) {
+      if (error.statusCode != 404) rethrow;
+      return {'status': 'unavailable', 'fields': [], 'documents': []};
     }
   }
 }
