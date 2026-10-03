@@ -19,6 +19,7 @@ class FeedPage extends StatefulWidget {
 
 class _FeedPageState extends State<FeedPage> {
   final _controller = FeedController();
+  int _homeVersion = 0;
   @override
   void initState() {
     super.initState();
@@ -52,9 +53,10 @@ class _FeedPageState extends State<FeedPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        DashboardHeader(compact: compact),
+        DashboardHeader(compact: compact, onHome: _home),
         SizedBox(height: compact ? 8 : 20),
         FeedToolbar(
+          key: ValueKey(_homeVersion),
           controller: _controller,
           onOpen: () => _open('선택한 공고', _controller.chosen),
         ),
@@ -65,6 +67,11 @@ class _FeedPageState extends State<FeedPage> {
         const SizedBox(height: 8),
       ],
     );
+  }
+
+  void _home() {
+    _controller.resetHome();
+    setState(() => _homeVersion++);
   }
 
   Widget _selection(bool compact) => SizedBox(

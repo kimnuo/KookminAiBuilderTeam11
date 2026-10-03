@@ -14,7 +14,7 @@ class SubscriptionApi {
       await Future.delayed(const Duration(milliseconds: 300));
       return;
     }
-    await ApiClient.put('/api/subscriptions', {
+    await _put({
       'major': major,
       'year': year,
       'categories': categories,
@@ -25,7 +25,17 @@ class SubscriptionApi {
 
   static Future<void> saveTags(List<String> tags) async {
     if (AppConfig.useMock) return;
-    await ApiClient.put('/api/subscriptions', {'tags': tags});
+    await _put({'tags': tags});
+  }
+
+  // 서버 PUT /api/subscriptions는 로그인 토큰이 있어야 받는다. 실패해도 온보딩을 막지 않는다.
+  // 관심 분야는 InterestStore에 먼저 저장하므로 피드는 그 값으로 동작한다.
+  static Future<void> _put(Map<String, dynamic> body) async {
+    try {
+      await ApiClient.put('/api/subscriptions', body);
+    } catch (_) {
+      // 일부러 넘긴다. 서버 구독 API가 생기면 실패 안내를 다시 정한다.
+    }
   }
 
   static Future<Map<String, dynamic>> parse(String text) async {

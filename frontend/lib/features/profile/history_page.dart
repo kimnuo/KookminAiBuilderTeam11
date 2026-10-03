@@ -5,6 +5,7 @@ import 'package:kmu_notice/shared/api/subscription_api.dart';
 import 'package:kmu_notice/shared/lib/catalog.dart';
 import 'package:kmu_notice/shared/lib/routes.dart';
 import 'package:kmu_notice/shared/ui/app_colors.dart';
+import 'package:kmu_notice/shared/ui/mascot_guide.dart';
 import 'package:kmu_notice/shared/ui/select_chip.dart';
 import 'package:kmu_notice/shared/ui/step_scaffold.dart';
 import 'entry_list_editor.dart';
@@ -61,6 +62,9 @@ class _HistoryPageState extends State<HistoryPage> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     return StepScaffold(
+      guide: const MascotGuide(
+        'PDF가 있으면 이력을 대신 채워 볼게요.\n나중에 채워도 괜찮아요.',
+      ),
       title: '내 이력을 알려 주시면\n맞는 공고를 골라 드려요',
       ctaLabel: h.tags.isEmpty ? '나중에 할게요' : '저장하고 피드 보기',
       ctaLoading: _saving,

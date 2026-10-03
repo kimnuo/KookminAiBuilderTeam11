@@ -46,4 +46,11 @@ class Catalog {
   ];
 
   static const years = [1, 2, 3, 4];
+
+  // 구독(Subscription.year)에 졸업생은 0으로 보낸다.
+  static const graduateYear = 0;
+  static const subscriptionYears = [...years, graduateYear];
+
+  static String yearLabel(int year) =>
+      year == graduateYear ? '졸업생' : '$year학년';
 }

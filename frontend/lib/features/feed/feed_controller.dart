@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 
 import 'package:kmu_notice/shared/api/notice_api.dart';
 import 'package:kmu_notice/shared/api/recommend_api.dart';
+import 'package:kmu_notice/shared/lib/interest_groups.dart';
+import 'package:kmu_notice/shared/lib/interest_store.dart';
 import 'package:kmu_notice/shared/lib/notice.dart';
 import 'package:kmu_notice/shared/lib/notice_search.dart';
 import 'package:kmu_notice/shared/lib/notice_deadline.dart';
@@ -13,6 +15,7 @@ class FeedController extends ChangeNotifier {
   String? error;
   bool loading = true;
   int _generation = 0;
+  bool _seeded = false;
 
   Future<void> load() async {
     final generation = ++_generation;
@@ -20,6 +23,7 @@ class FeedController extends ChangeNotifier {
     error = null;
     notifyListeners();
     try {
+      await _seedSelection();
       final data = await NoticeApi.feed(sort);
       if (generation == _generation) notices = data;
     } catch (_) {
@@ -46,6 +50,17 @@ class FeedController extends ChangeNotifier {
       notifyListeners();
     } catch (_) {
       // 적합도는 덤이라 실패해도 조용히 넘어간다
+    }
+  }
+
+  // 온보딩에서 고른 분야를 처음 한 번만 선택값으로 깐다. 그 뒤로는 사용자가 고른 대로 둔다.
+  Future<void> _seedSelection() async {
+    if (_seeded) return;
+    _seeded = true;
+    try {
+      selected.addAll(feedGroupIdsFor(await InterestStore.load()));
+    } catch (_) {
+      // 저장값을 못 읽어도 피드는 그대로 연다.
     }
   }
 
@@ -95,6 +110,19 @@ class FeedController extends ChangeNotifier {
   void clearSelection() {
     selected.clear();
     notifyListeners();
+  }
+
+  void resetHome() {
+    query = '';
+    source = '';
+    selected.clear();
+    final reload = sort != 'recommend';
+    sort = 'recommend';
+    if (reload) {
+      load();
+    } else {
+      notifyListeners();
+    }
   }
 
   @override
