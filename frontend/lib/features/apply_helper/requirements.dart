@@ -27,3 +27,29 @@ List<Map<String, dynamic>> _evidence(dynamic raw) => raw is List
           )
           .toList()
     : [];
+
+// 지원 준비 API(fields/documents)와 공고 API(digest.requirements)를 함께 읽는다.
+List<Map<String, dynamic>> requirementActions(
+  Map<String, dynamic> data,
+  Notice notice,
+) {
+  final digest = mapValue(data['digest']);
+  final direct = data['status'] == 'failed'
+      ? <Map<String, dynamic>>[]
+      : _evidence(data['requirements']);
+  final items = <Map<String, dynamic>>[
+    ...direct,
+    if (digest['status'] == 'done') ..._evidence(digest['requirements']),
+    ...notice.requiredActions,
+  ];
+  final seen = <String>{};
+  return items
+      .where((item) {
+        final text = item['text'];
+        return text is String &&
+            text.trim().isNotEmpty &&
+            seen.add(text.trim());
+      })
+      .map((item) => <String, dynamic>{...item, 'name': item['text']})
+      .toList();
+}
