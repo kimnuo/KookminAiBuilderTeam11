@@ -426,3 +426,18 @@ FodyWeavers.xsd
 
 # Official VS Code C# Dev Kit Extension exclusion
 #*.lscache
+
+# Team 11 (2026-10-03, AGENTS.md 12)
+.env
+.env.*
+!.env.example
+node_modules/
+.venv/
+venv/
+__pycache__/
+.next/
+dist/
+build/
+*.log
+.DS_Store
+.playwright-mcp/
