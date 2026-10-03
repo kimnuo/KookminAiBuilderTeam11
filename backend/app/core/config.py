@@ -54,10 +54,14 @@ if not LLM_API_BASE.endswith("/v1"):
 LLM_API_KEY = os.getenv("KMU_AI_API_KEY", "")
 LLM_API_MODEL = os.getenv("KMU_AI_MODEL", "claude-haiku-4-5")
 RECOMMEND_BATCH = 8  # 한 번 호출에 넣는 공지 수
-RECOMMEND_MAX = 40  # 한 요청에서 다룰 최대 공지 수
+RECOMMEND_MAX = 60  # 한 요청에서 다룰 최대 공지 수
 
 PAGE_SIZE = 20
 CORS_ORIGINS = os.getenv("CORS_ORIGINS", "*").split(",")
+
+# 관리자 전용 엔드포인트(/api/admin/poll-now, /redigest) 열쇠. backend/.env 의 ADMIN_TOKEN.
+# 비어 있으면 그 두 엔드포인트는 503 으로 막힌다 (외부 공개 시 무인증 노출을 막기 위해 기본은 잠김).
+ADMIN_TOKEN = os.getenv("ADMIN_TOKEN", "").strip()
 
 KMU_BASE_URL = "https://www.kookmin.ac.kr"
 SW_BASE_URL = "https://software.kookmin.ac.kr"

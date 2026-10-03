@@ -16,7 +16,15 @@ from app.ai.recommend import rank
 from app.ai.llm import LlmError
 from app.core.config import LLM_API_MODEL, LLM_CONCURRENCY, RECOMMEND_BATCH, RECOMMEND_MAX
 from app.collectors.common import now_kst
-from app.core.schemas import Fit, Notice, RecommendRequest, Recommendation, RecommendResponse
+from app.core.schemas import (
+    Fit,
+    Notice,
+    RecommendRequest,
+    Recommendation,
+    RecommendResponse,
+    Situation,
+    Subscription,
+)
 from app.db import store
 
 log = logging.getLogger(__name__)
@@ -34,9 +42,10 @@ ANSWER_SCHEMA = {
                 "properties": {
                     "noticeId": {"type": "string"},
                     "chance": {"type": "integer", "minimum": 0, "maximum": 100},
+                    "priority": {"type": "integer", "minimum": 0, "maximum": 100},
                     "reason": {"type": "string"},
                 },
-                "required": ["noticeId", "chance", "reason"],
+                "required": ["noticeId", "chance", "priority", "reason"],
             },
         }
     },
@@ -46,7 +55,7 @@ ANSWER_SCHEMA = {
 
 def cache_key(request: RecommendRequest, notice: Notice) -> str:
     situation = request.situation.model_dump_json(by_alias=True)
-    seed = f"{LLM_API_MODEL}|{situation}|{sorted(request.tags)}|{notice.id}|{notice.digest.title}"
+    seed = f"v2|{LLM_API_MODEL}|{situation}|{sorted(request.tags)}|{notice.id}|{notice.digest.title}"
     return hashlib.sha256(seed.encode("utf-8")).hexdigest()
 
 
@@ -89,9 +98,27 @@ def clean(item: dict, known: dict[str, Notice]) -> Recommendation | None:
         return None
     try:
         chance = int(item.get("chance"))
+        priority = int(item.get("priority", 0))
     except (TypeError, ValueError):
         return None
-    return Recommendation(notice_id=notice_id, chance=max(0, min(100, chance)), reason=reason[:60])
+    return Recommendation(
+        notice_id=notice_id,
+        chance=max(0, min(100, chance)),
+        priority=max(0, min(100, priority)),
+        reason=reason[:60],
+    )
+
+
+def _from_cache(notice_id: str, row: tuple[int, str]) -> Recommendation:
+    """캐시의 reason 은 "추천도|근거" 로 둔다 (표를 바꾸지 않으려고)."""
+    chance, text = row
+    priority, _, reason = text.partition("|")
+    return Recommendation(
+        notice_id=notice_id,
+        chance=chance,
+        priority=int(priority) if priority.isdigit() else 0,
+        reason=reason or text,
+    )
 
 
 def recommend(request: RecommendRequest) -> RecommendResponse:
@@ -101,7 +128,7 @@ def recommend(request: RecommendRequest) -> RecommendResponse:
     keys = {n.id: cache_key(request, n) for n in notices}
     cached = store.cached_recommendations(list(keys.values()))
     found = {
-        n.id: Recommendation(notice_id=n.id, chance=cached[keys[n.id]][0], reason=cached[keys[n.id]][1])
+        n.id: _from_cache(n.id, cached[keys[n.id]])
         for n in notices
         if keys[n.id] in cached
     }
@@ -109,7 +136,11 @@ def recommend(request: RecommendRequest) -> RecommendResponse:
     for item in _ask_all(request, missing):
         found[item.notice_id] = item
     store.save_recommendations(
-        [(keys[i.notice_id], i.notice_id, i.chance, i.reason) for i in found.values() if i.notice_id in keys]
+        [
+            (keys[i.notice_id], i.notice_id, i.chance, f"{i.priority}|{i.reason}")
+            for i in found.values()
+            if i.notice_id in keys
+        ]
     )
     items = [found[n.id] for n in notices if n.id in found]
     return RecommendResponse(model=LLM_API_MODEL, items=add_code_score(request, notices, items))
@@ -164,4 +195,22 @@ def fit_of(notice_id: str, request: RecommendRequest) -> Fit | None:
     """공지 하나의 될 가능성. 상세 화면에서 쓴다 (캐시에 있으면 AI 를 부르지 않는다)."""
     answer = recommend(request.model_copy(update={"notice_ids": [notice_id]}))
     item = answer.items[0] if answer.items else None
-    return Fit(chance=item.chance, reason=item.reason) if item else None
+    return Fit(chance=item.chance, priority=item.priority, reason=item.reason) if item else None
+
+
+def fits_of(notices: list[Notice], subscription: Subscription) -> dict[str, Fit]:
+    """여러 공지의 될 가능성을 한꺼번에. 캐시에 있는 것은 AI 를 다시 부르지 않는다."""
+    request = RecommendRequest(
+        situation=Situation(
+            major=subscription.major,
+            year=subscription.year,
+            status="재학",
+            interests=subscription.categories,
+        ),
+        tags=subscription.tags,
+        notice_ids=[n.id for n in notices],
+    )
+    return {
+        item.notice_id: Fit(chance=item.chance, priority=item.priority, reason=item.reason)
+        for item in recommend(request).items
+    }

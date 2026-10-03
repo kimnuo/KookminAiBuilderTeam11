@@ -21,13 +21,18 @@ def recommendations(
     return recommend(with_subscription(request, authorization))
 
 
-def with_subscription(request: RecommendRequest, authorization: str | None) -> RecommendRequest:
-    """상황을 안 보냈으면 로그인한 사람의 구독 설정(학과·학년·분야·태그)으로 채운다."""
+def subscription_of(authorization: str | None) -> Subscription | None:
+    """로그인한 사람의 구독 설정(나의 상황). 로그인 전이면 None."""
     me = user_of(_bearer(authorization))
     raw = store.get_subscription(me) if me else None
-    if raw is None:
+    return Subscription.model_validate_json(raw) if raw else None
+
+
+def with_subscription(request: RecommendRequest, authorization: str | None) -> RecommendRequest:
+    """상황을 안 보냈으면 로그인한 사람의 구독 설정(학과·학년·분야·태그)으로 채운다."""
+    sub = subscription_of(authorization)
+    if sub is None:
         return request
-    sub = Subscription.model_validate_json(raw)
     situation = request.situation
     if situation.major is None and situation.year is None and not situation.interests:
         situation = Situation(major=sub.major, year=sub.year, status="재학", interests=sub.categories)

@@ -80,9 +80,10 @@ class Digest(ApiModel):
 
 
 class Fit(ApiModel):
-    """AI 가 본 될 가능성과 근거 한 줄 (POST /api/recommend 와 같은 값)."""
+    """AI 가 본 될 가능성·추천도와 근거 한 줄 (POST /api/recommend 와 같은 값)."""
 
     chance: int = Field(ge=0, le=100)
+    priority: int = Field(0, ge=0, le=100)
     reason: str
 
 
@@ -139,6 +140,7 @@ class RecommendRequest(ApiModel):
 class Recommendation(ApiModel):
     notice_id: str
     chance: int = Field(ge=0, le=100)  # 지원했을 때 될 가능성 (AI 판단)
+    priority: int = Field(0, ge=0, le=100)  # 이 학생이 지금 볼 가치 (AI 판단, 추천순 기준)
     reason: str  # 추천 근거 한 줄 (AI)
     score: int = 0  # 추천 점수 (코드 판단, app/ai/recommend.py)
     reasons: list[str] = []  # 왜 추천하는지 (코드 판단)
@@ -174,3 +176,9 @@ class Subscription(ApiModel):
     categories: list[str] = []
     keywords: list[str] = []
     tags: list[str] = []
+
+
+class ProfileAnalyzeRequest(ApiModel):
+    """이력서에서 뽑은 글. 기기에서 연락처·학번을 가린 뒤 보낸다. 저장하지 않는다."""
+
+    text: str = ""

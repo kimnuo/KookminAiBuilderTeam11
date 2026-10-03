@@ -3,8 +3,9 @@ from fastapi import APIRouter, Header, HTTPException, Query
 from app.core.config import CATEGORIES, SOURCES, source_list_url
 from app.core.schemas import Notice, NoticePage, RecommendRequest, Source
 from app.features.notices import service
+from app.features.feed.service import with_reasons
 from app.features.notices.requirements import requirements_of
-from app.features.recommend.router import with_subscription
+from app.features.recommend.router import subscription_of, with_subscription
 from app.features.recommend.service import fit_of
 
 router = APIRouter(tags=["notices"])
@@ -44,6 +45,9 @@ def get_notice(notice_id: str, authorization: str | None = Header(None)) -> Noti
         raise HTTPException(status_code=404, detail="notice not found")
     request = with_subscription(RecommendRequest(), authorization)
     notice.fit = fit_of(notice_id, request)
+    subscription = subscription_of(authorization)
+    if subscription is not None:
+        with_reasons([notice], subscription)  # 추천 이유(코드)를 notice 에 채운다
     return notice
 
 
