@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import 'package:kmu_notice/shared/api/notice_api.dart';
+import 'package:kmu_notice/shared/lib/feed_config.dart';
 import 'package:kmu_notice/shared/lib/interest_groups.dart';
 import 'package:kmu_notice/shared/lib/interest_store.dart';
 import 'package:kmu_notice/shared/lib/notice.dart';
@@ -54,10 +55,19 @@ class FeedController extends ChangeNotifier {
               (sort != 'recommend' || !deadlineExpired(n, now: now)),
         )
         .toList();
-    if (sort == 'deadline') {
-      result.sort((a, b) => compareDeadline(a, b, now: now));
+    return sort == 'deadline' ? _deadlineOrder(result, now) : result;
+  }
+
+  List<Notice> _deadlineOrder(List<Notice> items, DateTime now) {
+    if (FeedConfig.demo) {
+      items.sort((a, b) => compareDeadline(a, b, now: now));
+      return items;
     }
-    return result;
+    // API의 마감순은 유지하고, 지난 마감만 뒤로 옮긴다.
+    return [
+      ...items.where((n) => !deadlineExpired(n, now: now)),
+      ...items.where((n) => deadlineExpired(n, now: now)),
+    ];
   }
 
   List<Notice> get chosen => visible

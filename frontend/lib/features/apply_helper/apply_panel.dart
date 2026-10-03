@@ -68,12 +68,13 @@ class _ApplyPanelState extends State<ApplyPanel> {
   );
 
   Widget _content(Map<String, dynamic> data, Map<String, String> values) {
-    if (data['status'] == 'unavailable') {
-      return const Text('필요한 항목은 공고의 필수 사항과 원문에서 확인해 주세요.');
-    }
     final fields = requirementFields(data),
         documents = requirementDocuments(data);
-    if (fields.isEmpty && documents.isEmpty) {
+    final actions = requirementActions(data, widget.notice);
+    if (fields.isEmpty && documents.isEmpty && actions.isEmpty) {
+      if (data['status'] == 'unavailable') {
+        return const Text('필요한 항목은 공고의 필수 사항과 원문에서 확인해 주세요.');
+      }
       return const Text('근거가 있는 준비 목록이 없어요. 원문을 확인해 주세요.');
     }
     return Column(
@@ -88,6 +89,15 @@ class _ApplyPanelState extends State<ApplyPanel> {
             child: Text('필요 서류', style: TextStyle(fontWeight: FontWeight.w700)),
           ),
         ...documents.map((d) => RequirementDocument(document: d)),
+        if (actions.isNotEmpty)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: Text(
+              '필수 준비 사항',
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
+          ),
+        ...actions.map((a) => RequirementDocument(document: a)),
       ],
     );
   }

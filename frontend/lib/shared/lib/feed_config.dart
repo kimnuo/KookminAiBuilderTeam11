@@ -13,6 +13,7 @@ class FeedConfig {
   static const posterImageTypes = {'jpg', 'jpeg', 'png', 'gif', 'webp'};
   static const applicationPointPattern =
       r'(신청|접수|제출|지원|등록|예약)\s*(방법|절차|경로|링크|주소|처)';
+  static const sourceLabels = {'sw-notice': 'SW사업단 공지사항'};
   static const previewCount = 3;
   static const previewRowHeight = 42.0;
   static const compactPreviewRowHeight = 28.0;
