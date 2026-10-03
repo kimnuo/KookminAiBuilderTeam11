@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:kmu_notice/shared/api/notice_api.dart';
 import 'package:kmu_notice/shared/lib/application_values.dart';
+import 'package:kmu_notice/shared/lib/feed_config.dart';
 import 'package:kmu_notice/shared/lib/notice.dart';
 import 'package:kmu_notice/shared/lib/routes.dart';
 import 'package:kmu_notice/shared/ui/app_colors.dart';
@@ -41,7 +42,8 @@ class _ApplyPanelState extends State<ApplyPanel> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
             ),
           ),
-          TextButton(onPressed: _edit, child: const Text('내 지원 정보 수정')),
+          if (!FeedConfig.demo)
+            TextButton(onPressed: _edit, child: const Text('내 지원 정보 수정')),
         ],
       ),
       const Text(
@@ -66,6 +68,9 @@ class _ApplyPanelState extends State<ApplyPanel> {
   );
 
   Widget _content(Map<String, dynamic> data, Map<String, String> values) {
+    if (data['status'] == 'unavailable') {
+      return const Text('필요한 항목은 공고의 필수 사항과 원문에서 확인해 주세요.');
+    }
     final fields = requirementFields(data),
         documents = requirementDocuments(data);
     if (fields.isEmpty && documents.isEmpty) {

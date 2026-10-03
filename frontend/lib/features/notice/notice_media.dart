@@ -9,15 +9,11 @@ class NoticeMedia extends StatelessWidget {
   final Notice notice;
   @override
   Widget build(BuildContext context) {
-    final poster = mapValue(notice.previewMedia['poster']);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (poster['asset'] is String) ...[
-          PosterPreview(
-            asset: poster['asset'],
-            label: poster['alt'] ?? notice.title,
-          ),
+        for (final poster in notice.posters) ...[
+          PosterPreview(poster: poster),
           const SizedBox(height: 18),
         ],
         if (notice.attachments.isNotEmpty) ...[
