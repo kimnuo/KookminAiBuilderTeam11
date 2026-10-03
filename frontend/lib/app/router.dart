@@ -14,6 +14,8 @@ import 'package:kmu_notice/features/profile/portfolio_page.dart';
 import 'package:kmu_notice/features/profile/portfolio_review_page.dart';
 import 'package:kmu_notice/features/profile/profile_analysis.dart';
 import 'package:kmu_notice/features/profile/settings_page.dart';
+import 'package:kmu_notice/shared/api/api_client.dart';
+import 'package:kmu_notice/shared/lib/feed_config.dart';
 import 'package:kmu_notice/shared/lib/feed_path.dart';
 import 'package:kmu_notice/shared/lib/routes.dart';
 
@@ -21,8 +23,16 @@ import 'package:kmu_notice/features/feed/feed_page.dart';
 import 'package:kmu_notice/features/notice/notice_page.dart';
 import 'package:kmu_notice/features/apply_helper/apply_panel.dart';
 
+/// 처음 열었을 때 보여 줄 화면.
+///
+/// 처음 오는 사람은 환영 화면부터 보게 한다 (사용자 지시 2026-10-03) — 피드로 바로 떨어지면
+/// 무엇을 하는 서비스인지 모른 채 목록만 보게 된다. 환영 화면에 「로그인 없이 둘러볼게요」가 있어
+/// 가입하지 않아도 피드로 갈 수 있다. 이미 로그인했거나 ?demo=1 이면 그대로 피드로 보낸다.
+String _firstLocation() =>
+    ApiClient.token == null && !FeedConfig.demo ? Routes.welcome : feedPath;
+
 final appRouter = GoRouter(
-  initialLocation: feedPath,
+  initialLocation: _firstLocation(),
   routes: [
     GoRoute(path: Routes.welcome, builder: (_, _) => const WelcomePage()),
     GoRoute(path: Routes.signup, builder: (_, _) => const SignupPage()),
