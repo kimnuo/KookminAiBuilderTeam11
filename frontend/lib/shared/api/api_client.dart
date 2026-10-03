@@ -45,6 +45,14 @@ class ApiClient {
     return _decode(res);
   }
 
+  static Future<Map<String, dynamic>> get(String path) async {
+    final res = await http.get(
+      Uri.parse('${AppConfig.apiBaseUrl}$path'),
+      headers: _headers,
+    );
+    return _decode(res);
+  }
+
   static Future<Map<String, dynamic>> delete(String path) async {
     final res = await http.delete(
       Uri.parse('${AppConfig.apiBaseUrl}$path'),
