@@ -1,0 +1,17 @@
+[
+  {
+    "id": "demo-student",
+    "name": "학생지원센터",
+    "group": "교내"
+  },
+  {
+    "id": "demo-sw",
+    "name": "SW교육센터",
+    "group": "교내"
+  },
+  {
+    "id": "demo-career",
+    "name": "커리어지원센터",
+    "group": "교내"
+  }
+]

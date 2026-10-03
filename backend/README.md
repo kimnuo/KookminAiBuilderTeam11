@@ -14,7 +14,7 @@ python3 -m venv .venv
 
 - API 문서(Swagger): http://localhost:8091/docs
 - 처음엔 DB 가 비어 있다. `POST /api/admin/poll-now` 로 수집을 한 번 돌린다 (출처마다 새 글 8건, 몇 분 걸림)
-- AI 요약은 지금 이 개발 서버의 `claude` CLI(구독)를 부른다. 다른 PC에서 돌리면 요약은 `failed` 가 된다 → 프론트는 `mock/notices.json` 이나 개발 서버 API 를 쓴다
+- AI 요약은 지금 이 개발 서버의 `claude` CLI(구독)를 부른다. 다른 PC에서 돌리면 요약은 `failed` 가 된다 → 프론트는 `mock/live-notices.json`(실제 수집 + AI 결과 20건) 이나 개발 서버 API 를 쓴다. `mock/notices.json` 은 프론트 더미 화면(`?demo=1`)용 가상 공고다
 
 | 환경변수 | 기본값 | 뜻 |
 |---|---|---|

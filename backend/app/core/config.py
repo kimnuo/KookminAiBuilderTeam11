@@ -7,7 +7,7 @@ BACKEND_DIR = Path(__file__).resolve().parents[2]
 REPO_DIR = BACKEND_DIR.parent
 DATA_DIR = BACKEND_DIR / "data"  # .gitignore 됨
 DB_PATH = Path(os.getenv("DB_PATH", DATA_DIR / "app.db"))
-MOCK_NOTICES_PATH = REPO_DIR / "mock" / "notices.json"
+MOCK_NOTICES_PATH = REPO_DIR / "mock" / "live-notices.json"  # mock/notices.json 은 프론트 더미(?demo=1)
 
 # 수집기가 학교 서버에 자기 이름을 밝힌다 (PRD 7절)
 USER_AGENT = "KMU-Team11-NoticeBot/0.2 (K-Builder hackathon)"

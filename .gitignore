@@ -441,4 +441,6 @@ build/
 *.log
 .DS_Store
 .playwright-mcp/
+.playwright-cli/
+output/playwright/
 backend/data/

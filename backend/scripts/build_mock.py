@@ -1,4 +1,4 @@
-"""DB 에 쌓인 실제 수집·AI 결과에서 mock/notices.json 을 만든다 (프론트용, PRD 10절).
+"""DB 에 쌓인 실제 수집·AI 결과에서 mock/live-notices.json 을 만든다 (프론트용 실제 데이터, PRD 10절).
 
 실행: cd backend && .venv/bin/python -m scripts.build_mock
 - 수집(POST /api/admin/poll-now)을 한 번 돌린 뒤 실행한다
