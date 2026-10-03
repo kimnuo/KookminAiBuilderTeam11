@@ -1,6 +1,6 @@
 .notice-list {
   display: grid;
-  gap: 16px;
+  gap: 14px;
 }
 .notice-card {
   background: var(--surface);
@@ -27,10 +27,10 @@
 .source-icon {
   display: grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
-  border-radius: 14px;
+  border-radius: 12px;
   background: var(--blue-soft);
   color: var(--blue-strong);
 }
@@ -66,7 +66,7 @@
   font-size: 20px;
   letter-spacing: -0.5px;
   line-height: 1.5;
-  margin: 18px 0 10px;
+  margin: 14px 0 8px;
   font-weight: 700;
   word-break: keep-all;
   overflow-wrap: anywhere;
@@ -92,8 +92,8 @@
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  margin-top: 18px;
-  padding: 12px 14px;
+  margin-top: 14px;
+  padding: 10px 12px;
   border-radius: var(--control-radius);
   background: var(--blue-soft);
   color: var(--blue-strong);
@@ -112,8 +112,8 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 20px;
-  padding-top: 16px;
+  margin-top: 16px;
+  padding-top: 12px;
   border-top: 1px solid #f2f4f6;
   font-size: 13px;
   color: var(--muted);

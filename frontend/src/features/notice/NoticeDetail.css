@@ -20,11 +20,11 @@
 .detail-dialog {
   position: relative;
   background: var(--surface);
-  border-radius: 28px;
-  width: min(680px, 100%);
-  max-height: min(90dvh, 880px);
+  border-radius: 24px;
+  width: min(760px, 100%);
+  max-height: min(calc(100dvh - 64px), 880px);
   overflow: auto;
-  padding: 36px 32px 24px;
+  padding: 32px 36px 24px;
   box-shadow: 0 16px 64px #191f281f;
   overscroll-behavior: contain;
 }
@@ -109,39 +109,21 @@
 }
 @media (max-width: 800px) {
   .modal-backdrop {
-    padding: 0;
-  }
-  .modal-backdrop[open] {
-    place-items: end center;
+    padding: 12px;
   }
   .detail-dialog {
-    width: 100%;
-    max-height: calc(100dvh - 56px);
-    border-radius: 28px 28px 0 0;
-    padding: 32px 24px calc(24px + env(safe-area-inset-bottom));
-    box-shadow: none;
-  }
-  .detail-dialog::before {
-    content: '';
-    display: block;
-    width: 36px;
-    height: 4px;
-    border-radius: 4px;
-    background: #d1d6db;
-    margin: -20px auto 28px;
+    max-height: calc(100dvh - 24px);
+    border-radius: 20px;
+    padding: 28px 20px 24px;
   }
   .close-button {
-    top: 22px;
-    right: 20px;
+    top: 16px;
+    right: 16px;
   }
   .detail-dialog h2 {
     font-size: 24px;
   }
   .detail-meta {
     font-size: 13px;
-    margin-top: 8px;
-  }
-  .detail-actions {
-    padding-bottom: calc(8px + env(safe-area-inset-bottom));
   }
 }
