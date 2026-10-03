@@ -457,7 +457,7 @@ AI 정확도와 비용 실측은 루트 `README.md`와 `backend/app/ai/README.md
 
 서비스 분류는 `학사·생활` `졸업` `장학` `취업` `행사·대외활동` `기타` 6개다. 서버(`backend/app/core/config.py`)와 화면(`frontend/lib/shared/lib/feed_config.dart`)이 같은 목록을 쓴다.
 
-AI 모듈(`backend/app/ai/config/categories.json`)은 처음 계획한 10개(`학사` `장학` `공모전·행사` `채용·인턴` `특강·교육` `국제교류` `봉사` `생활·시설` `시스템` `기타`)로 정확도를 쟀다. 서비스 6개로 바꾸는 매핑은 다음 단계다.
+AI 모듈(`backend/app/ai/config/categories.json`)은 처음 계획한 10개(`학사` `장학` `공모전·행사` `채용·인턴` `특강·교육` `국제교류` `봉사` `생활·시설` `시스템` `기타`)로 정확도를 쟀다. 서비스 6개로 옮기는 표는 같은 파일의 `serviceMap` 이고, enrich 결과에 `serviceCategories` 로 같이 싣는다(「졸업」은 제목에 졸업이 있으면 코드가 붙인다).
 
 AI 모듈의 게시판별 기본값은 학사(4)→학사, 장학(7)→장학, 공모·행사(9)→공모전·행사, 교외채용(11)→채용·인턴, 특강(6)→특강·교육이다. AI가 여기에 태그를 더한다.
 
