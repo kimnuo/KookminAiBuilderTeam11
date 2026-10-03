@@ -1,7 +1,7 @@
 """포트폴리오 글에서 전화번호·이메일·학번 모양의 글자를 가린다 (PRD 6-1절 원칙 2).
 
-브라우저(프론트)가 먼저 가려서 보내고, 서버도 AI를 부르기 전에 한 번 더 가린다.
-패턴은 config/mask_patterns.json 한 곳에 두고 프론트 참조 구현(mask_reference.js)과 같이 쓴다.
+설계: 브라우저(프론트)가 먼저 가려서 보내고, 서버도 AI를 부르기 전에 한 번 더 가린다. 2026-10-03 제출 기준으로 서버 profile 라우트가 없어서 이 함수는 아직 서버에서 부르지 않는다.
+패턴은 config/mask_patterns.json 한 곳에 두고 옛 JS 참조 구현(mask_reference.js)과 같이 쓴다. Flutter 화면(pii_masker.dart)은 별도 규칙이라 날짜 예외·라벨 붙은 학번 규칙이 없다.
 이름, 생년월일, 개인 사이트 주소는 가리지 못한다. 한계는 JSON 의 note 에 적었다.
 """
 import json

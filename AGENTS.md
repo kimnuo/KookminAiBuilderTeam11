@@ -209,7 +209,7 @@ git diff --cached | grep -nEi "sk-[a-z0-9_-]{16,}|AKIA[0-9A-Z]{16}|auth_token|ap
 
 - 한글이 들어간 경로에서 Python을 돌리면 `PYTHONUTF8=1`을 켠다.
 - 파일명 대소문자가 다르면 로컬에서는 되고 배포에서만 깨진다(5절).
-- 푸시 전에 빌드와 타입 검사를 돌리고, 실패하면 푸시하지 않는다. 예: `npm run build && git push`
+- 푸시 전에 빌드와 타입 검사를 돌리고, 실패하면 푸시하지 않는다. 예: 프론트는 `flutter analyze && flutter test`, AI 모듈은 `python -m pytest app/ai/tests -q`
 
 ## 11. 해커톤 운영
 
