@@ -54,10 +54,12 @@ if not LLM_API_BASE.endswith("/v1"):
 LLM_API_KEY = os.getenv("KMU_AI_API_KEY", "")
 LLM_API_MODEL = os.getenv("KMU_AI_MODEL", "claude-haiku-4-5")
 RECOMMEND_BATCH = 8  # 한 번 호출에 넣는 공지 수
-RECOMMEND_MAX = 60  # 한 요청에서 다룰 최대 공지 수
+RECOMMEND_MAX = 80  # 한 요청에서 다룰 최대 공지 수
+FEED_FIT_LIMIT = 80  # 피드에서 AI 적합도를 매길 상위 글 수 (나머지는 코드 순서 그대로 뒤에)
 
 PAGE_SIZE = 20
-CORS_ORIGINS = os.getenv("CORS_ORIGINS", "*").split(",")
+# 쉼표로 여러 개. 공백을 지우고 빈 칸은 버린다 ("a, b" 의 b 가 안 맞던 문제, 팀 리뷰 11번)
+CORS_ORIGINS = [o.strip() for o in os.getenv("CORS_ORIGINS", "*").split(",") if o.strip()] or ["*"]
 
 # 관리자 전용 엔드포인트(/api/admin/poll-now, /redigest) 열쇠. backend/.env 의 ADMIN_TOKEN.
 # 비어 있으면 그 두 엔드포인트는 503 으로 막힌다 (외부 공개 시 무인증 노출을 막기 위해 기본은 잠김).

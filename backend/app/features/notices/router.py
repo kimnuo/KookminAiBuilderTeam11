@@ -43,10 +43,11 @@ def get_notice(notice_id: str, authorization: str | None = Header(None)) -> Noti
     notice = service.get_notice(notice_id)
     if notice is None:
         raise HTTPException(status_code=404, detail="notice not found")
-    request = with_subscription(RecommendRequest(), authorization)
-    notice.fit = fit_of(notice_id, request)
     subscription = subscription_of(authorization)
     if subscription is not None:
+        # 구독(나의 상황)이 없으면 될 가능성을 판단할 근거가 없다. 0% 를 보여 주거나
+        # 게이트웨이를 기다리게 하지 않고 fit 을 비워 둔다 (팀 QA 2026-10-03)
+        notice.fit = fit_of(notice_id, with_subscription(RecommendRequest(), authorization))
         with_reasons([notice], subscription)  # 추천 이유(코드)를 notice 에 채운다
     return notice
 

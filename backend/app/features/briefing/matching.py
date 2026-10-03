@@ -29,7 +29,8 @@ def audience_reasons(audience: Audience | None, me: Situation) -> list[str] | No
 
 
 def _year(audience: Audience, me: Situation) -> list[str] | None:
-    if not audience.years or me.year is None:
+    # year 0 은 졸업생이다. 학년으로 맞출 대상이 아니라 학년 조건은 보지 않는다
+    if not audience.years or not me.year:
         return []
     return [f"{me.year}학년 대상"] if me.year in audience.years else None
 
