@@ -1,0 +1,13 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "flutter-web-preview",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "frontend/scripts/dev-server.py"
+      ],
+      "port": 4173
+    }
+  ]
+}

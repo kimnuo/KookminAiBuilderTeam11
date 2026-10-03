@@ -1,0 +1,29 @@
+{
+  "name": "가상 사용자",
+  "email": "student@example.com",
+  "school": "국민대학교",
+  "major": "소프트웨어학부",
+  "year": 3,
+  "studentId": "20000000",
+  "portfolioUrl": null,
+  "tags": [
+    "AI·데이터",
+    "개발",
+    "디자인"
+  ],
+  "history": {
+    "skills": [
+      "Python",
+      "JavaScript"
+    ],
+    "certificates": [],
+    "projects": [],
+    "awards": [],
+    "activities": [
+      {
+        "title": "가상 코딩 동아리",
+        "period": "2026.03–2026.09"
+      }
+    ]
+  }
+}
