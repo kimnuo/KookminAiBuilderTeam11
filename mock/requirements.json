@@ -1,0 +1,129 @@
+{
+  "demo-ai-challenge": {
+    "fields": [
+      {
+        "key": "name",
+        "required": true,
+        "evidence": "[가상 공고] 신청자 이름을 입력해 주세요."
+      },
+      {
+        "key": "email",
+        "required": true,
+        "evidence": "[가상 공고] 안내받을 이메일을 입력해 주세요."
+      },
+      {
+        "key": "portfolioUrl",
+        "required": true,
+        "evidence": "[가상 공고] 포트폴리오 링크를 제출해 주세요."
+      }
+    ],
+    "documents": []
+  },
+  "demo-scholarship": {
+    "fields": [
+      {
+        "key": "name",
+        "required": true,
+        "evidence": "[가상 공고] 신청자 이름을 입력해 주세요."
+      },
+      {
+        "key": "email",
+        "required": true,
+        "evidence": "[가상 공고] 안내받을 이메일을 입력해 주세요."
+      },
+      {
+        "key": "studentId",
+        "required": true,
+        "evidence": "[가상 공고] 본인 확인을 위한 학번을 입력해 주세요."
+      }
+    ],
+    "documents": [
+      {
+        "name": "재학증명서",
+        "condition": "재학생",
+        "evidence": "[가상 공고] 재학증명서 1부를 첨부해 주세요."
+      }
+    ]
+  },
+  "demo-internship": {
+    "fields": [
+      {
+        "key": "name",
+        "required": true,
+        "evidence": "[가상 공고] 신청자 이름을 입력해 주세요."
+      },
+      {
+        "key": "email",
+        "required": true,
+        "evidence": "[가상 공고] 안내받을 이메일을 입력해 주세요."
+      },
+      {
+        "key": "portfolioUrl",
+        "required": true,
+        "evidence": "[가상 공고] 포트폴리오 링크를 제출해 주세요."
+      }
+    ],
+    "documents": []
+  },
+  "demo-workshop": {
+    "fields": [
+      {
+        "key": "name",
+        "required": true,
+        "evidence": "[가상 공고] 신청자 이름을 입력해 주세요."
+      },
+      {
+        "key": "email",
+        "required": true,
+        "evidence": "[가상 공고] 안내받을 이메일을 입력해 주세요."
+      }
+    ],
+    "documents": []
+  },
+  "demo-exchange": {
+    "fields": [
+      {
+        "key": "name",
+        "required": true,
+        "evidence": "[가상 공고] 신청자 이름을 입력해 주세요."
+      },
+      {
+        "key": "email",
+        "required": true,
+        "evidence": "[가상 공고] 안내받을 이메일을 입력해 주세요."
+      },
+      {
+        "key": "studentId",
+        "required": true,
+        "evidence": "[가상 공고] 본인 확인을 위한 학번을 입력해 주세요."
+      }
+    ],
+    "documents": [
+      {
+        "name": "재학증명서",
+        "condition": "재학생",
+        "evidence": "[가상 공고] 재학증명서 1부를 첨부해 주세요."
+      }
+    ]
+  },
+  "demo-volunteer": {
+    "fields": [
+      {
+        "key": "name",
+        "required": true,
+        "evidence": "[가상 공고] 신청자 이름을 입력해 주세요."
+      },
+      {
+        "key": "email",
+        "required": true,
+        "evidence": "[가상 공고] 안내받을 이메일을 입력해 주세요."
+      },
+      {
+        "key": "activities",
+        "required": false,
+        "evidence": "[가상 공고] 활동 이력이 있으면 입력해 주세요."
+      }
+    ],
+    "documents": []
+  }
+}

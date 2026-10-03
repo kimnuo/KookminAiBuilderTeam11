@@ -1,0 +1,124 @@
+[
+  {
+    "id": "demo-ai-challenge",
+    "title": "대학생 AI 서비스 아이디어 공모전",
+    "source": {
+      "id": "demo-sw",
+      "name": "SW교육센터",
+      "group": "교내"
+    },
+    "url": "https://example.com/?demo=ai-challenge",
+    "postedAt": "2026-10-03",
+    "department": "SW교육센터",
+    "ai": {
+      "status": "done",
+      "categories": [
+        "공모전·행사"
+      ],
+      "tags": [
+        "AI·데이터",
+        "개발"
+      ],
+      "summary": [
+        "일상의 불편을 해결하는 AI 서비스 아이디어를 모집해요.",
+        "개인 또는 4인 이하 팀으로 참여할 수 있어요.",
+        "기획서와 포트폴리오 링크를 온라인으로 제출해요."
+      ],
+      "deadline": {
+        "date": "2026-10-12",
+        "time": "18:00",
+        "evidence": "[가상 공고] 신청은 2026-10-12 18:00까지 접수합니다."
+      },
+      "audience": {
+        "years": [],
+        "majors": [],
+        "text": "재학생 (가상 조건)"
+      },
+      "apply": "온라인 신청서에 필요 정보와 서류를 제출해 주세요. (가상 신청 방법)"
+    },
+    "recommendationReasons": [
+      "내 관심 태그 「AI·데이터」와 「개발」에 맞는 공고예요."
+    ]
+  },
+  {
+    "id": "demo-scholarship",
+    "title": "2학기 학습 성장 장학금 신청 안내",
+    "source": {
+      "id": "demo-student",
+      "name": "학생지원센터",
+      "group": "교내"
+    },
+    "url": "https://example.com/?demo=scholarship",
+    "postedAt": "2026-10-03",
+    "department": "학생지원센터",
+    "ai": {
+      "status": "done",
+      "categories": [
+        "장학"
+      ],
+      "tags": [
+        "연구"
+      ],
+      "summary": [
+        "자기 주도 학습 계획이 있는 재학생을 지원해요.",
+        "학습 계획서와 재학증명서를 준비해 주세요.",
+        "선발 결과는 신청 시 입력한 이메일로 안내해요."
+      ],
+      "deadline": {
+        "date": "2026-10-05",
+        "time": "18:00",
+        "evidence": "[가상 공고] 신청은 2026-10-05 18:00까지 접수합니다."
+      },
+      "audience": {
+        "years": [],
+        "majors": [],
+        "text": "재학생 (가상 조건)"
+      },
+      "apply": "온라인 신청서에 필요 정보와 서류를 제출해 주세요. (가상 신청 방법)"
+    },
+    "recommendationReasons": [
+      "선택한 관심 분야 「장학」에 해당해요."
+    ]
+  },
+  {
+    "id": "demo-internship",
+    "title": "겨울방학 프론트엔드 개발 인턴 모집",
+    "source": {
+      "id": "demo-career",
+      "name": "커리어지원센터",
+      "group": "교내"
+    },
+    "url": "https://example.com/?demo=internship",
+    "postedAt": "2026-10-03",
+    "department": "커리어지원센터",
+    "ai": {
+      "status": "done",
+      "categories": [
+        "채용·인턴"
+      ],
+      "tags": [
+        "개발",
+        "디자인"
+      ],
+      "summary": [
+        "웹 서비스 개발에 관심 있는 3·4학년을 모집해요.",
+        "기본 정보와 프로젝트 포트폴리오를 제출해 주세요.",
+        "서류 검토 후 개별 인터뷰를 진행해요."
+      ],
+      "deadline": {
+        "date": "2026-10-08",
+        "time": "18:00",
+        "evidence": "[가상 공고] 신청은 2026-10-08 18:00까지 접수합니다."
+      },
+      "audience": {
+        "years": [],
+        "majors": [],
+        "text": "재학생 (가상 조건)"
+      },
+      "apply": "온라인 신청서에 필요 정보와 서류를 제출해 주세요. (가상 신청 방법)"
+    },
+    "recommendationReasons": [
+      "내 태그 「개발」과 학년 조건이 맞아요."
+    ]
+  }
+]
