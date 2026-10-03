@@ -36,10 +36,11 @@ class _MajorYearPageState extends State<MajorYearPage> {
         const SectionLabel('학년'),
         Wrap(
           spacing: 8,
+          runSpacing: 8,
           children: [
-            for (final y in Catalog.years)
+            for (final y in Catalog.subscriptionYears)
               SelectChip(
-                label: '$y학년',
+                label: Catalog.yearLabel(y),
                 selected: _year == y,
                 onTap: () => setState(() => _year = y),
               ),

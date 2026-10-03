@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:kmu_notice/app/router.dart';
+import 'package:kmu_notice/features/onboarding/onboarding_draft.dart';
 import 'package:kmu_notice/features/profile/profile_store.dart';
+import 'package:kmu_notice/shared/lib/catalog.dart';
+import 'package:kmu_notice/shared/lib/routes.dart';
 
 import 'test_helpers.dart';
 
@@ -32,5 +36,18 @@ void main() {
 
     final saved = await ProfileStore.load();
     expect(saved.tags, ['AI·데이터']);
+  });
+
+  testWidgets('졸업생을 고르면 학년 값 0으로 넘어간다', (tester) async {
+    await pumpApp(tester);
+    appRouter.push(Routes.onboardingMajor);
+    await tester.pumpAndSettle();
+
+    await tapText(tester, '졸업생');
+    await tapText(tester, '소프트웨어학부');
+    await tapText(tester, '다음');
+
+    expect(OnboardingDraft.year, Catalog.graduateYear);
+    expect(find.text('어떤 소식을\n받아 볼까요?'), findsOneWidget);
   });
 }
