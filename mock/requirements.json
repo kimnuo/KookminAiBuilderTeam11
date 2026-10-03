@@ -125,5 +125,35 @@
       }
     ],
     "documents": []
+  },
+  "demo-sw-seminar": {
+    "fields": [
+      {
+        "key": "name",
+        "required": true,
+        "evidence": "[가상 공고] 신청자 이름을 입력해 주세요."
+      },
+      {
+        "key": "email",
+        "required": true,
+        "evidence": "[가상 공고] 안내받을 이메일을 입력해 주세요."
+      }
+    ],
+    "documents": []
+  },
+  "demo-supporters": {
+    "fields": [
+      {
+        "key": "name",
+        "required": true,
+        "evidence": "[가상 공고] 신청자 이름을 입력해 주세요."
+      },
+      {
+        "key": "email",
+        "required": true,
+        "evidence": "[가상 공고] 안내받을 이메일을 입력해 주세요."
+      }
+    ],
+    "documents": []
   }
 }

@@ -6,12 +6,22 @@
   },
   {
     "id": "demo-sw",
-    "name": "SW교육센터",
-    "group": "교내"
+    "name": "국민대 SW중심대학사업단",
+    "group": "국민대학교"
   },
   {
     "id": "demo-career",
     "name": "커리어지원센터",
     "group": "교내"
+  },
+  {
+    "id": "demo-sw-college",
+    "name": "국민대 SW대학",
+    "group": "국민대학교"
+  },
+  {
+    "id": "demo-external",
+    "name": "대외활동 정보",
+    "group": "외부"
   }
 ]

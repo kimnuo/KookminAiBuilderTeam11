@@ -1,13 +1,9 @@
 import { getNotice } from '../../shared/api/api-client.js';
+import { groupLabels } from '../../shared/lib/notice-groups.js';
 import { icon } from '../../shared/ui/icons.js';
 import { escapeHtml, originalLink } from '../../shared/lib/html.js';
 import { validDeadline } from '../../shared/lib/deadline.js';
-import {
-  noticeAi,
-  summaries,
-  recommendationReasons,
-  categoriesFor,
-} from '../../shared/lib/notice-data.js';
+import { noticeAi, summaries, recommendationReasons } from '../../shared/lib/notice-data.js';
 
 function detailMarkup(notice) {
   const ai = noticeAi(notice);
@@ -18,7 +14,7 @@ function detailMarkup(notice) {
     return `${meta}${title}${notice.ai?.status === 'failed' ? '' : '<p class="detail-summary">AI가 공고를 정리하고 있어요.</p>'}${link}`;
   const deadline = validDeadline(ai.deadline);
   const reasons = recommendationReasons(notice);
-  return `${meta}${title}<span class="category-pill">${escapeHtml(categoriesFor(notice)[0] || '공지')}</span>
+  return `${meta}${title}<span class="category-pill">${escapeHtml(groupLabels(notice).join(' · '))}</span>
     <p class="detail-summary">${summaries(notice).map(escapeHtml).join('<br />') || '요약을 확인할 수 없어요.'}</p>
     ${reasons.length ? `<div class="reason">${icon('check-circle')}${escapeHtml(reasons[0])}</div>` : ''}
     ${section('마감일', deadline ? `${deadline.date}${deadline.time ? ` ${deadline.time}` : ' (시각은 원문 확인)'}` : '원문 확인', deadline?.evidence)}

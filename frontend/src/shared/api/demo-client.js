@@ -11,10 +11,12 @@ async function readFixture(name) {
 
 function loadData() {
   dataPromise ??= Promise.all(
-    ['notices', 'more-notices', 'sources', 'requirements', 'profile'].map(readFixture),
-  ).then(([notices, more, sources, requirements, profile]) => {
+    ['notices', 'more-notices', 'campus-notices', 'sources', 'requirements', 'profile'].map(
+      readFixture,
+    ),
+  ).then(([notices, more, campus, sources, requirements, profile]) => {
     demoState.profile = profile;
-    return { notices: [...notices, ...more], sources, requirements };
+    return { notices: [...notices, ...more, ...campus], sources, requirements };
   });
   return dataPromise;
 }

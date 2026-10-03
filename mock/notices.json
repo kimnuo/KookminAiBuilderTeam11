@@ -4,12 +4,12 @@
     "title": "대학생 AI 서비스 아이디어 공모전",
     "source": {
       "id": "demo-sw",
-      "name": "SW교육센터",
-      "group": "교내"
+      "name": "국민대 SW중심대학사업단",
+      "group": "국민대학교"
     },
     "url": "https://example.com/?demo=ai-challenge",
     "postedAt": "2026-10-03",
-    "department": "SW교육센터",
+    "department": "국민대 SW중심대학사업단",
     "ai": {
       "status": "done",
       "categories": [

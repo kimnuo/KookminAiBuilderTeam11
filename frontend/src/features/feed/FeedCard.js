@@ -1,11 +1,11 @@
 import { escapeHtml, originalLink } from '../../shared/lib/html.js';
 import { deadlineLabel } from '../../shared/lib/deadline.js';
+import { groupLabels } from '../../shared/lib/notice-groups.js';
 import { icon } from '../../shared/ui/icons.js';
 import {
   noticeAi,
   summaries,
   recommendationReasons,
-  categoriesFor,
   tagsFor,
 } from '../../shared/lib/notice-data.js';
 
@@ -32,11 +32,10 @@ function cardHeader(notice, ai) {
 }
 
 function cardFooter(notice, failed) {
-  const category = categoriesFor(notice)[0];
+  const categories = failed ? [] : groupLabels(notice).slice(0, 2);
   const tags = tagsFor(notice).slice(0, 2);
   return `<div class="card-footer"><div class="card-meta">
-    ${category ? `<span class="category-pill">${escapeHtml(category)}</span>` : ''}
-    <span>${escapeHtml(notice.department || notice.source?.group || '')}</span>
+    ${categories.map((category) => `<span class="category-pill">${escapeHtml(category)}</span>`).join('')}
     <span class="tags">${tags.map((tag) => `<span class="tag">#${escapeHtml(tag)}</span>`).join('')}</span>
     </div>${failed ? '' : `<span class="card-open">자세히 보기 ${icon('chevron-right')}</span>`}
   </div>`;

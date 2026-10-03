@@ -4,12 +4,12 @@
     "title": "처음 시작하는 데이터 분석 실습 특강",
     "source": {
       "id": "demo-sw",
-      "name": "SW교육센터",
-      "group": "교내"
+      "name": "국민대 SW중심대학사업단",
+      "group": "국민대학교"
     },
     "url": "https://example.com/?demo=workshop",
     "postedAt": "2026-10-03",
-    "department": "SW교육센터",
+    "department": "국민대 SW중심대학사업단",
     "ai": {
       "status": "done",
       "categories": [

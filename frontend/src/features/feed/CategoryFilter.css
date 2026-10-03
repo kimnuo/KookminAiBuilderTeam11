@@ -1,0 +1,109 @@
+#category-navigation {
+  margin-top: 32px;
+}
+.category-all {
+  width: 100%;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--secondary);
+  font-size: 15px;
+  font-weight: 600;
+}
+.category-all[aria-pressed='true'] {
+  color: var(--blue-strong);
+  background: var(--blue-soft);
+}
+.category-all > span:last-child {
+  margin-left: auto;
+  font-size: 13px;
+}
+.category-options {
+  border: 0;
+  padding: 0;
+  margin: 24px 0 0;
+  min-width: 0;
+}
+.category-options legend {
+  width: 100%;
+  padding: 0 12px 12px;
+  color: var(--secondary);
+  font-size: 13px;
+  font-weight: 600;
+}
+.category-options legend small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 400;
+  margin-top: 4px;
+}
+.category-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: var(--secondary);
+  font-size: 14px;
+  cursor: pointer;
+}
+.category-option:hover {
+  background: var(--background);
+}
+.category-option:has(input:checked) {
+  background: var(--blue-soft);
+  color: var(--blue-strong);
+  font-weight: 600;
+}
+.category-option input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--blue-strong);
+  flex-shrink: 0;
+}
+.category-option .icon {
+  display: none;
+}
+.category-count {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--muted);
+}
+#mobile-categories {
+  display: none;
+}
+@media (max-width: 800px) {
+  #mobile-categories {
+    display: block;
+    background: var(--surface);
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 28px;
+  }
+  #mobile-categories .category-all {
+    min-height: 44px;
+    padding: 10px 12px;
+  }
+  #mobile-categories .category-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+    margin-top: 16px;
+  }
+  #mobile-categories legend {
+    padding-left: 4px;
+  }
+  #mobile-categories .category-option {
+    padding: 10px 6px;
+    font-size: 13px;
+    gap: 6px;
+  }
+}
