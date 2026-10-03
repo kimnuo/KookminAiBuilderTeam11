@@ -443,3 +443,12 @@ build/
 .playwright-mcp/
 .playwright-cli/
 output/playwright/
+
+# Team 11: keys and launch scripts (AGENTS.md 8)
+code-kmu.ps1
+code-kmu.sh
+*.pem
+*.key
+.aws/
+credentials.json
+secrets.json

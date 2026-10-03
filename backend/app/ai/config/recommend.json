@@ -1,0 +1,17 @@
+{
+  "note": "추천 점수 가중치와 이유 문구 (PRD 6-1절 「추천 순서 (코드)」). 초기값이고 표본으로 아직 확인하지 않았다. yearMismatch 는 다른 점수 합의 최댓값(태그 3개 + 분야 + 전공)보다 크게 깎아서, 대상 학년이 아닌 글을 빼지 않고 맨 아래로 보낸다. 이 관계는 테스트가 검사한다.",
+  "weights": {
+    "tag": 3,
+    "category": 2,
+    "yearMatch": 2,
+    "majorMatch": 2,
+    "yearMismatch": -20
+  },
+  "reasons": {
+    "tags": "내 태그 {names}{josa} 겹침",
+    "categories": "관심 분야 {names}",
+    "yearMatch": "{year}학년 대상",
+    "yearMismatch": "{years}학년 대상 (내 학년 아님)",
+    "majorMatch": "내 전공 「{major}」 대상"
+  }
+}

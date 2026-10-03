@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LLM 이 돌려주는 지원 필요 항목 (status 는 코드가 붙인다)",
+  "$comment": "고정 키 목록은 $defs.fieldKey 한 곳에 둔다. 항목의 key 는 문자열만 검사하고, 목록 밖 key 는 requirements.py 가 그 항목만 버린다. 키 하나 틀렸다고 응답 전체를 failed 로 만들지 않기 위해서다.",
+  "$defs": {
+    "fieldKey": {
+      "enum": ["name", "phone", "email", "studentId", "school", "major", "year", "birthDate",
+               "portfolioUrl", "certificates", "awards", "activities", "other"]
+    }
+  },
+  "type": "object",
+  "required": ["fields", "documents"],
+  "properties": {
+    "fields": {
+      "type": "array",
+      "maxItems": 30,
+      "items": {
+        "type": "object",
+        "required": ["key", "required", "evidence"],
+        "properties": {
+          "key": { "type": "string" },
+          "label": { "type": ["string", "null"] },
+          "required": { "type": "boolean" },
+          "evidence": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "documents": {
+      "type": "array",
+      "maxItems": 30,
+      "items": {
+        "type": "object",
+        "required": ["name", "condition", "evidence"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "condition": { "type": ["string", "null"] },
+          "evidence": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}
