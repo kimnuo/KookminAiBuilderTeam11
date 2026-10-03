@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LLM 이 돌려주는 포트폴리오 이력 (status 는 코드가 붙인다, PRD 6-1절 extractProfile)",
+  "type": "object",
+  "required": ["skills", "tags", "projects", "awards", "activities"],
+  "$defs": {
+    "text": { "type": "string", "minLength": 1 },
+    "maybe": { "type": ["string", "null"] }
+  },
+  "properties": {
+    "skills": { "type": "array", "items": { "type": "string" } },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "projects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "evidence"],
+        "properties": {
+          "title": { "$ref": "#/$defs/text" },
+          "role": { "$ref": "#/$defs/maybe" },
+          "period": { "$ref": "#/$defs/maybe" },
+          "evidence": { "$ref": "#/$defs/text" }
+        }
+      }
+    },
+    "awards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "evidence"],
+        "properties": {
+          "title": { "$ref": "#/$defs/text" },
+          "date": { "$ref": "#/$defs/maybe" },
+          "evidence": { "$ref": "#/$defs/text" }
+        }
+      }
+    },
+    "activities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "evidence"],
+        "properties": {
+          "title": { "$ref": "#/$defs/text" },
+          "period": { "$ref": "#/$defs/maybe" },
+          "evidence": { "$ref": "#/$defs/text" }
+        }
+      }
+    }
+  }
+}

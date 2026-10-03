@@ -2,7 +2,7 @@
 
 사용자가 요청한 UI 미리보기용 가상 공고와 가상 인물입니다. 실제 수집 결과가 아니며 대회에서 실제 수집을 시연하는 용도로 사용하지 않습니다.
 
-- `notices.json`, `more-notices.json`: 공고 6개, Notice 형식
+- `notices.json`, `more-notices.json`, `campus-notices.json`: 공고 8개, Notice 형식
 - `sources.json`: 가상 출처
 - `requirements.json`: 공고 ID별 fields/documents 응답
 - `profile.json`: 가상 프로필, 브라우저 메모리에서만 사용
