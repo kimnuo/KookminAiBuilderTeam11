@@ -1,5 +1,7 @@
 import 'package:go_router/go_router.dart';
 
+import 'notice_dialog.dart';
+
 import 'package:kmu_notice/features/auth/consent_page.dart';
 import 'package:kmu_notice/features/auth/login_page.dart';
 import 'package:kmu_notice/features/auth/signup_page.dart';
@@ -51,11 +53,8 @@ final appRouter = GoRouter(
     GoRoute(path: Routes.settings, builder: (_, _) => const SettingsPage()),
     GoRoute(
       path: Routes.feed,
-      builder: (context, _) => FeedPage(
-        onNotice: (n) => context.push(
-          '/notice/${Uri.encodeComponent(n.id)}${FeedConfig.demo ? '?demo=1' : ''}',
-        ),
-      ),
+      builder: (context, _) =>
+          FeedPage(onNotice: (n) => openNoticeDialog(context, n.id)),
     ),
     GoRoute(
       path: '/notice/:id',

@@ -12,8 +12,9 @@ import 'requirement_field.dart';
 import 'requirement_document.dart';
 
 class ApplyPanel extends StatefulWidget {
-  const ApplyPanel({super.key, required this.notice});
+  const ApplyPanel({super.key, required this.notice, this.onEdit});
   final Notice notice;
+  final Future<void> Function()? onEdit;
   @override
   State<ApplyPanel> createState() => _ApplyPanelState();
 }
@@ -87,6 +88,10 @@ class _ApplyPanelState extends State<ApplyPanel> {
   }
 
   Future<void> _edit() async {
+    if (widget.onEdit != null) {
+      await widget.onEdit!();
+      return;
+    }
     await context.push(Routes.applicantInfo);
     if (mounted) setState(() => _values = applicationValues());
   }

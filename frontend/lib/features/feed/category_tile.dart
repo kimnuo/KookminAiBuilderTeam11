@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:kmu_notice/shared/lib/feed_config.dart';
 import 'package:kmu_notice/shared/lib/notice.dart';
-import 'package:kmu_notice/shared/lib/notice_deadline.dart';
 import 'package:kmu_notice/shared/ui/app_colors.dart';
+
+import 'category_previews.dart';
 
 class CategoryTile extends StatelessWidget {
   const CategoryTile({
@@ -12,11 +13,13 @@ class CategoryTile extends StatelessWidget {
     required this.selected,
     required this.onSelect,
     required this.onOpen,
+    required this.onNotice,
   });
   final NoticeGroup group;
   final List<Notice> notices;
   final bool selected;
   final VoidCallback onSelect, onOpen;
+  final ValueChanged<Notice> onNotice;
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (_, size) {
@@ -34,37 +37,44 @@ class CategoryTile extends StatelessWidget {
           onTap: onOpen,
           child: Padding(
             padding: EdgeInsets.all(tiny ? (size.maxHeight < 65 ? 4 : 8) : 14),
-            child: _content(size.maxHeight, tiny),
+            child: _content(tiny),
           ),
         ),
       );
     },
   );
-  Widget _content(double height, bool tiny) => Column(
+  Widget _content(bool tiny) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       _top(tiny),
-      if (!tiny) ...[const SizedBox(height: 8), _label(15)],
-      const Spacer(),
-      if (height > 155 && notices.isNotEmpty) ...[
-        Text(
-          notices.first.title,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 13, color: AppColors.grey700),
+      if (!tiny) ...[
+        const SizedBox(height: 10),
+        Expanded(
+          child: CategoryPreviews(notices: notices, onNotice: onNotice),
         ),
-        const SizedBox(height: 8),
-      ],
-      _bottom(height, tiny),
+        const SizedBox(height: 6),
+      ] else
+        const Spacer(),
+      _bottom(tiny),
     ],
   );
   Widget _top(bool tiny) => Row(
     children: [
       if (!tiny) ...[
-        Icon(group.icon, color: group.color, size: 24),
-        const Spacer(),
+        Icon(group.icon, color: group.color, size: 22),
+        const SizedBox(width: 8),
       ],
-      if (tiny) Expanded(child: _label(12)),
+      Expanded(
+        child: Text(
+          group.label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: tiny ? 12 : 14,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
       SizedBox(
         width: 28,
         height: 28,
@@ -77,33 +87,27 @@ class CategoryTile extends StatelessWidget {
       ),
     ],
   );
-  Widget _bottom(double height, bool tiny) => Row(
+  Widget _bottom(bool tiny) => Row(
     children: [
       Text(
         '${notices.length}개',
         style: TextStyle(
-          fontSize: tiny ? 12 : 17,
+          fontSize: tiny ? 12 : 15,
           fontWeight: FontWeight.w700,
           color: group.color,
         ),
       ),
       const Spacer(),
-      if (height > 185 && notices.isNotEmpty)
-        Text(
-          deadlineLabel(notices.first),
-          style: const TextStyle(fontSize: 11, color: AppColors.grey500),
+      if (!tiny)
+        const Text(
+          '더 보기',
+          style: TextStyle(fontSize: 11, color: AppColors.grey500),
         ),
       Icon(
         Icons.chevron_right_rounded,
-        size: tiny ? 14 : 20,
+        size: tiny ? 14 : 18,
         color: AppColors.grey500,
       ),
     ],
-  );
-  Widget _label(double size) => Text(
-    group.label,
-    maxLines: 1,
-    overflow: TextOverflow.ellipsis,
-    style: TextStyle(fontSize: size, fontWeight: FontWeight.w700),
   );
 }

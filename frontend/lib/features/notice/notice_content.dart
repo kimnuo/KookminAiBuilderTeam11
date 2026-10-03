@@ -6,6 +6,7 @@ import 'package:kmu_notice/shared/lib/notice_search.dart';
 import 'package:kmu_notice/shared/ui/app_colors.dart';
 
 import 'detail_section.dart';
+import 'notice_media.dart';
 
 class NoticeContent extends StatelessWidget {
   const NoticeContent({
@@ -41,9 +42,40 @@ class NoticeContent extends StatelessWidget {
         style: const TextStyle(color: AppColors.grey500),
       ),
       const SizedBox(height: 32),
-      ..._sections(),
+      LayoutBuilder(builder: (_, size) => _body(size.maxWidth)),
     ],
   );
+
+  Widget _body(double width) {
+    final hasMedia =
+        notice.previewMedia.isNotEmpty || notice.attachments.isNotEmpty;
+    final sections = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: _sections(),
+    );
+    if (!hasMedia) return sections;
+    if (width >= 620) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: sections),
+          const SizedBox(width: 24),
+          SizedBox(width: 220, child: NoticeMedia(notice: notice)),
+        ],
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 260),
+          child: NoticeMedia(notice: notice),
+        ),
+        const SizedBox(height: 24),
+        sections,
+      ],
+    );
+  }
 
   List<Widget> _sections() {
     if (notice.ai.isEmpty) {
