@@ -441,3 +441,4 @@ build/
 *.log
 .DS_Store
 .playwright-mcp/
+backend/data/
