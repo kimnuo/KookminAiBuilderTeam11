@@ -56,7 +56,11 @@ class WelcomePage extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: SafeArea(
-        child: Center(
+        // Center 를 쓰면 하단 바가 세로로 화면 전체를 먹어 본문이 사라진다.
+        // Align + heightFactor 1 은 가로만 가운데로 모으고 높이는 자식에 맞춘다 (2026-10-03)
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          heightFactor: 1,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: _maxWidth),
             child: Column(
