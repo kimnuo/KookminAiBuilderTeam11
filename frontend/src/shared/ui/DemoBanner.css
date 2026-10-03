@@ -1,0 +1,37 @@
+.demo-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  margin-top: 24px;
+  border: 1px solid #bdd7ff;
+  border-radius: 14px;
+  color: var(--blue-strong);
+  background: var(--blue-soft);
+}
+.demo-banner strong {
+  font-size: 15px;
+}
+.demo-banner p {
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 4px 0 0;
+}
+.demo-banner a {
+  flex-shrink: 0;
+  padding: 10px 0;
+  color: var(--blue-strong);
+  font-size: 14px;
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+@media (max-width: 800px) {
+  .demo-banner {
+    align-items: start;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 12px;
+    padding: 16px;
+  }
+}

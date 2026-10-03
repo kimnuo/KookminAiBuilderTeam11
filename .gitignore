@@ -441,6 +441,8 @@ build/
 *.log
 .DS_Store
 .playwright-mcp/
+.playwright-cli/
+output/playwright/
 
 # Team 11: keys and launch scripts (AGENTS.md 8)
 code-kmu.ps1
