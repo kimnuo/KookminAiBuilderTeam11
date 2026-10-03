@@ -95,7 +95,7 @@ AI 정확도와 비용 실측은 루트 `README.md`와 `backend/app/ai/README.md
   - 프롬프트를 바꾸면 `POST /api/admin/redigest` 로 저장된 글을 다시 요약한다.
   - AI 모듈(main `enrich.py`)은 키(`KMU_AI_API_KEY`)가 없으면 LLM을 만들 때 오류로 멈춘다. 평가 스크립트는 `--yes` 가 없으면 호출 수만 알리고 멈춘다.
 - **수용 기준**
-  - main `backend/app/ai/tests/test_enrich.py` 의 `test_evidence_not_in_text_is_dropped`, `test_two_bad_answers_fail_with_board_default` 가 통과한다. AI 모듈 테스트 전체는 150개 통과, 17개 건너뜀이다(2026-10-03, LLM 없이 실행). 건너뛴 17개는 공지 본문 캐시(`eval/.cache`, 커밋 안 함)가 있어야 도는 테스트이고, `fetch_bodies` 로 캐시를 받으면 167개가 모두 통과한다.
+  - main `backend/app/ai/tests/test_enrich.py` 의 `test_evidence_not_in_text_is_dropped`, `test_two_bad_answers_fail_with_board_default` 가 통과한다. AI 모듈 테스트 전체는 159개 통과, 17개 건너뜀이다(2026-10-03, LLM 없이 실행). 건너뛴 17개는 공지 본문 캐시(`eval/.cache`, 커밋 안 함)가 있어야 도는 테스트이고, `fetch_bodies` 로 캐시를 받으면 176개가 모두 통과한다.
   - 실측(AI 모듈, 표본 20건): 본문 공지 14건에서 AI 14/14, LLM 없는 기준선 4/14다. 포스터 공지까지 합쳐 실제 마감이 있는 16건은 AI 16/16, 기준선 4/16이다. 정답은 사람이 확인하기 전 초안이고 프롬프트를 이 표본으로 썼으므로 표본 안 점수다. 자세한 값은 `backend/app/ai/README.md`.
   - 서버의 `verify.py` 에는 자동 테스트가 없다.
 

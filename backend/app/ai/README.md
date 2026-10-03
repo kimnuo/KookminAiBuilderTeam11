@@ -26,7 +26,7 @@
 | `recommend.py`, `config/recommend.json` | 추천 점수와 정렬 (순수 코드) |
 | `requirements.py` | `extract_requirements(notice, llm) -> {status, fields, documents}` (PRD 6-1절 P3). 스키마 검사, 1회 재시도, 목록 밖 key 는 그 항목만 버림. 근거가 제목·본문에 글자 그대로(공백 무시) 없거나, 서류 이름·other label 이 근거 안에 없으면 버림 |
 | `prompts/requirements.md`, `schemas/requirements.schema.json` | 지원 필요 항목 프롬프트와 출력 스키마. 고정 키 목록은 스키마 `$defs.fieldKey` 한 곳에 둔다 |
-| `eval/` | 정답셋(enrich 20건, 지원 준비 8건)과 채점 스크립트 |
+| `eval/` | 정답셋(enrich 20건, 지원 준비 8건)과 채점 스크립트. 2026-10-03 실호출 결과 원자료는 `eval/RESULTS.md` |
 
 ## 백엔드에서 쓰는 법
 
