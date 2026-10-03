@@ -2,6 +2,7 @@ import { config } from '../../shared/config.js';
 import { getFeed, getSources } from '../../shared/api/api-client.js';
 import { escapeHtml } from '../../shared/lib/html.js';
 import { filterNotices } from '../../shared/lib/notice-data.js';
+import { activeTags, rankByTags } from '../../shared/lib/profile-tags.js';
 import { feedCard } from './FeedCard.js';
 
 class FeedPage {
@@ -30,12 +31,13 @@ class FeedPage {
   }
 
   render() {
-    const items = filterNotices(this.state.notices, {
+    const filtered = filterNotices(this.state.notices, {
       query: this.query.value,
       category: this.category.value,
       source: this.source.value,
       sort: this.state.sort,
     });
+    const items = this.state.sort === 'recommend' ? rankByTags(filtered, activeTags()) : filtered;
     document.getElementById('result-count').textContent = String(items.length);
     this.list.innerHTML = items.map((item) => feedCard(item, this.state.sort)).join('');
     document.getElementById('empty-state').hidden = items.length > 0;

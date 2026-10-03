@@ -47,3 +47,16 @@ export async function getNotice(id, signal) {
 export function getRequirements(id, signal) {
   return request(`/notices/${encodeURIComponent(id)}/requirements`, signal);
 }
+
+export async function getProfileTags(signal) {
+  const url = config.profileTagsEndpoint || `${config.demoBase}/profile-tags.json`;
+  const response = await fetch(url, {
+    credentials: 'same-origin',
+    headers: { Accept: 'application/json' },
+    signal,
+  });
+  if (!response.ok) throw new Error(`프로필 태그를 불러오지 못했어요 (${response.status})`);
+  const data = await response.json();
+  const tags = Array.isArray(data) ? data : data?.tags;
+  return Array.isArray(tags) ? tags.filter((tag) => config.tags.includes(tag)) : [];
+}

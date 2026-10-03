@@ -16,7 +16,8 @@ export function recommendationReasons(notice) {
   if (!noticeAi(notice)) return [];
   const reasons =
     notice.recommendationReasons ?? notice.reasons ?? notice.recommendationReason ?? [];
-  return (Array.isArray(reasons) ? reasons : [reasons])
+  const tagReasons = (notice.matchedTags ?? []).map((tag) => `내 태그 「${tag}」와 겹침`);
+  return [...tagReasons, ...(Array.isArray(reasons) ? reasons : [reasons])]
     .map((item) => (typeof item === 'string' ? item : item?.text || item?.label))
     .filter((item) => typeof item === 'string' && item.trim());
 }
@@ -28,8 +29,8 @@ export function categoriesFor(notice) {
 }
 
 export function tagsFor(notice) {
-  const values = noticeAi(notice)?.tags;
-  return Array.isArray(values) ? values.filter((item) => config.tags.includes(item)) : [];
+  const values = [...(noticeAi(notice)?.tags ?? []), ...(notice.matchedTags ?? [])];
+  return [...new Set(values)].filter((item) => config.tags.includes(item));
 }
 
 export function filterNotices(notices, filters, now = new Date()) {
