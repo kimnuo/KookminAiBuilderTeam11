@@ -13,7 +13,7 @@
     "ai": {
       "status": "done",
       "categories": [
-        "특강·교육"
+        "행사·대외활동"
       ],
       "tags": [
         "AI·데이터",
@@ -54,7 +54,7 @@
     "ai": {
       "status": "done",
       "categories": [
-        "국제교류"
+        "학사·생활"
       ],
       "tags": [
         "외국어·글로벌"
@@ -94,7 +94,7 @@
     "ai": {
       "status": "done",
       "categories": [
-        "봉사"
+        "행사·대외활동"
       ],
       "tags": [
         "개발",
@@ -120,5 +120,32 @@
     "recommendationReasons": [
       "내 태그 「개발」을 활용할 수 있는 활동이에요."
     ]
+  },
+  {
+    "id": "demo-campus-channels",
+    "title": "학교 공식 온라인 채널 모음 안내",
+    "source": {
+      "id": "demo-student",
+      "name": "학생지원센터",
+      "group": "교내"
+    },
+    "url": "https://example.com/?demo=campus-channels",
+    "postedAt": "2026-10-03",
+    "department": "학생지원센터",
+    "ai": {
+      "status": "done",
+      "categories": [
+        "기타"
+      ],
+      "tags": [],
+      "summary": [
+        "학교 소식을 확인하는 온라인 채널을 한곳에서 안내해요.",
+        "게시판과 공식 채널의 이용 방법을 확인해 주세요."
+      ],
+      "deadline": null,
+      "audience": null,
+      "apply": null
+    },
+    "recommendationReasons": []
   }
 ]

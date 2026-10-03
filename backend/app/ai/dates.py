@@ -10,7 +10,8 @@ import unicodedata
 from dataclasses import dataclass
 from datetime import date
 
-_FULL = re.compile(r"(?<![0-9])([0-9]{4}|[0-9]{2})\s*[./-]\s*([0-9]{1,2})\s*[./-]\s*([0-9]{1,2})(?![0-9])")
+# 연·월·일 구분자는 같아야 한다. 다르면 "09.01 - 09.22"(포스터의 9/1~9/22)가 2009-01-09 로 읽힌다.
+_FULL = re.compile(r"(?<![0-9])([0-9]{4}|[0-9]{2})\s*([./-])\s*([0-9]{1,2})\s*\2\s*([0-9]{1,2})(?![0-9])")
 _KOR = re.compile(r"(?:([0-9]{4})\s*년\s*)?([0-9]{1,2})\s*월\s*([0-9]{1,2})\s*일")
 _MD = re.compile(r"(?<![0-9.])([0-9]{1,2})\s*[./]\s*([0-9]{1,2})(?![0-9])(?!\s*(?:배|%|점|만점|명|원|개|시간|학점|kg|km))")
 _DAY = re.compile(r"~\s*([0-9]{1,2})\s*(?:\.|일)")
@@ -53,8 +54,13 @@ def find_dates(text: str) -> list[DateToken]:
     for pat, kind in ((_FULL, "ymd"), (_KOR, "kor"), (_MD, "md")):
         masked = _mask(s, [(t.start, t.end) for t in toks])
         for m in pat.finditer(masked):
-            y = _year(m.group(1)) if kind != "md" else None
-            mo, d = (int(m.group(1)), int(m.group(2))) if kind == "md" else (int(m.group(2)), int(m.group(3)))
+            g = m.groups()
+            if kind == "md":
+                y, mo, d = None, int(g[0]), int(g[1])
+            elif kind == "ymd":
+                y, mo, d = _year(g[0]), int(g[2]), int(g[3])   # g[1] 은 구분자
+            else:
+                y, mo, d = _year(g[0]), int(g[1]), int(g[2])
             toks.append(DateToken(y, mo, d, m.start(), m.end()))
     toks.sort(key=lambda t: t.start)
     masked = _mask(s, [(t.start, t.end) for t in toks])

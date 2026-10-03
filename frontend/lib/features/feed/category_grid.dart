@@ -13,19 +13,17 @@ class CategoryGrid extends StatelessWidget {
     required this.selected,
     required this.onSelect,
     required this.onOpen,
+    required this.onNotice,
   });
   final List<Notice> notices;
   final Set<String> selected;
   final ValueChanged<String> onSelect;
   final ValueChanged<NoticeGroup> onOpen;
+  final ValueChanged<Notice> onNotice;
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, size) {
-      final columns = size.maxWidth >= 1100
-          ? 5
-          : size.maxWidth >= 680
-          ? 4
-          : 2;
+      final columns = size.maxWidth >= 900 ? 3 : 2;
       final rows = (noticeGroups.length / columns).ceil();
       final gap = size.maxHeight < 350 ? 8.0 : 14.0;
       final height = (size.maxHeight - gap * (rows - 1)) / rows;
@@ -47,6 +45,7 @@ class CategoryGrid extends StatelessWidget {
                 selected: selected.contains(group.id),
                 onSelect: () => onSelect(group.id),
                 onOpen: () => onOpen(group),
+                onNotice: onNotice,
               ),
             )
             .toList(),

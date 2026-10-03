@@ -1,0 +1,33 @@
+{
+  "demo-ai-challenge": {
+    "poster": {
+      "asset": "assets/demo/media/ai-challenge-poster.png",
+      "alt": "대학생 AI 서비스 아이디어 공모전 포스터"
+    },
+    "files": [
+      {
+        "asset": "assets/demo/media/ai-challenge-guide.pdf",
+        "name": "공모전 참가 안내.pdf",
+        "type": "pdf"
+      }
+    ]
+  },
+  "demo-scholarship": {
+    "files": [
+      {
+        "asset": "assets/demo/media/scholarship-form.pdf",
+        "name": "장학금 신청 양식.pdf",
+        "type": "pdf"
+      }
+    ]
+  },
+  "demo-sw-seminar": {
+    "files": [
+      {
+        "asset": "assets/demo/media/graduation-guide.pdf",
+        "name": "졸업 프로젝트 설명회 안내.pdf",
+        "type": "pdf"
+      }
+    ]
+  }
+}

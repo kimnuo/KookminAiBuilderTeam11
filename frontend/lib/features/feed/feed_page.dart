@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:kmu_notice/shared/lib/feed_config.dart';
 import 'package:kmu_notice/shared/lib/notice.dart';
 import 'package:kmu_notice/shared/lib/notice_search.dart';
 import 'package:kmu_notice/shared/ui/app_colors.dart';
@@ -54,17 +53,6 @@ class _FeedPageState extends State<FeedPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         DashboardHeader(compact: compact),
-        if (FeedConfig.demo)
-          Padding(
-            padding: const EdgeInsets.only(top: 4),
-            child: Text(
-              '더미 데이터 미리보기 · 실제 공고가 아니에요',
-              style: TextStyle(
-                fontSize: compact ? 11 : 12,
-                color: AppColors.grey500,
-              ),
-            ),
-          ),
         SizedBox(height: compact ? 8 : 20),
         FeedToolbar(
           controller: _controller,
@@ -75,15 +63,6 @@ class _FeedPageState extends State<FeedPage> {
         const SizedBox(height: 8),
         Expanded(child: _content()),
         const SizedBox(height: 8),
-        Text(
-          '카드를 누르면 더 보기 · 체크박스로 여러 카테고리를 함께 선택하세요',
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontSize: compact ? 10 : 12,
-            color: AppColors.grey500,
-          ),
-        ),
       ],
     );
   }
@@ -135,6 +114,7 @@ class _FeedPageState extends State<FeedPage> {
       notices: _controller.visible,
       selected: _controller.selected,
       onSelect: _controller.toggle,
+      onNotice: widget.onNotice,
       onOpen: (g) => _open(
         g.label,
         _controller.visible

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:kmu_notice/shared/lib/feed_config.dart';
 
 import 'feed_controller.dart';
+import 'feed_select_button.dart';
 
 class FeedToolbar extends StatelessWidget {
   const FeedToolbar({
@@ -50,19 +52,30 @@ class FeedToolbar extends StatelessWidget {
   );
   Widget _controls(bool compact) => Row(
     children: [
-      if (!compact) _sources(),
-      SizedBox(
-        width: compact ? 115 : 135,
-        child: DropdownButton<String>(
-          value: controller.sort,
-          isExpanded: true,
-          underline: const SizedBox(),
-          items: const [
-            DropdownMenuItem(value: 'recommend', child: Text('추천 순')),
-            DropdownMenuItem(value: 'deadline', child: Text('마감 임박 순')),
-          ],
-          onChanged: (v) => controller.setSort(v ?? 'recommend'),
+      if (!compact) ...[
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 185),
+          child: FeedSelectButton(
+            value: controller.source,
+            options: {'': '모든 출처', ...controller.sources},
+            tooltip: '출처 선택',
+            icon:
+                (controller.sources[controller.source]?.contains('사업단') ??
+                    false)
+                ? Icons.school_rounded
+                : Icons.filter_alt_outlined,
+            onChanged: controller.setSource,
+          ),
         ),
+        const SizedBox(width: 8),
+      ],
+      FeedSelectButton(
+        value: controller.sort,
+        options: FeedConfig.sortOptions,
+        tooltip: '정렬 선택',
+        icon: Icons.swap_vert_rounded,
+        onChanged: controller.setSort,
+        compact: compact,
       ),
       if (compact) const Spacer() else const SizedBox(width: 12),
       FilledButton(
@@ -72,23 +85,5 @@ class FeedToolbar extends StatelessWidget {
         ),
       ),
     ],
-  );
-  Widget _sources() => SizedBox(
-    width: 160,
-    child: DropdownButton<String>(
-      value: controller.source,
-      isExpanded: true,
-      underline: const SizedBox(),
-      items: [
-        const DropdownMenuItem(value: '', child: Text('모든 출처')),
-        ...controller.sources.entries.map(
-          (e) => DropdownMenuItem(
-            value: e.key,
-            child: Text(e.value, overflow: TextOverflow.ellipsis),
-          ),
-        ),
-      ],
-      onChanged: (v) => controller.setSource(v ?? ''),
-    ),
   );
 }
