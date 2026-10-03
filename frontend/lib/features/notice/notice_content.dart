@@ -29,7 +29,6 @@ class NoticeContent extends StatelessWidget {
         ),
       ),
       const SizedBox(height: 14),
-      FitLine(notice: notice, fontSize: 13),
       SelectableText(
         notice.title,
         style: const TextStyle(
@@ -92,6 +91,7 @@ class NoticeContent extends StatelessWidget {
     }
     final d = validDeadline(notice);
     return [
+      FitCard(notice: notice),
       DetailSection(
         title: '핵심 요약',
         lines: notice.summary.isEmpty
@@ -111,7 +111,7 @@ class NoticeContent extends StatelessWidget {
         DetailSection(title: '신청 대상', lines: [notice.audience!]),
       if (notice.apply?.trim().isNotEmpty ?? false)
         DetailSection(title: '신청 방법', lines: [notice.apply!]),
-      if (notice.reasons.isNotEmpty)
+      if (notice.chance == null && notice.reasons.isNotEmpty)
         DetailSection(title: '추천 이유', lines: notice.reasons),
       preparation,
     ];
