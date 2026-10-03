@@ -22,6 +22,7 @@ const noticeDetail = createNoticeDetail({
 const feed = createFeedPage({
   onSelect: noticeDetail.show,
   getUserId: () => readLocalObject(config.sessionKey).userId,
+  onRender: (counts) => renderProfileCard(counts),
 });
 bindProfileTagToggles(() => feed.render());
 window.addEventListener('storage', (event) => {

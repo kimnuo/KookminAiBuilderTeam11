@@ -2,13 +2,14 @@ import { config } from '../../shared/config.js';
 import { getFeed, getSources } from '../../shared/api/api-client.js';
 import { escapeHtml } from '../../shared/lib/html.js';
 import { filterNotices } from '../../shared/lib/notice-data.js';
-import { activeTags, rankByTags } from '../../shared/lib/profile-tags.js';
+import { activeTags, rankByTags, tagCounts, withTags } from '../../shared/lib/profile-tags.js';
 import { feedCard } from './FeedCard.js';
 
 class FeedPage {
-  constructor({ onSelect, getUserId }) {
+  constructor({ onSelect, getUserId, onRender }) {
     this.onSelect = onSelect;
     this.getUserId = getUserId;
+    this.onRender = onRender;
     this.list = document.getElementById('notice-list');
     this.sortInput = /** @type {HTMLSelectElement} */ (document.getElementById('sort-select'));
     this.query = /** @type {HTMLInputElement} */ (document.getElementById('search-input'));
@@ -31,16 +32,20 @@ class FeedPage {
   }
 
   render() {
-    const filtered = filterNotices(this.state.notices, {
+    const tags = activeTags();
+    // 켜진 태그를 글마다 먼저 적어 둔다. 마감순에서도 카드에 겹친 태그가 보이게.
+    const tagged = withTags(this.state.notices, tags);
+    const filtered = filterNotices(tagged, {
       query: this.query.value,
       category: this.category.value,
       source: this.source.value,
       sort: this.state.sort,
     });
-    const items = this.state.sort === 'recommend' ? rankByTags(filtered, activeTags()) : filtered;
+    const items = this.state.sort === 'recommend' ? rankByTags(filtered, tags) : filtered;
     document.getElementById('result-count').textContent = String(items.length);
     this.list.innerHTML = items.map((item) => feedCard(item, this.state.sort)).join('');
     document.getElementById('empty-state').hidden = items.length > 0;
+    this.onRender?.(tagCounts(this.state.notices));
   }
 
   status(message = '', error = false) {
