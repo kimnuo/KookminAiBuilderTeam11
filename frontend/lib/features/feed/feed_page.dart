@@ -88,7 +88,7 @@ class _FeedPageState extends State<FeedPage> {
   // 소개 띠는 카테고리 칸(Expanded) 위에 놓여, 띠가 쓴 만큼 칸이 줄어든다.
   // 화면이 낮을수록 띠 상한을 낮춰 칸이 너무 작아지지 않게 한다.
   double _introHeight(BoxConstraints size) {
-    if (size.maxHeight < 600) return 44;
+    if (size.maxHeight < 600) return 36;
     if (size.maxWidth < 680) return 88;
     return size.maxHeight < 800 ? 76 : 96;
   }

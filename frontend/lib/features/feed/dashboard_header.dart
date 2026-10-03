@@ -37,14 +37,11 @@ class DashboardHeader extends StatelessWidget {
       const Spacer(),
       InfoNav(collapsed: compact || width < 900, notices: notices),
       // 로그인 전에도 공지는 다 보인다. 가입·로그인 입구만 여기 둔다.
+      // 좁은 화면에서는 글자 버튼이 헤더를 넘치게 해서(320px) 아이콘으로 바꾼다.
       ValueListenableBuilder<bool>(
         valueListenable: AuthApi.loggedIn,
-        builder: (context, loggedIn, _) => loggedIn
-            ? const SizedBox.shrink()
-            : TextButton(
-                onPressed: () => context.push(Routes.welcome),
-                child: const Text('로그인'),
-              ),
+        builder: (context, loggedIn, _) =>
+            loggedIn ? const SizedBox.shrink() : _loginEntry(context),
       ),
       IconButton(
         tooltip: '내 지원 정보',
@@ -58,4 +55,16 @@ class DashboardHeader extends StatelessWidget {
       ),
     ],
   );
+
+  Widget _loginEntry(BuildContext context) {
+    void open() => context.push(Routes.welcome);
+    if (compact) {
+      return IconButton(
+        tooltip: '로그인',
+        icon: const Icon(Icons.login_rounded),
+        onPressed: open,
+      );
+    }
+    return TextButton(onPressed: open, child: const Text('로그인'));
+  }
 }
