@@ -33,7 +33,7 @@
 
 | 지금 쓰는 방법 | 그 방법이 놓치는 것 | 크노가 하는 것 | 증거 |
 |---|---|---|---|
-| 학교 공식 앱 | 2018-01-17 이후 업데이트가 없고 단과대 공지가 없다 | 본부 게시판, SW중심대학사업단, 소프트웨어융합대학 RSS 를 한 화면에 모은다 | 서버 수집기 `backend/app/collectors/` (백엔드 브랜치) |
+| 학교 공식 앱 | 2018-01-17 이후 업데이트가 없고 단과대 공지가 없다 | 본부 게시판, SW중심대학사업단, 소프트웨어융합대학 RSS 를 한 화면에 모은다 | 서버 수집기 `backend/app/collectors/` (브랜치 `hs/feature-frontend-link`) |
 | RSS·키워드 알림 | 본문이 포스터 이미지뿐인 공지(표본 20건 중 6건)는 글자가 없어 걸리지 않는다 | 포스터 이미지 속 글자를 AI가 읽고 마감을 뽑는다 | [`poster.py`](backend/app/ai/poster.py), 포스터에만 마감이 있던 3건 중 3건 ([RESULTS.md](backend/app/ai/eval/RESULTS.md)) |
 | ChatGPT 에 공지 붙여 넣기 | 공지를 찾아 붙여 넣는 일이 학생에게 남고, 마감 근거를 원문과 대조하지 않는다 | 근거 문장이 원문에 글자 그대로 있고 그 안의 날짜가 같을 때만 마감을 띄운다. 아니면 「원문 확인」으로 둔다 | [`enrich.py`](backend/app/ai/enrich.py) `_evidence_supports`, 테스트 `test_evidence_not_in_text_is_dropped` |
 | 제목에 적힌 마감만 보기 | 마감이 본문이나 포스터에만 있으면 놓친다 | 본문과 포스터를 읽는다 | 실제 마감이 있는 16건에서 제목 규칙 4/16, AI 16/16 ([RESULTS.md](backend/app/ai/eval/RESULTS.md)) |
@@ -48,15 +48,15 @@
 |---|---|---|
 | 분야별 대시보드, 다중 선택, 검색, 출처 필터 | 구현 | `frontend/lib/features/feed/` |
 | 공지 상세: 요약, 마감과 근거, 대상, 원문 링크 | 구현 | `frontend/lib/features/notice/` |
-| 공지 수집 (본부 게시판, SW사업단, 소프트웨어융합대학 RSS)과 API 서버 | 구현, 백엔드 브랜치 | `origin/hs/feature-notice-digest` `backend/app/collectors/`, `features/` 〔main 머지 확인 필요〕 |
-| AI 분류·요약·마감 추출 (근거 검사, 재시도) | 구현 | 서버 `backend/app/ai/digest.py` 〔머지 확인 필요〕, AI 모듈 [`backend/app/ai/enrich.py`](backend/app/ai/enrich.py) |
+| 공지 수집 (본부 게시판, SW사업단, 소프트웨어융합대학 RSS)과 API 서버 | 구현, 백엔드 브랜치 | 브랜치 `hs/feature-frontend-link` `backend/app/collectors/`, `features/` |
+| AI 분류·요약·마감 추출 (근거 검사, 재시도) | 구현 | 서버 `backend/app/ai/digest.py`, AI 모듈 [`backend/app/ai/enrich.py`](backend/app/ai/enrich.py) |
 | 포스터 이미지 글자 읽기 | AI 모듈 구현, 서버 연결은 패치 대기 | [`backend/app/ai/poster.py`](backend/app/ai/poster.py) |
-| 지원 준비: 필요한 항목·서류, 내 값 복사 | 화면 구현, 서버 API 없음 (데모 데이터) | `frontend/lib/features/apply_helper/`, [`backend/app/ai/requirements.py`](backend/app/ai/requirements.py) |
-| 가입·동의·온보딩 | 화면 구현. main 에는 서버 API가 없어 계정은 앱 메모리에만 있다(새로고침하면 사라진다) | `frontend/lib/features/auth/`, `onboarding/` |
+| 지원 준비: 필요한 항목·서류, 내 값 복사 | 구현. 서버가 공고 본문으로 항목·서류를 뽑고 캐시한다(`GET /api/notices/{id}/requirements`) | `frontend/lib/features/apply_helper/`, [`backend/app/ai/requirements.py`](backend/app/ai/requirements.py) |
+| 가입·동의·온보딩 | 구현. 서버에 가입·로그인·로그아웃·동의·탈퇴·구독 API가 있다 | `frontend/lib/features/auth/`, `onboarding/` |
 | 포트폴리오 PDF: 브라우저에서 글자 추출, 연락처·학번 가리기 | 구현 | `frontend/lib/features/profile/pdf_text_extractor.dart`, `pii_masker.dart` |
-| 포트폴리오 AI 이력 추출 | AI 모듈 구현, 화면은 예시 결과 | [`backend/app/ai/profile.py`](backend/app/ai/profile.py) |
-| 맞춤 추천 | 부분 구현. 서버 `POST /api/briefing`이 학과·학년·관심 분야에 맞는 글을 고르고, 태그 점수 규칙은 AI 모듈에 있다. 피드의 추천 순은 아직 최신순이다 | 서버 `backend/app/features/briefing/`, [`backend/app/ai/recommend.py`](backend/app/ai/recommend.py) |
-| 온보딩에서 고른 분야로 피드 거르기 | 다음 단계. 지금은 대시보드에서 분야를 직접 고른다 | |
+| 포트폴리오 AI 이력 추출 | 구현. 서버 `POST /api/profile/analyze`가 가린 글로 이력을 뽑고 저장하지 않는다 | [`backend/app/ai/profile.py`](backend/app/ai/profile.py) |
+| 맞춤 추천 | 구현. 로그인해서 구독을 저장하면 피드가 AI 추천도 순으로 정렬되고 합격 가능성과 근거 한 줄이 붙는다. 로그인 전에는 최신순이다 | 서버 `backend/app/features/briefing/`, [`backend/app/ai/recommend.py`](backend/app/ai/recommend.py) |
+| 온보딩에서 고른 분야로 피드 거르기 | 부분. 고른 분야는 서버 구독에 저장되고 추천 순에 반영된다. 피드 첫 선택값으로 깔아 두는 기능은 마무리 중이다 | |
 | 알림 발송 (웹푸시·봇) | 다음 단계 | 없음 |
 | 링커리어 등 외부 플랫폼 | 다음 단계. 링커리어 약관 제39조 2호가 자동화 수단 접근을 금지한다 | 없음 |
 
@@ -80,7 +80,7 @@
 
 - **학생은 무료다.** 학교 홈페이지라는 무료 대안이 있어서 학생에게 돈을 받기는 어렵다고 본다.
 - **원가는 실측했다.** 공지 1건을 AI로 처리하는 데 약 $0.015~0.018이 든다(위 표). 같은 공지는 한 번만 처리하므로, 학생이 늘어도 공지 처리 원가는 늘지 않는다.
-- **규모도 실측했다.** 2026-09-03부터 10-02까지 30일 동안, 크노가 모으는 7개 출처(본부 게시판 5개, SW중심대학사업단, 소프트웨어융합대학 RSS)에 새 글이 51건 올라왔다. 고정 공지는 빼고 목록 페이지의 날짜로 셌다. 게시판별로는 공모·행사 21, 소프트웨어융합대학 10, 학사 6, SW중심대학사업단 6, 장학 4, 특강 2, 교외채용 2건이다.
+- **규모도 실측했다.** 2026-09-03부터 10-02까지 30일 동안, 본부 게시판 5개(학사·특강·장학·공모·교외채용), SW중심대학사업단, 소프트웨어융합대학 RSS 의 7개 게시판에 새 글이 51건 올라왔다(지금 서버가 실제로 모으는 곳은 본부 학사, SW중심대학사업단, 소프트웨어융합대학 RSS 4개로 6곳이다). 고정 공지는 빼고 목록 페이지의 날짜로 셌다. 게시판별로는 공모·행사 21, 소프트웨어융합대학 10, 학사 6, SW중심대학사업단 6, 장학 4, 특강 2, 교외채용 2건이다.
 - **그래서 학교 공지 전부를 AI로 읽어도 한 달 약 $0.81이다.** 포스터 공지 비율을 표본처럼 30%로 두고 계산했다(51건 × $0.0159). 고정 공지까지 85건으로 보면 $1.35다(고정 공지 34건은 글번호로 추정한 값). 9월은 개강 달이라 평소보다 많을 수 있다.
 - **손익분기 (가설 가격으로 한 산수).** 주최 측 공고 노출을 1건에 2,000원(약 $1.4, 환율 1,400원 가정)만 받아도, 한 달에 1건으로 학교 공지 전체의 AI 처리비를 덮는다. 2,000원은 계산을 보여 주려고 둔 값이고, 실제 단가는 인터뷰로 정한다.
 - **낼 사람 1: 공모전·대외활동·채용 주최 측.** 특정 학과·학년·관심 분야 학생에게만 공고를 보이게 하는 값을 공고 1건 단위로 받는다. 가격의 하한은 처리 원가이고, 상한은 주최 측이 같은 학생에게 닿으려고 지금 쓰는 홍보비다. 단가는 주최 측 인터뷰로 정한다(아직 하지 않았다).
