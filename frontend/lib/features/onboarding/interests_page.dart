@@ -3,7 +3,10 @@ import 'package:go_router/go_router.dart';
 
 import 'package:kmu_notice/shared/api/subscription_api.dart';
 import 'package:kmu_notice/shared/lib/catalog.dart';
+import 'package:kmu_notice/shared/lib/interest_store.dart';
 import 'package:kmu_notice/shared/lib/routes.dart';
+import 'package:kmu_notice/shared/ui/app_colors.dart';
+import 'package:kmu_notice/shared/ui/mascot_guide.dart';
 import 'package:kmu_notice/shared/ui/select_chip.dart';
 import 'package:kmu_notice/shared/ui/step_scaffold.dart';
 import 'natural_language_box.dart';
@@ -23,25 +26,46 @@ class _InterestsPageState extends State<InterestsPage> {
   List<String> _keywords = [];
   bool _parsing = false;
   bool _saving = false;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    // 설정의 「관심 분야 바꾸기」로 다시 오면 저장해 둔 분야를 켜 둔다.
+    InterestStore.load().then((saved) {
+      if (!mounted) return;
+      setState(() => _selected.addAll(Catalog.serviceCategories(saved)));
+    });
+  }
 
   Future<void> _parse() async {
     if (_text.text.trim().isEmpty) return;
-    setState(() => _parsing = true);
+    setState(() {
+      _parsing = true;
+      _error = null;
+    });
     try {
       final res = await SubscriptionApi.parse(_text.text.trim());
       final cats = List<String>.from(res['categories'] ?? const []);
+      if (!mounted) return;
       setState(() {
-        _selected.addAll(cats.where(Catalog.categories.contains));
+        _selected.addAll(Catalog.serviceCategories(cats));
         _keywords = List<String>.from(res['keywords'] ?? const []);
       });
+    } catch (_) {
+      if (mounted) setState(() => _error = 'AI가 문장을 읽지 못했어요. 분야를 직접 골라 주세요.');
     } finally {
       if (mounted) setState(() => _parsing = false);
     }
   }
 
   Future<void> _save() async {
-    setState(() => _saving = true);
+    setState(() {
+      _saving = true;
+      _error = null;
+    });
     try {
+      await InterestStore.save(_selected.toList());
       await SubscriptionApi.save(
         major: OnboardingDraft.major!,
         year: OnboardingDraft.year!,
@@ -49,6 +73,8 @@ class _InterestsPageState extends State<InterestsPage> {
         keywords: _keywords,
       );
       if (mounted) context.go(Routes.profileHistory);
+    } catch (_) {
+      if (mounted) setState(() => _error = '저장하지 못했어요. 잠시 후 다시 시도해 주세요.');
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -61,6 +87,9 @@ class _InterestsPageState extends State<InterestsPage> {
   @override
   Widget build(BuildContext context) {
     return StepScaffold(
+      guide: const MascotGuide(
+        '관심 분야를 골라 주세요.\n첫 화면에서 고른 분야를 미리 선택해 둘게요.',
+      ),
       title: '어떤 소식을\n받아 볼까요?',
       subtitle: '고른 분야의 공지만 알려 드려요.',
       ctaLabel: _selected.isEmpty ? '분야를 골라 주세요' : '${_selected.length}개 분야 받기',
@@ -86,6 +115,10 @@ class _InterestsPageState extends State<InterestsPage> {
               ),
           ],
         ),
+        if (_error != null) ...[
+          const SizedBox(height: 16),
+          Text(_error!, style: const TextStyle(color: AppColors.danger)),
+        ],
       ],
     );
   }

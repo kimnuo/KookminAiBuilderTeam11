@@ -64,5 +64,6 @@ void _loginTest() {
     expect(find.text('크노'), findsOneWidget);
     expect(find.text('학사·생활'), findsOneWidget);
     expect(find.text('행사·대외활동'), findsOneWidget);
+    expect(find.text('모든 카테고리'), findsOneWidget);
   });
 }

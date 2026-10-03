@@ -12,8 +12,11 @@ class StepScaffold extends StatelessWidget {
     required this.ctaLabel,
     required this.onCta,
     this.ctaLoading = false,
+    this.guide,
   });
 
+  // 제목 위에 놓는 안내. 온보딩에서는 MascotGuide를 넣는다.
+  final Widget? guide;
   final String title;
   final String? subtitle;
   final List<Widget> children;
@@ -29,6 +32,7 @@ class StepScaffold extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
           children: [
+            if (guide != null) ...[guide!, const SizedBox(height: 20)],
             Text(
               title,
               style: const TextStyle(
