@@ -14,15 +14,15 @@ import 'package:kmu_notice/features/profile/portfolio_page.dart';
 import 'package:kmu_notice/features/profile/portfolio_review_page.dart';
 import 'package:kmu_notice/features/profile/profile_analysis.dart';
 import 'package:kmu_notice/features/profile/settings_page.dart';
+import 'package:kmu_notice/shared/lib/feed_path.dart';
 import 'package:kmu_notice/shared/lib/routes.dart';
 
 import 'package:kmu_notice/features/feed/feed_page.dart';
 import 'package:kmu_notice/features/notice/notice_page.dart';
 import 'package:kmu_notice/features/apply_helper/apply_panel.dart';
-import 'package:kmu_notice/shared/lib/feed_config.dart';
 
 final appRouter = GoRouter(
-  initialLocation: '${Routes.feed}${FeedConfig.demo ? '?demo=1' : ''}',
+  initialLocation: feedPath,
   routes: [
     GoRoute(path: Routes.welcome, builder: (_, _) => const WelcomePage()),
     GoRoute(path: Routes.signup, builder: (_, _) => const SignupPage()),

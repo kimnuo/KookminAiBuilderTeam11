@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:kmu_notice/shared/api/auth_api.dart';
+import 'package:kmu_notice/shared/lib/feed_path.dart';
 import 'package:kmu_notice/shared/lib/routes.dart';
 import 'package:kmu_notice/shared/ui/app_colors.dart';
 import 'package:kmu_notice/shared/ui/consent_check_row.dart';
@@ -78,7 +79,7 @@ class _ConsentPageState extends State<ConsentPage> {
           Text(_error!, style: const TextStyle(color: AppColors.danger)),
         const SizedBox(height: 8),
         TextButton(
-          onPressed: () => context.go(Routes.feed),
+          onPressed: () => context.go(feedPath),
           child: const Text(
             '동의하지 않고 공지만 볼게요',
             style: TextStyle(color: AppColors.grey500),

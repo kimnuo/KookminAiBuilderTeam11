@@ -3,11 +3,10 @@ import 'package:go_router/go_router.dart';
 
 import 'package:kmu_notice/shared/api/notice_api.dart';
 import 'package:kmu_notice/shared/lib/notice.dart';
-import 'package:kmu_notice/shared/lib/feed_config.dart';
-import 'package:kmu_notice/shared/lib/routes.dart';
 import 'package:kmu_notice/shared/lib/open_original.dart';
 
 import 'notice_content.dart';
+import 'package:kmu_notice/shared/lib/feed_path.dart';
 
 class NoticePage extends StatefulWidget {
   const NoticePage({
@@ -61,9 +60,7 @@ class _NoticePageState extends State<NoticePage> {
             icon: const Icon(Icons.arrow_back_rounded),
             onPressed: () => context.canPop()
                 ? context.pop()
-                : context.go(
-                    '${Routes.feed}${FeedConfig.demo ? '?demo=1' : ''}',
-                  ),
+                : context.go(feedPath),
           ),
     actions: [
       if (widget.onClose != null)

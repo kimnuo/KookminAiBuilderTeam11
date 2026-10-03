@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:kmu_notice/shared/api/subscription_api.dart';
 import 'package:kmu_notice/shared/lib/catalog.dart';
+import 'package:kmu_notice/shared/lib/feed_path.dart';
 import 'package:kmu_notice/shared/lib/routes.dart';
 import 'package:kmu_notice/shared/ui/app_colors.dart';
 import 'package:kmu_notice/shared/ui/mascot_guide.dart';
@@ -42,7 +43,7 @@ class _HistoryPageState extends State<HistoryPage> {
     try {
       await ProfileStore.save(_h!);
       await SubscriptionApi.saveTags(_h!.tags);
-      if (mounted) context.go(Routes.feed);
+      if (mounted) context.go(feedPath);
     } finally {
       if (mounted) setState(() => _saving = false);
     }
