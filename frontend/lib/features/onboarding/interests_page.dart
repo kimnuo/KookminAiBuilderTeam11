@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:kmu_notice/shared/api/subscription_api.dart';
 import 'package:kmu_notice/shared/lib/catalog.dart';
+import 'package:kmu_notice/shared/lib/interest_store.dart';
 import 'package:kmu_notice/shared/lib/routes.dart';
 import 'package:kmu_notice/shared/ui/select_chip.dart';
 import 'package:kmu_notice/shared/ui/step_scaffold.dart';
@@ -24,6 +25,18 @@ class _InterestsPageState extends State<InterestsPage> {
   bool _parsing = false;
   bool _saving = false;
 
+  @override
+  void initState() {
+    super.initState();
+    // 설정의 「관심 분야 바꾸기」로 다시 오면 저장해 둔 분야를 켜 둔다.
+    InterestStore.load().then((saved) {
+      if (!mounted) return;
+      setState(
+        () => _selected.addAll(saved.where(Catalog.categories.contains)),
+      );
+    });
+  }
+
   Future<void> _parse() async {
     if (_text.text.trim().isEmpty) return;
     setState(() => _parsing = true);
@@ -42,6 +55,7 @@ class _InterestsPageState extends State<InterestsPage> {
   Future<void> _save() async {
     setState(() => _saving = true);
     try {
+      await InterestStore.save(_selected.toList());
       await SubscriptionApi.save(
         major: OnboardingDraft.major!,
         year: OnboardingDraft.year!,
