@@ -69,6 +69,16 @@ def test_deadline_from_poster_is_marked():
     assert out["deadline"]["date"] == "2026-09-25" and out["deadline"]["source"] == "poster"
 
 
+def test_poster_hyphen_range_keeps_poster_source():
+    # 실호출에서 읽은 포스터 글. 근거가 포스터에만 있으면 제목 규칙으로 넘어가지 않고 poster 로 남아야 한다
+    notice = {"id": "kmu-11-12374", "postedAt": "2026-09-01", "title": "2026 하반기 현대그룹 신입 매니저 채용", "body": "",
+              "posterText": "2026 하반기 / 현대그룹 / 신입 매니저 채용 / 09.01 - 09.22"}
+    ans = {"categories": ["채용·인턴"], "tags": [], "summary": None, "audience": None, "apply": None,
+           "deadline": {"date": "2026-09-22", "time": None, "evidence": "09.01 - 09.22"}}
+    out = enrich(notice, lambda p: json.dumps(ans, ensure_ascii=False))
+    assert out["deadline"]["date"] == "2026-09-22" and out["deadline"]["source"] == "poster"
+
+
 class FakeClient:
     def __init__(self, stop="end_turn"):
         self.kwargs, self.stop = None, stop

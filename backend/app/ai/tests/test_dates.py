@@ -21,6 +21,13 @@ def test_two_digit_year_and_spaces():
     assert ends("26.10.01.(목) ~ 26.10.15.(목)") == [date(2026, 10, 15)]
     assert ends("2026. 08. 25.(화) ~ 2026. 09. 09.(수) 18:00") == [date(2026, 9, 9)]
     assert ends("26. 9. 16.(수) ~ 26. 9. 30.(수) 16:00까지") == [date(2026, 9, 30)]
+    assert ends("2026-10-13 ~ 2026-10-16") == [date(2026, 10, 16)]
+
+
+def test_mixed_separators_are_not_a_short_year():
+    # 현대그룹 채용 포스터를 Haiku 가 읽은 표기 (2026-10-03 실호출). 2009-01-09 로 읽으면 안 된다
+    toks = find_dates("09.01 - 09.22")
+    assert [(t.year, t.month, t.day) for t in toks] == [(None, 9, 1), (None, 9, 22)]
 
 
 def test_korean_month_day():
