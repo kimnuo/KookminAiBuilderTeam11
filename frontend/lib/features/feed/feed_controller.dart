@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import 'package:kmu_notice/shared/api/notice_api.dart';
+import 'package:kmu_notice/shared/api/recommend_api.dart';
 import 'package:kmu_notice/shared/lib/feed_config.dart';
 import 'package:kmu_notice/shared/lib/interest_groups.dart';
 import 'package:kmu_notice/shared/lib/interest_store.dart';
@@ -32,6 +33,25 @@ class FeedController extends ChangeNotifier {
     if (generation != _generation) return;
     loading = false;
     notifyListeners();
+    loadFits(generation);
+  }
+
+  /// 공고마다 될 가능성과 근거 한 줄을 받아 붙인다. 못 받아도 목록은 그대로 보인다.
+  Future<void> loadFits(int generation) async {
+    if (notices.isEmpty) return;
+    try {
+      final fits = await RecommendApi.fits(notices.map((n) => n.id).toList());
+      if (generation != _generation || fits.isEmpty) return;
+      for (final notice in notices) {
+        final fit = fits[notice.id];
+        if (fit != null) {
+          notice.json['fit'] = {'chance': fit.chance, 'reason': fit.reason};
+        }
+      }
+      notifyListeners();
+    } catch (_) {
+      // 적합도는 덤이라 실패해도 조용히 넘어간다
+    }
   }
 
   // 온보딩에서 고른 분야를 처음 한 번만 선택값으로 깐다. 그 뒤로는 사용자가 고른 대로 둔다.

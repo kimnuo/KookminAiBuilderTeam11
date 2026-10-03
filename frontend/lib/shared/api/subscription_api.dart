@@ -36,7 +36,7 @@ class SubscriptionApi {
     await _put({...current, 'tags': tags});
   }
 
-  // 백엔드에 /api/subscriptions가 아직 없다. 실패해도 온보딩을 막지 않는다.
+  // 서버 PUT /api/subscriptions는 로그인 토큰이 있어야 받는다. 실패해도 온보딩을 막지 않는다.
   // 관심 분야는 InterestStore에 먼저 저장하므로 피드는 그 값으로 동작한다.
   static Future<void> _put(Map<String, dynamic> body) async {
     try {

@@ -1,6 +1,6 @@
 # 크노: 흩어진 국민대 공지를 AI가 대신 읽고, 내 분야만 모아 준다
 
-국민대 K-Builder 2026 팀 11. 주제는 「귀찮음 주식회사: 대학 생활의 귀찮은 순간을 돈 받고 해결하는 AI 서비스」다.
+국민대 K-Builder 2026 · 화이팅구리. 주제는 「귀찮음 주식회사: 대학 생활의 귀찮은 순간을 돈 받고 해결하는 AI 서비스」다.
 
 | 축 | 한 줄 |
 |---|---|
@@ -15,7 +15,7 @@
 ## 왜 필요한가
 
 - 본부 공지만 해도 학사·행정·특강·장학·공모·채용 등 10개 넘는 분류로 나뉜다. 단과대 17곳은 홈페이지가 따로 있다.
-- 학교 공식 앱은 2018-01-17 이후 업데이트가 없고 단과대 공지가 없다.
+- App Store 「국민대학교」 앱은 마지막 버전 1.5.0 이 2018-01-17 에 나온 뒤 업데이트가 없고(2026-10-03 버전 기록 확인, 안드로이드는 확인 안 함), 공지 메뉴에 단과대 공지가 없다(행정·학사·장학·입학공지 등).
 - 실제 공지 20건을 받아 보니 **6건(30%)은 본문이 포스터 이미지 1장뿐**이었다. 글자가 없으니 검색에도 키워드 알림에도 걸리지 않는다.
 
 ## 어떻게 동작하나
@@ -33,7 +33,7 @@
 
 | 지금 쓰는 방법 | 그 방법이 놓치는 것 | 크노가 하는 것 | 증거 |
 |---|---|---|---|
-| 학교 공식 앱 | 2018-01-17 이후 업데이트가 없고 단과대 공지가 없다 | 본부 게시판, SW중심대학사업단, 소프트웨어융합대학 RSS 를 한 화면에 모은다 | 서버 수집기 `backend/app/collectors/` (브랜치 `hs/feature-frontend-link`) |
+| 학교 공식 앱 | App Store 「국민대학교」 앱(v1.5.0)은 2018-01-17 이후 업데이트가 없고 단과대 공지가 없다 | 본부 게시판, SW중심대학사업단, 소프트웨어융합대학 RSS 에 외부 채용·대외활동 사이트까지 한 화면에 모은다 | 서버 수집기 `backend/app/collectors/` |
 | RSS·키워드 알림 | 본문이 포스터 이미지뿐인 공지(표본 20건 중 6건)는 글자가 없어 걸리지 않는다 | 포스터 이미지 속 글자를 AI가 읽고 마감을 뽑는다 | [`poster.py`](backend/app/ai/poster.py), 포스터에만 마감이 있던 3건 중 3건 ([RESULTS.md](backend/app/ai/eval/RESULTS.md)) |
 | ChatGPT 에 공지 붙여 넣기 | 공지를 찾아 붙여 넣는 일이 학생에게 남고, 마감 근거를 원문과 대조하지 않는다 | 근거 문장이 원문에 글자 그대로 있고 그 안의 날짜가 같을 때만 마감을 띄운다. 아니면 「원문 확인」으로 둔다 | [`enrich.py`](backend/app/ai/enrich.py) `_evidence_supports`, 테스트 `test_evidence_not_in_text_is_dropped` |
 | 제목에 적힌 마감만 보기 | 마감이 본문이나 포스터에만 있으면 놓친다 | 본문과 포스터를 읽는다 | 실제 마감이 있는 16건에서 제목 규칙 4/16, AI 16/16 ([RESULTS.md](backend/app/ai/eval/RESULTS.md)) |
@@ -48,7 +48,7 @@
 |---|---|---|
 | 분야별 대시보드, 다중 선택, 검색, 출처 필터 | 구현 | `frontend/lib/features/feed/` |
 | 공지 상세: 요약, 마감과 근거, 대상, 원문 링크 | 구현 | `frontend/lib/features/notice/` |
-| 공지 수집 (본부 게시판, SW사업단, 소프트웨어융합대학 RSS)과 API 서버 | 구현, 백엔드 브랜치 | 브랜치 `hs/feature-frontend-link` `backend/app/collectors/`, `features/` |
+| 공지 수집 (본부 게시판, SW사업단, 소프트웨어융합대학 RSS)과 API 서버 | 구현, 백엔드 브랜치 | `backend/app/collectors/`, `features/` |
 | AI 분류·요약·마감 추출 (근거 검사, 재시도) | 구현 | 서버 `backend/app/ai/digest.py`, AI 모듈 [`backend/app/ai/enrich.py`](backend/app/ai/enrich.py) |
 | 포스터 이미지 글자 읽기 | AI 모듈 구현, 서버 연결은 패치 대기 | [`backend/app/ai/poster.py`](backend/app/ai/poster.py) |
 | 지원 준비: 필요한 항목·서류, 내 값 복사 | 구현. 서버가 공고 본문으로 항목·서류를 뽑고 캐시한다(`GET /api/notices/{id}/requirements`) | `frontend/lib/features/apply_helper/`, [`backend/app/ai/requirements.py`](backend/app/ai/requirements.py) |
@@ -56,9 +56,13 @@
 | 포트폴리오 PDF: 브라우저에서 글자 추출, 연락처·학번 가리기 | 구현 | `frontend/lib/features/profile/pdf_text_extractor.dart`, `pii_masker.dart` |
 | 포트폴리오 AI 이력 추출 | 구현. 서버 `POST /api/profile/analyze`가 가린 글로 이력을 뽑고 저장하지 않는다 | [`backend/app/ai/profile.py`](backend/app/ai/profile.py) |
 | 맞춤 추천 | 구현. 로그인해서 구독을 저장하면 피드가 AI 추천도 순으로 정렬되고 합격 가능성과 근거 한 줄이 붙는다. 로그인 전에는 최신순이다 | 서버 `backend/app/features/briefing/`, [`backend/app/ai/recommend.py`](backend/app/ai/recommend.py) |
-| 온보딩에서 고른 분야로 피드 거르기 | 부분. 고른 분야는 서버 구독에 저장되고 추천 순에 반영된다. 피드 첫 선택값으로 깔아 두는 기능은 마무리 중이다 | |
+| 온보딩에서 고른 분야로 피드 거르기 | 구현. 고른 분야를 기기와 서버 구독에 저장한다. 피드를 처음 열 때 그 분야가 선택된 상태로 열리고, 추천 순에도 반영된다 | |
+| 서비스 소개 띠, 「추천 방식」「수집 출처」「사용해 보기」 메뉴 | 구현 | `frontend/lib/features/feed/intro_band.dart`, `info_nav.dart`, `info_dialogs.dart` |
+| 로그인 입구, 로그인 상태에 맞춘 설정 메뉴 | 구현 | `frontend/lib/features/feed/dashboard_header.dart`, `frontend/lib/features/profile/settings_page.dart` |
+| 사이트 하단 출처·저작권·AI 요약 안내 | 구현 | `frontend/lib/features/feed/site_footer.dart` |
+| 크노 캐릭터의 온보딩 안내 말풍선 | 구현 | `frontend/lib/shared/ui/mascot_guide.dart`, `frontend/assets/mascot/` |
 | 알림 발송 (웹푸시·봇) | 다음 단계 | 없음 |
-| 링커리어 등 외부 플랫폼 | 다음 단계. 링커리어 약관 제39조 2호가 자동화 수단 접근을 금지한다 | 없음 |
+| 외부 채용·대외활동 사이트 | 부분. 자소설닷컴(신입 채용)·인디스워크(신입·인턴 채용, 교육·대외활동) 수집기를 붙였다. 두 사이트의 이용약관은 아직 확인하지 않았다. 링커리어는 약관 제39조 2호가 자동화 수단 접근을 금지해서 넣지 않았다 | `backend/app/collectors/jasoseol.py`, `inthiswork.py` |
 
 ## AI 정확도와 비용 (2026-10-03 실측)
 
@@ -75,6 +79,8 @@
 - **표본 안 점수다.** 정답은 Claude가 원문과 포스터 이미지를 보고 쓴 초안이고 사람이 확인하지 않았다. 프롬프트도 이 20건을 읽은 뒤에 썼다.
 - 비용: 글 공지 1건 약 $0.015, 포스터 공지 1건 약 $0.018 (게이트웨이 사용 기록 기준). 같은 공지는 한 번만 처리하므로 원가는 학생 수가 아니라 공지 수에 비례한다.
 - **공지별 원자료**(정답 초안, 기준선, AI 결과, AI 근거 문장, 포스터 판독)는 [`backend/app/ai/eval/RESULTS.md`](backend/app/ai/eval/RESULTS.md)에 있다. 재현 명령도 거기 있다.
+
+**맞춤 추천 실측 (2026-10-03, 배포 서버 API).** 테스트 계정에 학과·학년과 관심 분야 「장학」「취업」을 저장하자, 추천 순 상위 10개 중 장학·취업 글이 4개에서 6개로 늘고 마감 지난 글은 0건이 됐다. 관심 분야를 「행사·대외활동」으로 바꾸면 순서가 바뀐다. 다만 1순위 기준이 AI 추천도라서 관심 분야 밖 글이 상위에 섞이기도 한다.
 
 ## 돈: 누가 얼마를 내나 (가설)
 
@@ -118,13 +124,14 @@ python -m pytest app/ai/tests -q
 
 ```
 frontend/         Flutter 웹 (feed, notice, apply_helper, auth, onboarding, profile)
-backend/app/ai/   AI 모듈: enrich, poster, recommend, profile, requirements, mask, eval, tests
+backend/app/      서버: collectors(수집), attachments(첨부 글자), features(API), jobs(주기 수집·요약), db
+backend/app/ai/   AI 모듈: enrich, poster, recommend, profile, requirements, mask, eval, tests (서버 요약은 digest.py)
 docs/             PRD, 개발 계획, 동의 문구, 현장 설문
 mock/             화면 개발용 예시 데이터
 AGENTS.md         팀 작업 규칙 (브랜치, 키·개인정보, 코드 길이)
 ```
 
-## 팀
+## 팀 (화이팅구리)
 
 | 역할 | 담당 |
 |---|---|

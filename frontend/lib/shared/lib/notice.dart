@@ -21,6 +21,9 @@ class Notice {
           )
           .toList();
   Map<String, dynamic> get digest => mapValue(json['digest']);
+  Map<String, dynamic> get fit => mapValue(json['fit']);
+  int? get chance => (fit['chance'] as num?)?.round();
+  String get fitReason => fit['reason']?.toString() ?? '';
   List<Map<String, dynamic>> get keyPoints => ai.isEmpty
       ? []
       : digestItems(digest['keyPoints'], 'value')

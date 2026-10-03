@@ -443,6 +443,7 @@ build/
 .playwright-mcp/
 .playwright-cli/
 output/playwright/
+backend/data/
 
 # Generated PDF previews
 output/pdf/

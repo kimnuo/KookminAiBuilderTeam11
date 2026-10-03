@@ -4,6 +4,7 @@ import 'package:kmu_notice/shared/lib/notice.dart';
 import 'package:kmu_notice/shared/lib/feed_config.dart';
 import 'package:kmu_notice/shared/lib/notice_search.dart';
 import 'package:kmu_notice/shared/ui/app_colors.dart';
+import 'package:kmu_notice/shared/ui/fit_line.dart';
 
 import 'detail_section.dart';
 import 'notice_media.dart';
@@ -93,6 +94,6 @@ class NoticeContent extends StatelessWidget {
         ),
       ];
     }
-    return [NoticeAiSections(notice: notice), preparation];
+    return [FitCard(notice: notice), NoticeAiSections(notice: notice), preparation];
   }
 }

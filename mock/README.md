@@ -8,3 +8,4 @@
 - `profile.json`: 가상 프로필, 브라우저 메모리에서만 사용
 
 `npm run dev --prefix frontend` 후 `http://127.0.0.1:4173/?demo=1`을 엽니다. 더미 모드에는 명시적인 안내가 표시됩니다.
+- `profile-tags.json`: 가상 프로필 태그. `config.profileTagsEndpoint` 가 비어 있고 기기에 저장된 프로필 태그도 없을 때 일반 화면에서 쓴다

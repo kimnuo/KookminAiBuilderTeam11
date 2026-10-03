@@ -2,7 +2,7 @@
 
 | 항목 | 내용 |
 |---|---|
-| 상태 | v0.5 (2026-10-03 제출본). v0.5에서 0절 「구현 상태」와 0-1절 「기능명세서」를 더했고, 분야를 서비스 6개로 맞췄고, 알림과 서버 API 일부를 다음 단계로 옮겼다. v0.5.1에서 배포 브랜치의 서버 API(가입·구독·지원 준비·이력 분석·추천)를 구현으로 고쳤다. 1절부터는 착수 때 쓴 계획이라 0절과 다르면 0절이 실제다 |
+| 상태 | v0.5 (2026-10-03 제출본). v0.5에서 0절 「구현 상태」와 0-1절 「기능명세서」를 더했고, 분야를 서비스 6개로 맞췄고, 알림과 서버 API 일부를 다음 단계로 옮겼다. v0.5.1에서 배포 브랜치의 서버 API(가입·구독·지원 준비·이력 분석·추천)를 구현으로 고쳤다. v0.5.2에서 서버·화면·AI 모듈을 main 에 모으고, 온보딩 분야 반영·로그인 입구·서비스 소개·하단 출처 안내를 더했다. v0.5.3에서 외부 채용·대외활동 수집기(자소설닷컴·인디스워크)를 반영했다. 1절부터는 착수 때 쓴 계획이라 0절과 다르면 0절이 실제다 |
 | 팀 | 11조. 백엔드 해서, 프론트 A 택준, 프론트 B 민섭, 현찬(빈 곳 담당) |
 | 대회 주제 | 귀찮음 주식회사: 대학 생활의 귀찮은 순간을 돈 받고 해결하는 AI 서비스 |
 | 제출물 | 발표자료, 소스코드, 배포 URL (2026-10-03 확인) |
@@ -11,11 +11,11 @@
 
 ## 0. 구현 상태 (2026-10-03 제출 기준)
 
-「다음 단계」는 이번 대회에서 만들지 않은 것이다. 서버(수집·API)는 브랜치 `hs/feature-frontend-link`에 있고, 배포본(https://kmu-notice-demo.vercel.app)이 이 브랜치에서 빌드된다. main 머지는 진행 중이다.
+「다음 단계」는 이번 대회에서 만들지 않은 것이다. 서버(수집·API, `backend/app/`)와 화면(`frontend/`), AI 모듈(`backend/app/ai/`)이 모두 이 저장소 main 에 있고, 배포본(https://kmu-notice-demo.vercel.app)도 같은 코드로 빌드한다.
 
 | 기능 | 상태 | 코드 |
 |---|---|---|
-| 공지 수집: 본부 학사(4), SW사업단, 소프트웨어융합대학 RSS | 구현 | 서버 `backend/app/collectors/` |
+| 공지 수집: 본부 학사(4), SW사업단, 소프트웨어융합대학 RSS 4개, 외부 3곳(자소설닷컴 1, 인디스워크 2) | 구현 | 서버 `backend/app/collectors/` |
 | 첨부 pdf·hwp·hwpx·docx·pptx 글자를 요약에 넣기 | 구현 (계획에서는 제외였다) | 서버 `backend/app/attachments/` |
 | AI 분류·요약·마감 (근거 검사, 재시도) | 구현 | 서버 `backend/app/ai/digest.py`, AI 모듈 `backend/app/ai/enrich.py` |
 | 포스터 이미지 글자 읽기 | AI 모듈 구현, 서버 연결은 다음 단계 | `backend/app/ai/poster.py` |
@@ -25,9 +25,13 @@
 | 포트폴리오 PDF 글자 추출과 연락처·학번 가리기 | 구현 (브라우저) | `frontend/lib/features/profile/pdf_text_extractor.dart`, `pii_masker.dart` |
 | 포트폴리오 AI 이력 추출 | 구현. 서버 `POST /api/profile/analyze`가 가린 글로 이력을 뽑고 저장하지 않는다. 선택 동의 확인은 화면에서 한다 | `backend/app/ai/profile.py` |
 | 맞춤 추천 순서와 추천 이유 | 구현. 로그인해서 구독을 저장하면 피드가 AI 추천도 순으로 정렬되고 합격 가능성과 근거 한 줄이 붙는다(`POST /api/recommend`). 로그인 전에는 최신순이다. `POST /api/briefing`도 있다 | 서버 `backend/app/features/briefing/`, `backend/app/ai/recommend.py` |
-| 온보딩에서 고른 분야로 피드 거르기 | 부분. 고른 분야는 서버 구독에 저장되고 추천 순에 반영된다. 화면이 피드 첫 선택값으로 깔아 두는 기능은 통합 브랜치에서 마무리 중이다 | |
+| 온보딩에서 고른 분야로 피드 거르기 | 구현. 고른 분야를 기기와 서버 구독에 저장한다. 피드를 처음 열 때 그 분야가 선택된 상태로 열리고, 추천 순에도 반영된다 | |
+| 서비스 소개 띠, 「추천 방식」「수집 출처」「사용해 보기」 메뉴 | 구현 | `frontend/lib/features/feed/intro_band.dart`, `info_nav.dart`, `info_dialogs.dart` |
+| 로그인 입구, 로그인 상태에 맞춘 설정 메뉴 | 구현 | `frontend/lib/features/feed/dashboard_header.dart`, `frontend/lib/features/profile/settings_page.dart` |
+| 사이트 하단 출처·저작권·AI 요약 안내 | 구현 | `frontend/lib/features/feed/site_footer.dart` |
+| 크노 캐릭터의 온보딩 안내 말풍선 | 구현 | `frontend/lib/shared/ui/mascot_guide.dart`, `frontend/assets/mascot/` |
 | 알림 발송 | 다음 단계 | |
-| 외부 플랫폼 수집 | 다음 단계 (8절) | |
+| 외부 플랫폼 수집 | 부분. 자소설닷컴(신입 채용)·인디스워크(신입·인턴 채용, 교육·대외활동) 수집기. 두 사이트 이용약관은 확인 전이다. 링커리어는 약관 제39조 2호 때문에 넣지 않았다 (8절) | `backend/app/collectors/jasoseol.py`, `inthiswork.py` |
 
 AI 정확도와 비용 실측은 루트 `README.md`와 `backend/app/ai/README.md`에 있다. 기능마다 입력·처리·출력·예외는 0-1절 기능명세서에 있다.
 
@@ -36,7 +40,7 @@ AI 정확도와 비용 실측은 루트 `README.md`와 `backend/app/ai/README.md
 0절 표를 기능 단위로 풀어 쓴 것이다. 기준은 2026-10-03 시점의 코드다.
 
 - **main** = `origin/main`. Flutter 화면(`frontend/lib/`)과 AI 모듈(`backend/app/ai/` 의 enrich·poster·profile·requirements·recommend·mask)이 있다. AI 모듈은 `HC` 브랜치에도 같은 파일이 있다.
-- **백엔드 브랜치** = `hs/feature-frontend-link`(배포본이 이 브랜치에서 빌드된다). 수집·첨부·요약·API 서버(`backend/app/`)가 있다. 이 브랜치의 `backend/app/ai/` 에는 서버 전용 `digest.py`·`verify.py`·`llm.py` 가 있다.
+- 서버 코드(`backend/app/collectors/`, `features/`, `jobs/`)도 main 에 있다. 아래 「백엔드 브랜치」라는 말은 처음 서버를 만든 브랜치를 가리키던 표기이고, 지금은 main 의 같은 경로를 뜻한다. 수집·첨부·요약·API 서버(`backend/app/`)가 있다. 이 브랜치의 `backend/app/ai/` 에는 서버 전용 `digest.py`·`verify.py`·`llm.py` 가 있다.
 - 상태: **구현** = 실제 서버나 기기에서 동작한다. **부분** = 화면이나 함수는 있지만 mock·데모 데이터를 쓰거나 서로 연결되지 않았다. **다음 단계** = 코드가 없다.
 - 처리 칸의 (코드)는 같은 입력이면 같은 결과가 나오는 규칙이고, (AI)는 LLM 호출이다.
 
@@ -44,7 +48,7 @@ AI 정확도와 비용 실측은 루트 `README.md`와 `backend/app/ai/README.md
 
 | ID | 기능 | 사용자 | 입력 | 처리 | 출력 | 화면 경로 / API | 우선순위 | 상태 | 코드 위치 |
 |---|---|---|---|---|---|---|---|---|---|
-| F-01 | 공지 수집 | 시스템(10분 주기), 운영자 | 출처 6곳: 본부 학사(4), SW중심대학사업단 공지, 소프트웨어융합대학 RSS 4개 | ① 목록을 읽고 이미 저장한 글 거름 (코드) ② 출처마다 새 글 최대 8건, 학교 서버 요청 사이 1초 (코드) ③ 상세 본문·첨부 받아 DB에 pending 저장 (코드) | 저장된 공지 | `POST /api/admin/poll-now`, `GET /api/admin/poll-status`, `POST /api/admin/redigest`, `GET /api/sources` | P0 | 구현 | 백엔드 브랜치 `backend/app/collectors/`(`kmu_board.py`, `sw_bulletin.py`, `cs_rss.py`), `backend/app/jobs/poll.py`, `scheduler.py`, `backend/app/features/admin/router.py`, `backend/app/core/config.py` |
+| F-01 | 공지 수집 | 시스템(10분 주기), 운영자 | 출처 9곳: 본부 학사(4), SW중심대학사업단 공지, 소프트웨어융합대학 RSS 4개, 자소설닷컴 신입 채용, 인디스워크 채용·대외활동 2개 | ① 목록을 읽고 이미 저장한 글 거름 (코드) ② 출처마다 새 글 최대 8건, 학교 서버 요청 사이 1초 (코드) ③ 상세 본문·첨부 받아 DB에 pending 저장 (코드) | 저장된 공지 | `POST /api/admin/poll-now`, `GET /api/admin/poll-status`, `POST /api/admin/redigest`, `GET /api/sources` | P0 | 구현 | 백엔드 브랜치 `backend/app/collectors/`(`kmu_board.py`, `sw_bulletin.py`, `cs_rss.py`), `backend/app/jobs/poll.py`, `scheduler.py`, `backend/app/features/admin/router.py`, `backend/app/core/config.py` |
 | F-02 | 첨부파일 글자 추출 | 시스템 | 공지 첨부(글 하나에 4개, 파일당 15MB까지) | ① 파일 앞부분(매직 바이트)으로 형식 판별 (코드) ② pdf·hwp·hwpx·docx·pptx 글자 추출, 20자 미만이면 실패 처리 (코드) ③ 학번 형태 가림, 파일당 12,000자까지 요약 입력에 붙임 (코드) | 첨부별 분석 여부와 사유 | 공지 응답의 `attachments` | P0 (6절 계획에서는 제외했으나 구현) | 구현 | 백엔드 브랜치 `backend/app/attachments/`(`__init__.py`, `hwp.py`, `office.py`), `backend/app/jobs/gather.py` |
 | F-03 | AI 요약·분류·마감 (근거 검사) | 시스템 | 본문+첨부 글(학번 가림, 3만 자까지) | ① JSON 스키마로 제목·요약·핵심·대상·마감·할 일 여부·분류 받기 (AI) ② 근거가 입력 글에 없으면 그 항목과 마감을 버림, 날짜 형식 검사, 분류는 고정 6개 중 2개까지 (코드) ③ 실패하면 1회 재호출, 또 실패하면 failed (코드) | `digest`(pending·done·failed), `categories` | `GET /api/notices`, `GET /api/notices/{id}`, `GET /api/categories` | P0 | 구현 | 백엔드 브랜치 `backend/app/ai/digest.py`, `verify.py`, `llm.py`, `prompts/digest_system.md`. 같은 규칙의 AI 모듈은 main `backend/app/ai/enrich.py`(서버에서 아직 부르지 않음) |
 | F-04 | 포스터 이미지 글자 읽기 | 시스템 | 본문이 거의 없는 공지의 이미지(3장, 5MB까지) | ① 본문 길이로 대상 판별 (코드) ② 파일 앞부분으로 이미지 형식 판별 (코드) ③ 이미지 글자 읽기 (AI) ④ 읽은 글을 요약 입력에 붙이고, 마감 근거가 포스터에만 있으면 `source="poster"` (코드) | `posterText`, 마감 출처 표시 | 없음 (서버 미연결) | P0 | 부분 | main `backend/app/ai/poster.py`, `prompts/poster.md` |
@@ -54,17 +58,18 @@ AI 정확도와 비용 실측은 루트 `README.md`와 `backend/app/ai/README.md
 | F-08 | 지원 준비 패널 | 학생 | 공지 제목·본문, 내 지원 정보(기기) | ① 필요 항목·서류 추출, 고정 키 12개 밖은 `other` (AI) ② 근거가 원문에 없거나 키가 목록 밖이면 그 항목만 버림, 1회 재시도 후 failed (코드) ③ 화면에서 근거 없는 항목을 한 번 더 거르고 내 값과 짝지어 복사 버튼 (코드) | 필요 항목·내 값·복사, 필요 서류 | 상세 화면 아래 패널, `GET /api/notices/{id}/requirements` | P3 | 구현 (서버가 결과를 캐시한다) | main `frontend/lib/features/apply_helper/`(`apply_panel.dart`, `requirements.dart`, `requirement_field.dart`, `requirement_document.dart`), AI 함수 main `backend/app/ai/requirements.py`, `prompts/requirements.md` |
 | F-09 | 내 지원 정보 | 학생 | 이름·연락처·이메일·학번 등 직접 입력 | ① 기기(shared_preferences)에 저장, 빈 칸은 null (코드) ② 서버와 AI로 보내지 않음 | 지원 준비 패널의 「내 값」 | `/profile/applicant` | P3 | 구현 (기기 안) | main `frontend/lib/features/profile/applicant_info_page.dart`, `frontend/lib/shared/lib/applicant_store.dart`, `application_values.dart` |
 | F-10 | 가입·로그인·필수 동의·탈퇴 | 학생 | 닉네임, 비밀번호, 동의 체크 | ① 비밀번호 8자 이상·영문과 숫자 포함 검사, 닉네임 중복 거절 (코드) ② 필수 동의 기록 (코드) ③ 탈퇴하면 기기의 이력과 지원 정보 삭제 (코드) | 로그인 상태 | `/`, `/signup`, `/login`, `/consent`, `/settings`. `POST /api/auth/*`, `/api/consent`, `DELETE /api/me` | P1 | 구현 | main `frontend/lib/features/auth/`, `frontend/lib/features/profile/settings_page.dart`, `frontend/lib/shared/api/auth_api.dart`, `mock_auth.dart` |
-| F-11 | 온보딩 | 학생 | 학과·학년(졸업생은 0), 관심 분야, 자연어 한 줄 | ① 자연어를 분야·키워드로 해석 (AI 예정, 지금은 고정 예시값) ② 학과·학년·분야 저장 (코드, mock) | 구독 설정 | `/onboarding/major`, `/onboarding/interests`. `PUT /api/subscriptions`(구현), `POST /api/subscriptions/parse`(서버에 없음) | P1 | 부분 (분야 선택지는 `catalog.dart` 의 10개라 서버 분류 6개와 다르다. 고른 분야는 서버 구독에 저장돼 추천 순에 반영된다. 자연어 해석은 고정 예시값이다) | main `frontend/lib/features/onboarding/`, `frontend/lib/shared/api/subscription_api.dart`, `frontend/lib/shared/lib/catalog.dart` |
-| F-12 | 내 이력 수기 입력 | 학생 | 태그(14개 목록), 기술, 프로젝트·수상·활동 | ① 기기에 저장 (코드) ② 태그만 서버로 보냄 (코드, mock) | 내 이력 | `/profile/history` | P1 | 부분 (기기 저장은 동작한다. 태그 저장이 서버 구독 전체를 덮어쓴다) | main `frontend/lib/features/profile/history_page.dart`, `entry_list_editor.dart`, `profile_store.dart` |
+| F-11 | 온보딩 | 학생 | 학과·학년(졸업생은 0), 관심 분야, 자연어 한 줄 | ① 자연어를 분야·키워드로 해석 (AI 예정, 지금은 고정 예시값) ② 학과·학년·분야 저장 (코드, mock) | 구독 설정 | `/onboarding/major`, `/onboarding/interests`. `PUT /api/subscriptions`(구현), `POST /api/subscriptions/parse`(서버에 없음) | P1 | 구현 (고른 분야를 기기에 저장해 피드 첫 선택값으로 깔고, 서버 구독에도 저장해 추천 순에 반영한다. 자연어 한 줄 해석 `subscriptions/parse` 는 서버에 없어 예시값이다) | main `frontend/lib/features/onboarding/`, `frontend/lib/shared/api/subscription_api.dart`, `frontend/lib/shared/lib/catalog.dart` |
+| F-12 | 내 이력 수기 입력 | 학생 | 태그(14개 목록), 기술, 프로젝트·수상·활동 | ① 기기에 저장 (코드) ② 태그만 서버로 보냄 (코드, mock) | 내 이력 | `/profile/history` | P1 | 구현 (기기에 저장하고, 태그는 서버 구독에 합쳐 저장한다) | main `frontend/lib/features/profile/history_page.dart`, `entry_list_editor.dart`, `profile_store.dart` |
 | F-13 | 포트폴리오 PDF 글자 추출·가리기 | 학생 (선택 동의) | PDF 파일 | ① 선택 동의 확인 (코드) ② 브라우저에서 글자 추출, 글자가 없으면 스캔본 안내 (코드) ③ 전화번호·이메일·학번 형태를 가리고 가린 개수 표시 (코드) | 가린 글 미리보기 | `/profile/portfolio` | P2 | 구현 (브라우저 안, 원본 저장 안 함) | main `frontend/lib/features/profile/portfolio_page.dart`, `pdf_text_extractor.dart`, `pii_masker.dart`, `masked_preview.dart`. 같은 목적의 파이썬판 main `backend/app/ai/mask.py` |
 | F-14 | AI 이력 추출·검토 | 학생 (선택 동의) | F-13의 가린 글 | ① 기술·태그·프로젝트·수상·활동 추출 (AI) ② 근거 없는 항목과 목록 밖 태그 버림, 30자 미만이면 AI를 부르지 않고 `no_text` (코드) ③ 검토 화면에서 체크한 항목만 기기에 저장 (코드) | 내 이력 칸 채움 | `/profile/portfolio/review`. `POST /api/profile/analyze` | P2 | 구현 (서버 `POST /api/profile/analyze`. USE_MOCK 빌드에서는 예시 결과) | AI 함수 main `backend/app/ai/profile.py`, `prompts/profile.md`. 화면 main `frontend/lib/features/profile/portfolio_review_page.dart`, `profile_analysis.dart`, `frontend/lib/shared/api/profile_api.dart` |
 | F-15 | 나의 상황 브리핑 | 학생 | 학과, 학년, 신분, 졸업 예정 여부, 관심 분류 (저장 안 함) | ① 대상·마감·할 일 여부는 F-03에서 뽑아 둔 값 (AI) ② done, 할 일 있음, 마감 안 지남, 대상 조건 일치, 관심 분류 또는 필수 분류(학사·생활, 졸업)를 모두 만족하는 글만 (코드) ③ 마감 임박 순, 출처만 다른 같은 공지 합치기, 이유 문구 (코드) | 글 목록, 이유, 남은 날 | `POST /api/briefing` (화면에서 부르지 않음) | P1 | 부분 | 백엔드 브랜치 `backend/app/features/briefing/`(`router.py`, `service.py`, `matching.py`, `dedupe.py`) |
 | F-16 | 태그 맞춤 추천 순서 | 학생 | 공지의 AI 결과, 내 학과·학년·분야·태그 | ① 겹친 태그×3, 분야 일치 2, 학년 일치 2, 전공 일치 2, 학년 불일치 -20 (코드) ② 마감 지난 글 제외, 동점은 마감·게시일·id 순 (코드) ③ 추천 이유 문구 (코드) | id·점수·이유 목록 | 없음 (피드의 추천 순은 최신순) | P1 | 부분 (규칙 모듈만 있다. 서버 추천 순은 이 규칙 대신 AI 추천도를 쓴다, F-19) | main `backend/app/ai/recommend.py`, `backend/app/ai/config/recommend.json` |
-| F-19 | AI 추천도 정렬과 합격 가능성 | 학생 (로그인) | 구독(학과·학년·분야·태그), 공지 | ① 공지마다 될 가능성과 근거 한 줄 (AI) ② 추천도 순으로 정렬 (코드) | 정렬된 피드, 공고 제목 위 가능성·근거 한 줄 | `GET /api/feed?sort=recommend`, `POST /api/recommend` | P1 | 구현 | 브랜치 `hs/feature-frontend-link` `backend/app/features/recommend/`, `backend/app/features/feed/` |
+| F-19 | AI 추천도 정렬과 합격 가능성 | 학생 (로그인) | 구독(학과·학년·분야·태그), 공지 | ① 공지마다 될 가능성과 근거 한 줄 (AI) ② 추천도 순으로 정렬 (코드) | 정렬된 피드, 공고 제목 위 가능성·근거 한 줄 | `GET /api/feed?sort=recommend`, `POST /api/recommend` | P1 | 구현 | `backend/app/features/recommend/`, `backend/app/features/feed/` |
+| F-20 | 서비스 소개와 안내 | 처음 온 사용자 | 없음 | ① 피드 위 소개 띠 (코드) ② 「추천 방식」「수집 출처」 안내 창, 출처는 받은 공지에서 모은다 (코드) ③ 「사용해 보기」로 가입·온보딩 시작 (코드) ④ 하단에 출처·저작권·AI 요약 안내 (코드) | 소개 띠, 안내 창, 하단 안내 | `/feed` | P1 | 구현 | `frontend/lib/features/feed/intro_band.dart`, `info_nav.dart`, `info_dialogs.dart`, `site_footer.dart`, `dashboard_header.dart` |
 | F-17 | 알림 발송 | 학생 | 구독 분야, 새 공지 | 없음 | 없음 | 없음 | P0 (계획) | 다음 단계 | 코드 없음 |
-| F-18 | 외부 플랫폼 수집 | 학생 | 외부 공모전·대외활동 사이트 | 없음 | 없음 | 없음 | 로드맵 (6절, 8절) | 다음 단계 | 코드 없음 |
+| F-18 | 외부 플랫폼 수집 | 학생 | 자소설닷컴 신입 채용, 인디스워크 채용·대외활동 목록 | ① 목록을 읽고 새 글만 고름 (코드) ② 상세를 받아 요약으로 넘김 (코드, AI) | 외부 공고가 같은 피드에 섞여 나온다 | `/feed`, `GET /api/sources` | 로드맵 (6절, 8절) | 부분 (이용약관 확인 전. 링커리어는 제외) | `backend/app/collectors/jasoseol.py`, `inthiswork.py`, `backend/app/core/config.py` SOURCES |
 
-상태별 개수: 구현 12개(F-01, 02, 03, 05, 06, 07, 08, 09, 10, 13, 14, 19), 부분 5개(F-04, 11, 12, 15, 16), 다음 단계 2개(F-17, 18).
+상태별 개수: 구현 15개(F-01, 02, 03, 05, 06, 07, 08, 09, 10, 11, 12, 13, 14, 19, 20), 부분 4개(F-04, 15, 16, 18), 다음 단계 1개(F-17).
 
 ### 주요 기능 상세
 
@@ -72,7 +77,7 @@ AI 정확도와 비용 실측은 루트 `README.md`와 `backend/app/ai/README.md
 
 - **정상 흐름**
   1. 서버가 켜지면 스케줄러가 `POLL_INTERVAL_MIN`(기본 10분)마다 한 바퀴를 돈다. 운영자는 `POST /api/admin/poll-now` 로 바로 돌릴 수 있다.
-  2. 출처 6곳의 목록을 순서대로 읽는다. 요청 사이는 1초 띄우고, 수집기 이름을 User-Agent에 밝힌다.
+  2. 출처 9곳(학교 6, 외부 3)의 목록을 순서대로 읽는다. 요청 사이는 1초 띄우고, 수집기 이름을 User-Agent에 밝힌다.
   3. 이미 저장한 글을 빼고, 출처마다 새 글을 최대 `NEW_PER_SOURCE`(기본 8)건 고른다.
   4. 상세 본문과 첨부 글자를 모아(F-02) DB에 pending으로 저장한 뒤 요약(F-03)으로 넘긴다.
 - **예외 처리**
