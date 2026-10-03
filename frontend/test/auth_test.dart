@@ -1,16 +1,25 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:kmu_notice/features/auth/signup_rules.dart';
+
 import 'test_helpers.dart';
 
 void main() {
+  _passwordTest();
+  _signupTests();
+  _loginTest();
+}
+
+void _passwordTest() {
   test('비밀번호는 8자 이상, 영문과 숫자를 모두 포함해야 한다', () {
     expect(SignupRules.passwordValid('abcdefgh'), isFalse);
     expect(SignupRules.passwordValid('12345678'), isFalse);
     expect(SignupRules.passwordValid('abc123'), isFalse);
     expect(SignupRules.passwordValid('abcd1234'), isTrue);
   });
+}
 
+void _signupTests() {
   testWidgets('규칙에 안 맞는 비밀번호면 가입 버튼이 꺼져 있다', (tester) async {
     await pumpApp(tester);
     await tapText(tester, '시작하기');
@@ -35,7 +44,9 @@ void main() {
     await tapText(tester, '가입하기');
     expect(find.text('이미 사용 중인 닉네임이에요.'), findsOneWidget);
   });
+}
 
+void _loginTest() {
   testWidgets('가입한 계정으로만 로그인된다', (tester) async {
     await pumpApp(tester);
     await tapText(tester, '시작하기');
@@ -50,6 +61,9 @@ void main() {
 
     await fillFields(tester, ['login_user', 'testpass123']);
     await tapText(tester, '로그인');
+    expect(find.text('크노'), findsOneWidget);
+    expect(find.text('학사·생활'), findsOneWidget);
+    expect(find.text('행사·대외활동'), findsOneWidget);
     expect(find.text('모든 카테고리'), findsOneWidget);
   });
 }

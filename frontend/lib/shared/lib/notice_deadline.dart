@@ -1,8 +1,8 @@
 import 'feed_config.dart';
 import 'notice.dart';
 
-DateTime koreaToday() {
-  final kst = DateTime.now().toUtc().add(FeedConfig.koreaOffset);
+DateTime koreaToday([DateTime? now]) {
+  final kst = (now ?? DateTime.now()).toUtc().add(FeedConfig.koreaOffset);
   return DateTime.utc(kst.year, kst.month, kst.day);
 }
 
@@ -24,28 +24,34 @@ Map<String, dynamic>? validDeadline(Notice notice) {
   return d;
 }
 
-bool deadlineExpired(Notice notice) {
+bool deadlineExpired(Notice notice, {DateTime? now}) {
   final d = validDeadline(notice);
   if (d == null) return false;
   if (d['time'] == null) {
-    return DateTime.parse('${d['date']}T00:00:00Z').isBefore(koreaToday());
+    return DateTime.parse('${d['date']}T00:00:00Z').isBefore(koreaToday(now));
   }
   return !DateTime.parse('${d['date']}T${d['time']}:00+09:00')
-      .isAfter(DateTime.now());
+      .isAfter(now ?? DateTime.now());
 }
 
-String deadlineLabel(Notice notice) {
+String deadlineLabel(Notice notice, {DateTime? now}) {
+  final clock = now ?? DateTime.now();
   final d = validDeadline(notice);
   if (d == null) return '원문 확인';
-  if (deadlineExpired(notice)) return '마감';
+  if (deadlineExpired(notice, now: clock)) return '마감';
   final days = DateTime.parse('${d['date']}T00:00:00Z')
-      .difference(koreaToday())
+      .difference(koreaToday(clock))
       .inDays;
   if (days == 0) return '오늘 마감';
   return 'D-$days';
 }
 
-int compareDeadline(Notice a, Notice b) {
+int compareDeadline(Notice a, Notice b, {DateTime? now}) {
+  final clock = now ?? DateTime.now();
+  final expired = (deadlineExpired(a, now: clock) ? 1 : 0).compareTo(
+    deadlineExpired(b, now: clock) ? 1 : 0,
+  );
+  if (expired != 0) return expired;
   DateTime date(Notice n) {
     final d = validDeadline(n);
     return d == null
@@ -53,8 +59,8 @@ int compareDeadline(Notice a, Notice b) {
         : DateTime.parse('${d['date']}T${d['time'] ?? '23:59'}:00+09:00');
   }
 
-  // 마감 지난 글은 맨 아래로 (오름차순만 쓰면 2023년 마감이 맨 위로 올라온다, 2026-10-03)
-  final expiredA = deadlineExpired(a), expiredB = deadlineExpired(b);
-  if (expiredA != expiredB) return expiredA ? 1 : -1;
-  return date(a).compareTo(date(b));
+  final deadline = date(a).compareTo(date(b));
+  if (deadline != 0) return deadline;
+  final posted = b.postedAt.compareTo(a.postedAt);
+  return posted != 0 ? posted : a.id.compareTo(b.id);
 }

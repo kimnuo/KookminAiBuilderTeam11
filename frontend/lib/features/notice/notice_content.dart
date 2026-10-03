@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
 import 'package:kmu_notice/shared/lib/notice.dart';
-import 'package:kmu_notice/shared/lib/notice_deadline.dart';
+import 'package:kmu_notice/shared/lib/feed_config.dart';
 import 'package:kmu_notice/shared/lib/notice_search.dart';
 import 'package:kmu_notice/shared/ui/app_colors.dart';
 import 'package:kmu_notice/shared/ui/fit_line.dart';
 
 import 'detail_section.dart';
 import 'notice_media.dart';
+import 'notice_ai_sections.dart';
 
 class NoticeContent extends StatelessWidget {
   const NoticeContent({
@@ -48,8 +49,7 @@ class NoticeContent extends StatelessWidget {
   );
 
   Widget _body(double width) {
-    final hasMedia =
-        notice.previewMedia.isNotEmpty || notice.attachments.isNotEmpty;
+    final hasMedia = notice.posters.isNotEmpty || notice.attachments.isNotEmpty;
     final sections = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: _sections(),
@@ -61,7 +61,10 @@ class NoticeContent extends StatelessWidget {
         children: [
           Expanded(child: sections),
           const SizedBox(width: 24),
-          SizedBox(width: 220, child: NoticeMedia(notice: notice)),
+          SizedBox(
+            width: FeedConfig.posterSidebarWidth,
+            child: NoticeMedia(notice: notice),
+          ),
         ],
       );
     }
@@ -69,7 +72,9 @@ class NoticeContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 260),
+          constraints: const BoxConstraints(
+            maxWidth: FeedConfig.posterStackWidth,
+          ),
           child: NoticeMedia(notice: notice),
         ),
         const SizedBox(height: 24),
@@ -89,31 +94,6 @@ class NoticeContent extends StatelessWidget {
         ),
       ];
     }
-    final d = validDeadline(notice);
-    return [
-      FitCard(notice: notice),
-      DetailSection(
-        title: '핵심 요약',
-        lines: notice.summary.isEmpty
-            ? ['요약 정보가 없어요. 원문을 확인해 주세요.']
-            : notice.summary,
-      ),
-      DetailSection(
-        title: '마감일 · ${deadlineLabel(notice)}',
-        lines: d == null
-            ? ['근거가 있는 마감일 정보가 없어요. 원문을 확인해 주세요.']
-            : [
-                '${d['date']}${d['time'] == null ? '' : ' ${d['time']}'} (한국 시간)',
-                '근거: ${d['evidence']}',
-              ],
-      ),
-      if (notice.audience?.trim().isNotEmpty ?? false)
-        DetailSection(title: '신청 대상', lines: [notice.audience!]),
-      if (notice.apply?.trim().isNotEmpty ?? false)
-        DetailSection(title: '신청 방법', lines: [notice.apply!]),
-      if (notice.chance == null && notice.reasons.isNotEmpty)
-        DetailSection(title: '추천 이유', lines: notice.reasons),
-      preparation,
-    ];
+    return [FitCard(notice: notice), NoticeAiSections(notice: notice), preparation];
   }
 }

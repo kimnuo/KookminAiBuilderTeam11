@@ -2,12 +2,20 @@ import 'package:flutter/material.dart';
 
 class FeedConfig {
   static const requestTimeout = Duration(seconds: 20);
-  static const pageSize = 8;
   // 백엔드 POLL_INTERVAL_MIN 기본값(backend/app/core/config.py)과 맞춘다
   static const collectMinutes = 10;
   static const detailDialogWidth = 820.0;
   static const detailDialogHeight = 720.0;
   static const detailDialogRatio = .82;
+  static const posterDialogWidth = 650.0;
+  static const posterDialogRatio = .86;
+  static const posterPreviewHeight = 320.0;
+  static const posterSidebarWidth = 220.0;
+  static const posterStackWidth = 260.0;
+  static const posterImageTypes = {'jpg', 'jpeg', 'png', 'gif', 'webp'};
+  static const applicationPointPattern =
+      r'(신청|접수|제출|지원|등록|예약)\s*(방법|절차|경로|링크|주소|처)';
+  static const sourceLabels = {'sw-notice': 'SW사업단 공지사항'};
   static const previewCount = 3;
   static const previewRowHeight = 42.0;
   static const compactPreviewRowHeight = 28.0;

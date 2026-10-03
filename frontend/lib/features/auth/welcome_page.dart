@@ -59,7 +59,14 @@ class WelcomePage extends StatelessWidget {
               style: TextStyle(fontSize: 15, color: AppColors.grey700),
             ),
           ),
-          const SizedBox(height: 12),
+          TextButton(
+            onPressed: () => context.go(Routes.feed),
+            child: const Text(
+              '로그인 없이 둘러볼게요',
+              style: TextStyle(fontSize: 14, color: AppColors.grey500),
+            ),
+          ),
+          const SizedBox(height: 8),
         ],
       ),
     );

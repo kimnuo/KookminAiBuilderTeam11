@@ -1,4 +1,7 @@
+import 'feed_config.dart';
 import 'notice_view.dart';
+import 'notice_media_data.dart';
+import 'digest_items.dart';
 
 class Notice {
   Notice(Map<String, dynamic> raw) : json = noticeView(raw);
@@ -7,23 +10,39 @@ class Notice {
   String get title => json['title']?.toString() ?? '제목 없음';
   String get url => json['url']?.toString() ?? '';
   Map<String, dynamic> get previewMedia => mapValue(json['previewMedia']);
-  List<Map<String, dynamic>> get attachments => [
-    ...mapList(previewMedia['files']),
-    ...mapList(json['attachments']),
-  ];
+  List<Map<String, dynamic>> get posters =>
+      noticePosters(previewMedia, attachments, url);
+  List<Map<String, dynamic>> get attachments =>
+      [...mapList(previewMedia['files']), ...mapList(json['attachments'])]
+          .map(
+            (file) => file['asset'] is String
+                ? file
+                : {...file, 'url': noticeMediaUrl(file['url'], url)},
+          )
+          .toList();
   Map<String, dynamic> get digest => mapValue(json['digest']);
   Map<String, dynamic> get fit => mapValue(json['fit']);
   int? get chance => (fit['chance'] as num?)?.round();
   String get fitReason => fit['reason']?.toString() ?? '';
+  List<Map<String, dynamic>> get keyPoints => ai.isEmpty
+      ? []
+      : digestItems(digest['keyPoints'], 'value')
+            .where(
+              (p) =>
+                  p['label'] is String &&
+                  (p['label'] as String).trim().isNotEmpty,
+            )
+            .toList();
+  List<Map<String, dynamic>> get requiredActions =>
+      ai.isEmpty ? [] : digestItems(digest['requirements'], 'text');
   String get postedAt => json['postedAt']?.toString() ?? '';
   String get department => json['department']?.toString() ?? '';
   Map<String, dynamic> get source => mapValue(json['source']);
   String get sourceId => source['id']?.toString() ?? '';
-  String get sourceName {
-    final name = source['name']?.toString() ?? '출처 미상';
-    final group = source['group']?.toString();
-    return name == '공지사항' && group != null ? '$group · $name' : name;
-  }
+  String get sourceName =>
+      FeedConfig.sourceLabels[sourceId] ??
+      source['name']?.toString() ??
+      '출처 미상';
 
   Map<String, dynamic> get ai =>
       mapValue(json['ai'])['status'] == 'done' ? mapValue(json['ai']) : {};
