@@ -4,7 +4,7 @@
 
 | 항목 | 내용 |
 |---|---|
-| 상태 | v0.1 (2026-10-03, K-Builder 현장) |
+| 상태 | v0.2 (2026-10-03, K-Builder 현장). v0.2에서 브랜치 규칙을 개인 브랜치로 바꿨다 |
 | 대상 | 팀원 4명과 각자 쓰는 AI 코딩 도구 |
 | 같이 볼 문서 | `docs/PRD.md`는 무엇을 만드는지, 이 문서는 어떻게 만드는지 정한다 |
 
@@ -17,32 +17,36 @@
 ```bash
 git clone https://github.com/kimnuo/KookminAiBuilderTeam11.git
 cd KookminAiBuilderTeam11
-git config core.ignorecase false   # Windows: 파일명 대소문자 변경을 git이 알아채게 한다
 git switch main
 git pull origin main
 ```
 
 - 이미 클론했다면 `git switch main` 후 `git pull origin main`부터 한다.
+- 그다음 내 브랜치를 만든다(2절).
 - 백엔드가 `.env.example`을 올리면 복사해서 `.env`를 만든다. 키 값은 팀원에게 DM으로 받는다.
 
 ## 2. Git 규칙
 
 ### 브랜치
 
-- main에서 직접 작업하지 않는다. 기능마다 브랜치를 만든다.
-- 이름은 `feat/<영역>-<기능>` 또는 `fix/<영역>-<내용>`으로 짓는다. 영역은 `fe`, `be`, `ai`, `docs` 중 하나다.
-  - 예: `feat/fe-feed`, `feat/be-collector`, `feat/ai-enrich`, `fix/fe-login-redirect`
-- 브랜치 하나에는 기능 하나만 담는다. 2~3시간 안에 머지할 수 있는 크기로 자르고 자주 머지한다.
+- main에서 직접 작업하지 않는다. 각자 자기 이름 브랜치에서 작업한다.
+
+| 사람 | 브랜치 |
+|---|---|
+| 현찬 | `HC` |
+| 택준 | `tj_kim` (원격에 이미 있는 브랜치라 택준 것으로 **추정**, 확인 필요) |
+| 해서 | 정해서 적는다 |
+| 민섭 | 정해서 적는다 |
+
+- 브랜치 이름에는 `/`를 쓰지 않는다. `/`를 넣어도 작업 폴더에 폴더가 생기지는 않는다. git 내부(`.git/refs/heads/`)에만 폴더로 저장되고, 일부 GUI가 폴더처럼 묶어서 보여 준다. 다만 `HC/feed`가 있으면 `HC`라는 브랜치를 만들 수 없다(2026-10-03 실험으로 확인). 그래서 `/` 없이 간다.
+- PR 하나에는 기능 하나만 담는다. 2~3시간 안에 머지할 수 있는 크기로 자주 올린다.
 
 ### 작업 시작 전에 매번
 
 ```bash
 git switch main
 git pull origin main
-git switch -c feat/fe-feed     # 새 기능이면 새 브랜치
-
-# 이미 있는 내 브랜치에서 이어서 하면
-git switch feat/fe-feed
+git switch HC                  # 내 브랜치 (처음이면 git switch -c HC)
 git merge main                 # 최신 main을 내 브랜치에 합친다
 ```
 
@@ -56,9 +60,10 @@ git merge main                 # 최신 main을 내 브랜치에 합친다
 
 - GitHub에서 PR을 만들어 머지한다.
 - 머지 전에 내 브랜치에 최신 main을 합치고(`git merge main`), 로컬에서 실행과 빌드가 되는지 확인한다.
+- PR을 머지할 때는 **Create a merge commit**을 고른다. Squash and merge로 머지하면, 같은 개인 브랜치를 이어 쓰다가 다음에 `git merge main`을 할 때 충돌이 난다. 2026-10-03에 실험해 보니 squash 뒤에 같은 줄을 다시 고치면 충돌이 났고, merge commit은 충돌이 없었다.
 - 머지 담당은 팀이 정한다. 각자 머지한다면 머지한 뒤 팀 채팅에 알린다.
-- **PR 위에 PR을 쌓지 않는다.** 앞 PR이 머지되기 전에 그 브랜치에서 새 브랜치를 만들지 않는다. 기다릴 수 없으면 같은 PR에 커밋으로 얹는다.
-- 머지한 뒤에는 GitHub에서 그 브랜치를 지운다(Delete branch). 그리고 main에 내 파일이 실제로 들어갔는지 확인한다.
+- PR이 열려 있는 동안 내 브랜치에 커밋을 더 올리면 그 PR에 같이 들어간다. 따로 보내고 싶으면 먼저 머지한 뒤에 이어서 작업한다.
+- 개인 브랜치는 머지한 뒤에도 지우지 않는다. GitHub이 Delete branch 버튼을 보여 줘도 누르지 않는다. 머지한 뒤 main에 내 파일이 실제로 들어갔는지 확인한다.
 - main에 force push 하지 않는다. `git reset --hard`나 `git push --force`는 내 브랜치에서도 팀에 먼저 말하고 한다.
 - 무료 private 레포에서는 main 보호 규칙을 걸 수 없을 수 있다(**추정**). 그래서 위 규칙은 사람끼리 지킨다.
 
@@ -112,15 +117,18 @@ git merge main                 # 최신 main을 내 브랜치에 합친다
   - 프론트: 화면(`FeedPage`), 부품(`FeedCard`), 상태(`useFeed`), 서버 호출(`feed.api`)
   - 백엔드: 라우터(`router`), 로직(`service`), 입출력 형식(`schema`)
 - 기능 폴더끼리 서로 import하지 않는다. 같이 쓸 것이 생기면 프론트는 `shared/`, 백엔드는 `core/`로 옮긴다.
-### 폴더 담당 (2026-10-03 확정)
+### 폴더 담당
+
+세 사람의 역할(백엔드 해서, 프론트 A 택준, 프론트 B 민섭)은 2026-10-03에 정했다. 「제안」이라고 적은 칸은 아직 팀이 정하지 않았다.
 
 | 폴더 | 담당 |
 |---|---|
-| `backend/` (`ai/` 제외), `mock/` | 해서 (백엔드) |
+| `backend/` (`ai/` 제외) | 해서 (백엔드) |
+| `mock/` | 해서 (제안) |
 | `frontend/src/features/auth/`, `onboarding/`, `profile/` | 택준 (프론트 A) |
 | `frontend/src/features/feed/`, `notice/`, `apply-helper/` | 민섭 (프론트 B) |
-| `backend/app/ai/`, `docs/` | 현찬 |
-| `frontend/src/shared/`, `frontend/src/app/` | 프론트 둘이 같이. 고치기 전에 서로 말한다 |
+| `backend/app/ai/`, `docs/` | 현찬 (제안) |
+| `frontend/src/shared/`, `frontend/src/app/` | 프론트 둘이 같이 (제안). 고치기 전에 서로 말한다 |
 
 - 자세한 일은 PRD 12절 표를 따른다. 남의 폴더를 고칠 때는 담당자에게 먼저 말한다.
 
@@ -172,7 +180,7 @@ git merge main                 # 최신 main을 내 브랜치에 합친다
 
 ## 9. AI 코딩 도구를 쓸 때
 
-- 일을 시키기 전에 이 문서를 읽게 한다. `AGENTS.md`를 읽는 도구(Codex 등)와 `CLAUDE.md`를 읽는 Claude Code는 자동으로 읽는다. 다른 도구는 첫 메시지에 이 파일을 넣는다.
+- 일을 시키기 전에 이 문서를 읽게 한다. Claude Code는 `CLAUDE.md`를 통해 자동으로 읽는다. 다른 도구가 `AGENTS.md`를 자동으로 읽는지는 도구마다 다르니, 확실하지 않으면 첫 메시지에 이 파일을 넣는다.
 - AI가 만든 코드는 커밋 전에 직접 한 번 돌려 본다. 만들어졌다고 돌아가는 것은 아니다.
 - AI에게 git 명령(브랜치 전환, `add -A`, force push)을 맡기지 않는다. 커밋과 푸시는 사람이 한다.
 - 한 사람이 AI 세션을 여러 개 동시에 돌리면 세션마다 `git worktree`로 폴더를 나눈다. 같은 폴더에서 두 세션이 git을 건드리면 서로의 작업을 덮는다.
@@ -187,7 +195,7 @@ git merge main                 # 최신 main을 내 브랜치에 합친다
 
 ## 11. 해커톤 운영
 
-- 2~3시간마다 30초씩 맞춘다. 각자 "지금 데모 되나?"를 한 문장으로 말한다.
+- 2~3시간마다 30초씩 상태를 공유한다. 각자 "지금 데모 되나?"에 한 문장으로 답한다.
 - 5분 넘게 막히면 혼자 붙잡지 말고 팀에 공유한다.
 - 데모에 안 보이는 것은 만들지 않는다. 우선순위는 PRD 6-1절의 P0부터 P3 순서다.
 - 마감 2시간 전에 코드를 얼린다. 그 뒤로는 새 기능을 머지하지 않고 버그 수정과 리허설만 한다.
@@ -197,7 +205,7 @@ git merge main                 # 최신 main을 내 브랜치에 합친다
 
 ## 12. .gitignore에 있어야 하는 것
 
-지금 저장소의 `.gitignore`는 Visual Studio 템플릿이다. 2026-10-03에 확인했을 때 `.env`, `node_modules/`, `__pycache__/`는 걸렸지만 `.venv/`와 `.next/`는 빠져 있었다. 아래 목록과 대조해서 빠진 것을 더한다.
+저장소 `.gitignore`는 Visual Studio 템플릿 끝에 아래 목록을 덧붙인 것이다(2026-10-03). 새 도구가 만드는 폴더가 생기면 여기에 더한다.
 
 ```
 .env
@@ -218,4 +226,4 @@ build/
 ## 13. 이 문서를 고칠 때
 
 - 무엇을 만드는지는 PRD, 어떻게 만드는지는 이 문서를 본다. 둘 다 답이 없으면 팀 채팅에 묻는다.
-- 이 문서는 `docs/` 브랜치에서 PR로 고치고, 고친 내용을 팀에 알린다.
+- 이 문서는 자기 브랜치에서 고쳐 PR로 올리고, 고친 내용을 팀에 알린다.
