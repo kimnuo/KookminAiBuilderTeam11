@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "python3 -m http.server 4173",
+    "dev": "python3 scripts/dev-server.py",
     "format": "prettier --write src index.html README.md tests scripts package.json tsconfig.json",
     "check": "tsc -p tsconfig.json && node scripts/check-structure.js && prettier --check src index.html README.md tests scripts package.json tsconfig.json",
     "test": "node --test tests/*.test.js",

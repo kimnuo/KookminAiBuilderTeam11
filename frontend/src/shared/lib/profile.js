@@ -1,4 +1,5 @@
 import { config } from '../config.js';
+import { demoState, isDemoMode } from './demo-mode.js';
 
 export function readStoredObject(storage, key) {
   try {
@@ -10,6 +11,7 @@ export function readStoredObject(storage, key) {
 }
 
 export function readLocalObject(key) {
+  if (isDemoMode() && key === config.profileKey) return demoState.profile;
   try {
     return readStoredObject(localStorage, key);
   } catch {

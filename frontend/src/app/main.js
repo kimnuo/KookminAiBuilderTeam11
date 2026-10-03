@@ -4,6 +4,11 @@ import { renderProfileCard } from '../shared/ui/ProfileCard.js';
 import { createFeedPage } from '../features/feed/FeedPage.js';
 import { createNoticeDetail } from '../features/notice/NoticeDetail.js';
 import { createApplyPanel } from '../features/apply-helper/ApplyPanel.js';
+import { prepareDemo } from '../shared/api/demo-client.js';
+import { renderDemoBanner } from '../shared/ui/DemoBanner.js';
+
+renderDemoBanner();
+await prepareDemo().catch(() => {});
 
 const applyPanel = createApplyPanel();
 const noticeDetail = createNoticeDetail({

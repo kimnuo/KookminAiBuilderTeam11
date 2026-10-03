@@ -1,6 +1,9 @@
 import { config } from '../config.js';
+import { isDemoMode } from '../lib/demo-mode.js';
+import { requestDemo } from './demo-client.js';
 
 async function request(path, signal) {
+  if (isDemoMode()) return requestDemo(path, signal);
   const response = await fetch(`${config.apiBase}${path}`, {
     credentials: 'same-origin',
     headers: { Accept: 'application/json' },

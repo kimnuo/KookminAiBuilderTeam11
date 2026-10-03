@@ -1,5 +1,7 @@
 export const config = {
   apiBase: '/api',
+  demoBase: '/mock',
+  demoQueryKey: 'demo',
   profileKey: 'kmu.profile',
   sessionKey: 'kmu.session',
   timeZone: 'Asia/Seoul',
