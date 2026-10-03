@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class FeedConfig {
   static const requestTimeout = Duration(seconds: 20);
-  static const pageSize = 8;
   static const detailDialogWidth = 820.0;
   static const detailDialogHeight = 720.0;
   static const detailDialogRatio = .82;
