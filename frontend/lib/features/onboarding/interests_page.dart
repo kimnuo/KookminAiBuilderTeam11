@@ -5,6 +5,7 @@ import 'package:kmu_notice/shared/api/subscription_api.dart';
 import 'package:kmu_notice/shared/lib/catalog.dart';
 import 'package:kmu_notice/shared/lib/interest_store.dart';
 import 'package:kmu_notice/shared/lib/routes.dart';
+import 'package:kmu_notice/shared/ui/mascot_guide.dart';
 import 'package:kmu_notice/shared/ui/select_chip.dart';
 import 'package:kmu_notice/shared/ui/step_scaffold.dart';
 import 'natural_language_box.dart';
@@ -75,6 +76,9 @@ class _InterestsPageState extends State<InterestsPage> {
   @override
   Widget build(BuildContext context) {
     return StepScaffold(
+      guide: const MascotGuide(
+        '관심 분야를 골라 주세요.\n첫 화면에서 고른 분야를 미리 선택해 둘게요.',
+      ),
       title: '어떤 소식을\n받아 볼까요?',
       subtitle: '고른 분야의 공지만 알려 드려요.',
       ctaLabel: _selected.isEmpty ? '분야를 골라 주세요' : '${_selected.length}개 분야 받기',

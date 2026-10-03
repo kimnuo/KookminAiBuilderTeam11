@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:kmu_notice/shared/lib/routes.dart';
 import 'package:kmu_notice/shared/ui/app_colors.dart';
 import 'package:kmu_notice/shared/ui/bottom_cta.dart';
+import 'package:kmu_notice/shared/ui/mascot_guide.dart';
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
@@ -17,10 +18,9 @@ class WelcomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(
-                Icons.notifications_active_rounded,
-                size: 56,
-                color: AppColors.primary,
+              MascotGuide(
+                '안녕하세요, 크노예요.\n흩어진 학교 공지를 대신 읽어 드릴게요.',
+                size: 72,
               ),
               SizedBox(height: 28),
               Text(
