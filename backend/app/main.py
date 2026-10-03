@@ -9,10 +9,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import CORS_ORIGINS
 from app.db import store
 from app.features.admin.router import router as admin_router
+from app.features.auth.router import router as auth_router
 from app.features.briefing.router import router as briefing_router
 from app.features.feed.router import router as feed_router
 from app.features.notices.router import router as notices_router
 from app.features.recommend.router import router as recommend_router
+from app.features.subscriptions.router import router as subscriptions_router
 from app.jobs import scheduler
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -40,7 +42,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-for router in (notices_router, feed_router, briefing_router, recommend_router, admin_router):
+for router in (auth_router, notices_router, feed_router, briefing_router, recommend_router, subscriptions_router, admin_router):
     app.include_router(router, prefix="/api")
 
 

@@ -4,7 +4,7 @@ import logging
 import re
 from datetime import date
 
-from app.core.config import CATEGORIES
+from app.core.config import CATEGORIES, TAGS
 from app.core.schemas import Audience, Deadline, Digest, KeyDate, KeyPoint, Requirement
 
 log = logging.getLogger(__name__)
@@ -32,6 +32,7 @@ def to_digest(raw: dict, source_text: str, default_category: str) -> tuple[Diges
         last_date=_dated(KeyDate, raw.get("lastDate"), found),
         action_required=raw.get("actionRequired"),
         audience=_audience(raw.get("audience")),
+        tags=[t for t in raw.get("tags", []) if t in TAGS][:3],
         etc=[e for e in raw.get("etc", []) if e and e.strip()][:4],
     )
     _log_dropped(raw, digest)

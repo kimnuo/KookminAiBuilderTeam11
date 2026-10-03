@@ -1,8 +1,11 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Header, HTTPException, Query
 
 from app.core.config import CATEGORIES, SOURCES, source_list_url
-from app.core.schemas import Notice, NoticePage, Source
+from app.core.schemas import Notice, NoticePage, RecommendRequest, Source
 from app.features.notices import service
+from app.features.notices.requirements import requirements_of
+from app.features.recommend.router import with_subscription
+from app.features.recommend.service import fit_of
 
 router = APIRouter(tags=["notices"])
 
@@ -35,8 +38,21 @@ def list_notices(
 
 
 @router.get("/notices/{notice_id}", response_model=Notice, summary="한 페이지 요약 (공지 상세)")
-def get_notice(notice_id: str) -> Notice:
+def get_notice(notice_id: str, authorization: str | None = Header(None)) -> Notice:
     notice = service.get_notice(notice_id)
     if notice is None:
         raise HTTPException(status_code=404, detail="notice not found")
+    request = with_subscription(RecommendRequest(), authorization)
+    notice.fit = fit_of(notice_id, request)
     return notice
+
+
+@router.get(
+    "/notices/{notice_id}/requirements",
+    summary="지원할 때 적을 정보와 낼 서류 (지원 준비 패널)",
+    description="현찬의 app/ai/requirements.py 로 뽑는다. 사용자 정보는 보내지 않는다.",
+)
+def get_requirements(notice_id: str) -> dict:
+    if service.get_notice(notice_id) is None:
+        raise HTTPException(status_code=404, detail="notice not found")
+    return requirements_of(notice_id)

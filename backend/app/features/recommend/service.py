@@ -12,9 +12,11 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from app.ai.gateway import complete_json
+from app.ai.recommend import rank
 from app.ai.llm import LlmError
 from app.core.config import LLM_API_MODEL, LLM_CONCURRENCY, RECOMMEND_BATCH, RECOMMEND_MAX
-from app.core.schemas import Notice, RecommendRequest, Recommendation, RecommendResponse
+from app.collectors.common import now_kst
+from app.core.schemas import Fit, Notice, RecommendRequest, Recommendation, RecommendResponse
 from app.db import store
 
 log = logging.getLogger(__name__)
@@ -109,9 +111,42 @@ def recommend(request: RecommendRequest) -> RecommendResponse:
     store.save_recommendations(
         [(keys[i.notice_id], i.notice_id, i.chance, i.reason) for i in found.values() if i.notice_id in keys]
     )
-    return RecommendResponse(
-        model=LLM_API_MODEL, items=[found[n.id] for n in notices if n.id in found]
-    )
+    items = [found[n.id] for n in notices if n.id in found]
+    return RecommendResponse(model=LLM_API_MODEL, items=add_code_score(request, notices, items))
+
+
+def ai_view(notice: Notice) -> dict:
+    """현찬의 app/ai/recommend.py 가 보는 형태(ai 칸)로 맞춘다. 화면의 notice_view.dart 와 같은 변환."""
+    digest = notice.digest
+    return {
+        "id": notice.id,
+        "postedAt": notice.posted_at,
+        "ai": {
+            "categories": notice.categories,
+            "tags": digest.tags,
+            "deadline": digest.deadline.model_dump(by_alias=True, mode="json") if digest.deadline else None,
+            "audience": digest.audience.model_dump(by_alias=True, mode="json") if digest.audience else None,
+        },
+    }
+
+
+def add_code_score(
+    request: RecommendRequest, notices: list[Notice], items: list[Recommendation]
+) -> list[Recommendation]:
+    """순서·점수는 코드가 매긴다 (지침서 7절). AI 는 될 가능성과 근거 한 줄만 본다."""
+    user = {
+        "tags": request.tags,
+        "categories": request.situation.interests,
+        "year": request.situation.year,
+        "major": request.situation.major,
+    }
+    ranked = {r["id"]: r for r in rank([ai_view(n) for n in notices], user, now_kst().date().isoformat())}
+    for item in items:
+        scored = ranked.get(item.notice_id)
+        if scored:
+            item.score = scored["score"]
+            item.reasons = scored["reasons"]
+    return items
 
 
 def _ask_all(request: RecommendRequest, missing: list[Notice]) -> list[Recommendation]:
@@ -123,3 +158,10 @@ def _ask_all(request: RecommendRequest, missing: list[Notice]) -> list[Recommend
         results = list(pool.map(lambda chunk: ask(request, chunk), chunks))
     cleaned = [clean(item, known) for batch in results for item in batch]
     return [item for item in cleaned if item]
+
+
+def fit_of(notice_id: str, request: RecommendRequest) -> Fit | None:
+    """공지 하나의 될 가능성. 상세 화면에서 쓴다 (캐시에 있으면 AI 를 부르지 않는다)."""
+    answer = recommend(request.model_copy(update={"notice_ids": [notice_id]}))
+    item = answer.items[0] if answer.items else None
+    return Fit(chance=item.chance, reason=item.reason) if item else None

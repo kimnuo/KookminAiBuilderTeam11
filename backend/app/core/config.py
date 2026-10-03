@@ -1,5 +1,6 @@
 """설정값과 고정 목록. 상수는 여기 한 곳에만 둔다 (지침서 4절)."""
 
+import json
 import os
 from pathlib import Path
 
@@ -46,10 +47,12 @@ LLM_TIMEOUT_SEC = int(os.getenv("LLM_TIMEOUT_SEC", "180"))
 LLM_CONCURRENCY = int(os.getenv("LLM_CONCURRENCY", "3"))
 LLM_INPUT_MAX_CHARS = 30_000
 
-# 학교 AI 게이트웨이 (키는 backend/.env 의 LLM_API_KEY). 추천 적합도 계산에 쓴다
-LLM_API_BASE = os.getenv("LLM_API_BASE", "https://ai.cs.kookmin.ac.kr/v1")
-LLM_API_KEY = os.getenv("LLM_API_KEY", "")
-LLM_API_MODEL = os.getenv("LLM_API_MODEL", "claude-haiku-4-5")
+# 학교 AI 게이트웨이. 변수 이름은 현찬의 ai/llm_gateway.py 와 맞춘다 (키는 backend/.env, 커밋 금지)
+LLM_API_BASE = os.getenv("KMU_AI_BASE_URL", "https://ai.cs.kookmin.ac.kr").rstrip("/")
+if not LLM_API_BASE.endswith("/v1"):
+    LLM_API_BASE += "/v1"
+LLM_API_KEY = os.getenv("KMU_AI_API_KEY", "")
+LLM_API_MODEL = os.getenv("KMU_AI_MODEL", "claude-haiku-4-5")
 RECOMMEND_BATCH = 8  # 한 번 호출에 넣는 공지 수
 RECOMMEND_MAX = 40  # 한 요청에서 다룰 최대 공지 수
 
@@ -62,6 +65,9 @@ CS_BASE_URL = "https://cs.kookmin.ac.kr"
 
 # 분류 (해서 확정 2026-10-03). 글 하나에 여러 개 붙을 수 있다
 CATEGORIES = ["학사·생활", "졸업", "장학", "취업", "행사·대외활동", "기타"]
+
+# 관심 분야 태그. 목록은 현찬의 app/ai/config/tags.json 한 곳에만 둔다 (지침서 4절)
+TAGS = json.loads((BACKEND_DIR / "app" / "ai" / "config" / "tags.json").read_text(encoding="utf-8"))["tags"]
 # 단과대학 이름으로 대상을 적은 공지를 학과와 맞추기 위한 표 (소융대 사이트 메뉴에서 확인)
 MAJOR_GROUPS = {"소프트웨어융합대학": ["소프트웨어학부", "인공지능학부"]}
 # 관심과 상관없이 「나의 상황」에 늘 넣는 분류

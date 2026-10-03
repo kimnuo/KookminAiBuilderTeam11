@@ -74,8 +74,16 @@ class Digest(ApiModel):
     last_date: KeyDate | None = None  # 이 공지가 의미 있는 마지막 날 (행사 종료일 등). 지나면 브리핑에서 뺀다
     action_required: bool | None = None  # 신청·제출 등 학생이 할 일이 있는가
     audience: Audience | None = None
+    tags: list[str] = []  # 관심 분야 태그 (AI 가 고정 목록에서 고른다)
     etc: list[str] = []  # 기타
     error: str | None = None  # failed 일 때 이유
+
+
+class Fit(ApiModel):
+    """AI 가 본 될 가능성과 근거 한 줄 (POST /api/recommend 와 같은 값)."""
+
+    chance: int = Field(ge=0, le=100)
+    reason: str
 
 
 class Notice(ApiModel):
@@ -90,6 +98,8 @@ class Notice(ApiModel):
     categories: list[str]
     attachments: list[Attachment] = []
     digest: Digest
+    recommendation_reasons: list[str] = []  # 왜 추천하는지 (코드 판단, app/ai/recommend.py)
+    fit: Fit | None = None  # 될 가능성과 근거 한 줄 (AI). 피드에서는 null 일 수 있다
 
 
 class NoticePage(ApiModel):
@@ -121,7 +131,7 @@ class Briefing(ApiModel):
 class RecommendRequest(ApiModel):
     """추천 적합도 요청. 상황은 저장하지 않는다. 이름·학번·연락처는 받지 않는다."""
 
-    situation: Situation
+    situation: Situation = Situation()  # 비워 두면 로그인한 사람의 구독 설정을 쓴다
     tags: list[str] = Field([], examples=[["AI·데이터", "개발"]])  # 켜 둔 관심 분야 태그
     notice_ids: list[str] = []
 
@@ -129,9 +139,38 @@ class RecommendRequest(ApiModel):
 class Recommendation(ApiModel):
     notice_id: str
     chance: int = Field(ge=0, le=100)  # 지원했을 때 될 가능성 (AI 판단)
-    reason: str  # 추천 근거 한 줄
+    reason: str  # 추천 근거 한 줄 (AI)
+    score: int = 0  # 추천 점수 (코드 판단, app/ai/recommend.py)
+    reasons: list[str] = []  # 왜 추천하는지 (코드 판단)
 
 
 class RecommendResponse(ApiModel):
     model: str
     items: list[Recommendation]
+
+
+class AuthRequest(ApiModel):
+    """가입·로그인. 닉네임만 받는다. 이름·학번·연락처는 받지 않는다."""
+
+    nickname: str = Field(min_length=1, max_length=40)
+    password: str = Field(min_length=1, max_length=200)
+
+
+class AuthResult(ApiModel):
+    id: str
+    token: str
+
+
+class ConsentRequest(ApiModel):
+    type: str = Field(examples=["required", "portfolioAnalysis"])
+    version: str = Field(examples=["2026-10-03"])
+
+
+class Subscription(ApiModel):
+    """구독 설정(나의 상황). 화면 온보딩이 PUT 으로 보낸다. 이름·연락처·학번은 받지 않는다."""
+
+    major: str | None = None
+    year: int | None = Field(None, ge=1, le=6)
+    categories: list[str] = []
+    keywords: list[str] = []
+    tags: list[str] = []

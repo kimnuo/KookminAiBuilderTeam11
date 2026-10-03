@@ -5,6 +5,7 @@
 - body 는 AI 재처리용 본문·첨부 글이다. 학번은 가린 뒤 저장한다
 """
 
+import json
 import sqlite3
 from contextlib import closing
 
@@ -21,6 +22,39 @@ CREATE TABLE IF NOT EXISTS notices (
     updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_notices_source ON notices(source_id);
+
+CREATE TABLE IF NOT EXISTS subscriptions (
+    user_id TEXT PRIMARY KEY,
+    data TEXT NOT NULL,
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS requirements (
+    notice_id TEXT PRIMARY KEY,
+    data TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS users (
+    id TEXT PRIMARY KEY,
+    nickname TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS sessions (
+    token TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS consents (
+    user_id TEXT NOT NULL,
+    type TEXT NOT NULL,
+    version TEXT NOT NULL,
+    agreed_at TEXT NOT NULL DEFAULT (datetime('now')),
+    PRIMARY KEY (user_id, type)
+);
 
 CREATE TABLE IF NOT EXISTS recommendations (
     cache_key TEXT PRIMARY KEY,
@@ -115,3 +149,99 @@ def save_recommendations(rows: list[tuple[str, str, int, str]]) -> None:
             "ON CONFLICT(cache_key) DO UPDATE SET chance=excluded.chance, reason=excluded.reason",
             rows,
         )
+
+
+def create_user(user_id: str, nickname: str, password_hash: str) -> bool:
+    """닉네임이 이미 있으면 False. 비밀번호는 해시만 들어온다."""
+    with closing(_connect()) as conn, conn:
+        try:
+            conn.execute(
+                "INSERT INTO users (id, nickname, password_hash) VALUES (?, ?, ?)",
+                (user_id, nickname, password_hash),
+            )
+        except sqlite3.IntegrityError:
+            return False
+    return True
+
+
+def find_user(nickname: str) -> tuple[str, str] | None:
+    with closing(_connect()) as conn:
+        row = conn.execute(
+            "SELECT id, password_hash FROM users WHERE nickname = ?", (nickname,)
+        ).fetchone()
+    return (row[0], row[1]) if row else None
+
+
+def save_session(token: str, user_id: str) -> None:
+    with closing(_connect()) as conn, conn:
+        conn.execute("INSERT INTO sessions (token, user_id) VALUES (?, ?)", (token, user_id))
+
+
+def session_user(token: str) -> str | None:
+    with closing(_connect()) as conn:
+        row = conn.execute("SELECT user_id FROM sessions WHERE token = ?", (token,)).fetchone()
+    return row[0] if row else None
+
+
+def drop_session(token: str) -> None:
+    with closing(_connect()) as conn, conn:
+        conn.execute("DELETE FROM sessions WHERE token = ?", (token,))
+
+
+def delete_user(user_id: str) -> None:
+    """탈퇴: 계정·세션·동의 기록을 모두 지운다."""
+    with closing(_connect()) as conn, conn:
+        conn.execute("DELETE FROM sessions WHERE user_id = ?", (user_id,))
+        conn.execute("DELETE FROM consents WHERE user_id = ?", (user_id,))
+        conn.execute("DELETE FROM subscriptions WHERE user_id = ?", (user_id,))
+        conn.execute("DELETE FROM users WHERE id = ?", (user_id,))
+
+
+def save_consent(user_id: str, kind: str, version: str) -> None:
+    with closing(_connect()) as conn, conn:
+        conn.execute(
+            "INSERT INTO consents (user_id, type, version) VALUES (?, ?, ?) "
+            "ON CONFLICT(user_id, type) DO UPDATE SET version=excluded.version, "
+            "agreed_at=datetime('now')",
+            (user_id, kind, version),
+        )
+
+
+def body_of(notice_id: str) -> str | None:
+    with closing(_connect()) as conn:
+        row = conn.execute("SELECT body FROM notices WHERE id = ?", (notice_id,)).fetchone()
+    return row[0] if row else None
+
+
+def get_requirements(notice_id: str) -> dict | None:
+    with closing(_connect()) as conn:
+        row = conn.execute(
+            "SELECT data FROM requirements WHERE notice_id = ?", (notice_id,)
+        ).fetchone()
+    return json.loads(row[0]) if row else None
+
+
+def save_requirements(notice_id: str, data: dict) -> None:
+    with closing(_connect()) as conn, conn:
+        conn.execute(
+            "INSERT INTO requirements (notice_id, data) VALUES (?, ?) "
+            "ON CONFLICT(notice_id) DO UPDATE SET data=excluded.data",
+            (notice_id, json.dumps(data, ensure_ascii=False)),
+        )
+
+
+def save_subscription(user_id: str, data: str) -> None:
+    with closing(_connect()) as conn, conn:
+        conn.execute(
+            "INSERT INTO subscriptions (user_id, data) VALUES (?, ?) "
+            "ON CONFLICT(user_id) DO UPDATE SET data=excluded.data, updated_at=datetime('now')",
+            (user_id, data),
+        )
+
+
+def get_subscription(user_id: str) -> str | None:
+    with closing(_connect()) as conn:
+        row = conn.execute(
+            "SELECT data FROM subscriptions WHERE user_id = ?", (user_id,)
+        ).fetchone()
+    return row[0] if row else None

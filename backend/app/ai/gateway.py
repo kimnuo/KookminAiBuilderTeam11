@@ -42,3 +42,25 @@ def _tool_input(body: dict, tool_name: str) -> dict:
             if isinstance(value, dict):
                 return value
     raise LlmError("도구 응답이 없다")
+
+
+def complete_text(prompt: str) -> str:
+    """현찬의 ai 모듈들이 쓰는 형태(prompt -> 글자). JSON 검사는 그쪽에서 한다."""
+    if not LLM_API_KEY:
+        raise LlmError("KMU_AI_API_KEY 가 없다 (backend/.env)")
+    payload = {
+        "model": LLM_API_MODEL,
+        "max_tokens": 4000,
+        "messages": [{"role": "user", "content": prompt}],
+    }
+    headers = {"x-api-key": LLM_API_KEY, "anthropic-version": "2023-06-01"}
+    try:
+        response = httpx.post(
+            f"{LLM_API_BASE}/messages", json=payload, headers=headers, timeout=LLM_TIMEOUT_SEC
+        )
+    except httpx.HTTPError as exc:
+        raise LlmError(f"게이트웨이 호출 실패: {exc}") from exc
+    if response.status_code != 200:
+        raise LlmError(f"게이트웨이 {response.status_code}: {response.text[:200]}")
+    blocks = response.json().get("content", [])
+    return "".join(b.get("text", "") for b in blocks if b.get("type") == "text")
