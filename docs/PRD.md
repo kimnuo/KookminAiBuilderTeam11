@@ -1,13 +1,184 @@
-# PRD: 국민대 공지·기회 맞춤 알림 (가칭)
+# PRD: 크노, 국민대 공지·기회 맞춤 피드
 
 | 항목 | 내용 |
 |---|---|
-| 상태 | 초안 v0.4 (2026-10-03, K-Builder 현장). v0.2에서 가입·동의, 내 이력, 맞춤 추천, 지원 정보 채우기를 추가했고(6-1절), v0.3에서 표기를 바로잡았고, v0.4에서 역할 담당자를 정했다(12절) |
+| 상태 | v0.5 (2026-10-03 제출본). v0.5에서 0절 「구현 상태」와 0-1절 「기능명세서」를 더했고, 분야를 서비스 6개로 맞췄고, 알림과 서버 API 일부를 다음 단계로 옮겼다. 1절부터는 착수 때 쓴 계획이라 0절과 다르면 0절이 실제다 |
 | 팀 | 11조. 백엔드 해서, 프론트 A 택준, 프론트 B 민섭, 현찬(빈 곳 담당) |
 | 대회 주제 | 귀찮음 주식회사: 대학 생활의 귀찮은 순간을 돈 받고 해결하는 AI 서비스 |
-| 아직 모르는 것 | 마감 시각, 제출물, 심사 기준 세부, 배포 필요 여부 (16절) |
+| 제출물 | 발표자료, 소스코드, 배포 URL (2026-10-03 확인) |
 
 > 표기 규칙: **확인함** = 2026-10-03에 직접 열어 본 사실. **추정** = 확인 안 한 것. **가설** = 발표 전에 검증할 것.
+
+## 0. 구현 상태 (2026-10-03 제출 기준)
+
+「다음 단계」는 이번 대회에서 만들지 않은 것이다. 서버(수집·API)는 백엔드 브랜치 `hs/feature-notice-digest`에서 만들었다.
+
+| 기능 | 상태 | 코드 |
+|---|---|---|
+| 공지 수집: 본부 학사(4), SW사업단, 소프트웨어융합대학 RSS | 구현 | 서버 `backend/app/collectors/` |
+| 첨부 pdf·hwp·hwpx·docx·pptx 글자를 요약에 넣기 | 구현 (계획에서는 제외였다) | 서버 `backend/app/attachments/` |
+| AI 분류·요약·마감 (근거 검사, 재시도) | 구현 | 서버 `backend/app/ai/digest.py`, AI 모듈 `backend/app/ai/enrich.py` |
+| 포스터 이미지 글자 읽기 | AI 모듈 구현, 서버 연결은 다음 단계 | `backend/app/ai/poster.py` |
+| 분야 대시보드, 다중 선택, 검색, 상세 | 구현 | `frontend/lib/features/feed/`, `notice/` |
+| 지원 준비 화면 | 화면 구현, 서버 API는 다음 단계 (화면은 데모 데이터) | `frontend/lib/features/apply_helper/`, AI 함수 `backend/app/ai/requirements.py` |
+| 가입·동의·온보딩·내 이력 화면 | 화면 구현, 서버 API는 다음 단계 (기기 안에서만) | `frontend/lib/features/auth/`, `onboarding/`, `profile/` |
+| 포트폴리오 PDF 글자 추출과 연락처·학번 가리기 | 구현 (브라우저) | `frontend/lib/features/profile/pdf_text_extractor.dart`, `pii_masker.dart` |
+| 포트폴리오 AI 이력 추출 | AI 함수 구현, 화면 연결은 다음 단계 (화면은 예시 결과) | `backend/app/ai/profile.py` |
+| 맞춤 추천 순서와 추천 이유 | 부분 구현. 서버 `POST /api/briefing`이 나의 상황에 맞는 글을 고르고, 태그 점수 규칙은 AI 모듈에 있다. 피드의 추천 순은 아직 최신순이고 화면은 briefing을 부르지 않는다 | 서버 `backend/app/features/briefing/`, `backend/app/ai/recommend.py` |
+| 온보딩에서 고른 분야로 피드 거르기 | 다음 단계 (지금은 대시보드에서 직접 고른다) | |
+| 알림 발송 | 다음 단계 | |
+| 외부 플랫폼 수집 | 다음 단계 (8절) | |
+
+AI 정확도와 비용 실측은 루트 `README.md`와 `backend/app/ai/README.md`에 있다. 기능마다 입력·처리·출력·예외는 0-1절 기능명세서에 있다.
+
+## 0-1. 기능명세서
+
+0절 표를 기능 단위로 풀어 쓴 것이다. 기준은 2026-10-03 시점의 코드다.
+
+- **main** = `origin/main`. Flutter 화면(`frontend/lib/`)과 AI 모듈(`backend/app/ai/` 의 enrich·poster·profile·requirements·recommend·mask)이 있다. AI 모듈은 `HC` 브랜치에도 같은 파일이 있다.
+- **백엔드 브랜치** = `hs/feature-notice-digest`. 수집·첨부·요약·API 서버(`backend/app/`)가 있다. 이 브랜치의 `backend/app/ai/` 에는 서버 전용 `digest.py`·`verify.py`·`llm.py` 가 있다.
+- 상태: **구현** = 실제 서버나 기기에서 동작한다. **부분** = 화면이나 함수는 있지만 mock·데모 데이터를 쓰거나 서로 연결되지 않았다. **다음 단계** = 코드가 없다.
+- 처리 칸의 (코드)는 같은 입력이면 같은 결과가 나오는 규칙이고, (AI)는 LLM 호출이다.
+
+### 기능 표
+
+| ID | 기능 | 사용자 | 입력 | 처리 | 출력 | 화면 경로 / API | 우선순위 | 상태 | 코드 위치 |
+|---|---|---|---|---|---|---|---|---|---|
+| F-01 | 공지 수집 | 시스템(10분 주기), 운영자 | 출처 6곳: 본부 학사(4), SW중심대학사업단 공지, 소프트웨어융합대학 RSS 4개 | ① 목록을 읽고 이미 저장한 글 거름 (코드) ② 출처마다 새 글 최대 8건, 학교 서버 요청 사이 1초 (코드) ③ 상세 본문·첨부 받아 DB에 pending 저장 (코드) | 저장된 공지 | `POST /api/admin/poll-now`, `GET /api/admin/poll-status`, `POST /api/admin/redigest`, `GET /api/sources` | P0 | 구현 | 백엔드 브랜치 `backend/app/collectors/`(`kmu_board.py`, `sw_bulletin.py`, `cs_rss.py`), `backend/app/jobs/poll.py`, `scheduler.py`, `backend/app/features/admin/router.py`, `backend/app/core/config.py` |
+| F-02 | 첨부파일 글자 추출 | 시스템 | 공지 첨부(글 하나에 4개, 파일당 15MB까지) | ① 파일 앞부분(매직 바이트)으로 형식 판별 (코드) ② pdf·hwp·hwpx·docx·pptx 글자 추출, 20자 미만이면 실패 처리 (코드) ③ 학번 형태 가림, 파일당 12,000자까지 요약 입력에 붙임 (코드) | 첨부별 분석 여부와 사유 | 공지 응답의 `attachments` | P0 (6절 계획에서는 제외했으나 구현) | 구현 | 백엔드 브랜치 `backend/app/attachments/`(`__init__.py`, `hwp.py`, `office.py`), `backend/app/jobs/gather.py` |
+| F-03 | AI 요약·분류·마감 (근거 검사) | 시스템 | 본문+첨부 글(학번 가림, 3만 자까지) | ① JSON 스키마로 제목·요약·핵심·대상·마감·할 일 여부·분류 받기 (AI) ② 근거가 입력 글에 없으면 그 항목과 마감을 버림, 날짜 형식 검사, 분류는 고정 6개 중 2개까지 (코드) ③ 실패하면 1회 재호출, 또 실패하면 failed (코드) | `digest`(pending·done·failed), `categories` | `GET /api/notices`, `GET /api/notices/{id}`, `GET /api/categories` | P0 | 구현 | 백엔드 브랜치 `backend/app/ai/digest.py`, `verify.py`, `llm.py`, `prompts/digest_system.md`. 같은 규칙의 AI 모듈은 main `backend/app/ai/enrich.py`(서버에서 아직 부르지 않음) |
+| F-04 | 포스터 이미지 글자 읽기 | 시스템 | 본문이 거의 없는 공지의 이미지(3장, 5MB까지) | ① 본문 길이로 대상 판별 (코드) ② 파일 앞부분으로 이미지 형식 판별 (코드) ③ 이미지 글자 읽기 (AI) ④ 읽은 글을 요약 입력에 붙이고, 마감 근거가 포스터에만 있으면 `source="poster"` (코드) | `posterText`, 마감 출처 표시 | 없음 (서버 미연결) | P0 | 부분 | main `backend/app/ai/poster.py`, `prompts/poster.md` |
+| F-05 | 분야 대시보드 | 학생 | 피드 전체 목록 | ① `GET /api/feed` 한 번 받기 (코드) ② 분류·출처·제목 키워드로 6개 분야에 배정, 안 맞으면 기타 (코드) ③ 분야별 개수와 미리보기 최대 3건 (코드) | 분야 타일 6개(학사·생활, 졸업, 장학, 취업, 행사·대외활동, 기타) | `/feed` (`?demo=1` 이면 앱에 넣은 데모 데이터), `GET /api/feed` | P0 | 구현 | main `frontend/lib/features/feed/`(`feed_page.dart`, `category_grid.dart`, `category_tile.dart`, `category_previews.dart`, `category_dialog.dart`), `frontend/lib/shared/lib/feed_config.dart`. 서버는 백엔드 브랜치 `backend/app/features/feed/router.py` |
+| F-06 | 분야 다중 선택·검색·출처·정렬 | 학생 | 분야 여러 개, 검색어, 출처, 정렬(추천 순·마감 임박 순) | ① 고른 분야 중 하나라도 맞는 글 표시 (코드) ② 검색어를 단어로 나눠 제목·요약·분류·출처에 모두 들어 있는 글만, 전각·기호 정리와 별칭 치환 (코드) ③ 추천 순은 마감 지난 글 제외, 마감 임박 순은 마감일 순 (코드) | 걸러진 공지 목록 | `/feed`, `GET /api/feed?sort=recommend\|deadline` | P0 | 구현 (추천 순의 서버 정렬은 최신순) | main `frontend/lib/features/feed/feed_controller.dart`, `feed_toolbar.dart`, `feed_select_button.dart`, `frontend/lib/shared/lib/notice_search.dart`, `notice_deadline.dart` |
+| F-07 | 공지 상세 | 학생 | 공지 id | ① `GET /api/notices/{id}` (코드) ② done이면 요약·마감·근거, pending이면 「AI 분석 중」, failed면 「AI 분석을 완료하지 못했어요」 (코드) ③ 마감 근거가 없으면 「원문 확인」 (코드) ④ 첨부 목록과 원문 링크 (코드) | 상세 화면 (피드에서는 대화상자) | `/notice/:id`, `GET /api/notices/{id}` | P0 | 구현 (포스터 미리보기와 내장 첨부 파일은 데모 모드에서만) | main `frontend/lib/features/notice/`(`notice_page.dart`, `notice_content.dart`, `attachment_tile.dart`, `poster_preview.dart`), `frontend/lib/app/notice_dialog.dart`, `frontend/lib/shared/lib/notice_view.dart` |
+| F-08 | 지원 준비 패널 | 학생 | 공지 제목·본문, 내 지원 정보(기기) | ① 필요 항목·서류 추출, 고정 키 12개 밖은 `other` (AI) ② 근거가 원문에 없거나 키가 목록 밖이면 그 항목만 버림, 1회 재시도 후 failed (코드) ③ 화면에서 근거 없는 항목을 한 번 더 거르고 내 값과 짝지어 복사 버튼 (코드) | 필요 항목·내 값·복사, 필요 서류 | 상세 화면 아래 패널, `GET /api/notices/{id}/requirements` (서버에 없음) | P3 | 부분 (데모 데이터로만 채워진다. 실서버 모드에서는 「준비 목록을 불러오지 못했어요」) | main `frontend/lib/features/apply_helper/`(`apply_panel.dart`, `requirements.dart`, `requirement_field.dart`, `requirement_document.dart`), AI 함수 main `backend/app/ai/requirements.py`, `prompts/requirements.md` |
+| F-09 | 내 지원 정보 | 학생 | 이름·연락처·이메일·학번 등 직접 입력 | ① 기기(shared_preferences)에 저장, 빈 칸은 null (코드) ② 서버와 AI로 보내지 않음 | 지원 준비 패널의 「내 값」 | `/profile/applicant` | P3 | 구현 (기기 안) | main `frontend/lib/features/profile/applicant_info_page.dart`, `frontend/lib/shared/lib/applicant_store.dart`, `application_values.dart` |
+| F-10 | 가입·로그인·필수 동의·탈퇴 | 학생 | 닉네임, 비밀번호, 동의 체크 | ① 비밀번호 8자 이상·영문과 숫자 포함 검사, 닉네임 중복 거절 (코드) ② 필수 동의 기록 (코드) ③ 탈퇴하면 기기의 이력과 지원 정보 삭제 (코드) | 로그인 상태 | `/`, `/signup`, `/login`, `/consent`, `/settings`. `POST /api/auth/*`, `/api/consent`, `DELETE /api/me` 는 서버에 없음 | P1 | 부분 (`USE_MOCK` 기본값 true. 계정은 앱 메모리에만 있어 새로고침하면 사라진다) | main `frontend/lib/features/auth/`, `frontend/lib/features/profile/settings_page.dart`, `frontend/lib/shared/api/auth_api.dart`, `mock_auth.dart` |
+| F-11 | 온보딩 | 학생 | 학과·학년(졸업생은 0), 관심 분야, 자연어 한 줄 | ① 자연어를 분야·키워드로 해석 (AI 예정, 지금은 고정 예시값) ② 학과·학년·분야 저장 (코드, mock) | 구독 설정 | `/onboarding/major`, `/onboarding/interests`. `PUT /api/subscriptions`, `POST /api/subscriptions/parse` 는 서버에 없음 | P1 | 부분 (분야 선택지는 `catalog.dart` 의 10개라 서버 분류 6개와 다르다. 고른 분야로 피드를 거르지 않는다. 10개를 6개 카드로 옮겨 피드 첫 선택값으로 까는 초안이 `HC-onboarding` 브랜치에 있고 택준 확인 대기다) | main `frontend/lib/features/onboarding/`, `frontend/lib/shared/api/subscription_api.dart`, `frontend/lib/shared/lib/catalog.dart` |
+| F-12 | 내 이력 수기 입력 | 학생 | 태그(14개 목록), 기술, 프로젝트·수상·활동 | ① 기기에 저장 (코드) ② 태그만 서버로 보냄 (코드, mock) | 내 이력 | `/profile/history` | P1 | 부분 (기기 저장은 동작, 태그 전송은 mock) | main `frontend/lib/features/profile/history_page.dart`, `entry_list_editor.dart`, `profile_store.dart` |
+| F-13 | 포트폴리오 PDF 글자 추출·가리기 | 학생 (선택 동의) | PDF 파일 | ① 선택 동의 확인 (코드) ② 브라우저에서 글자 추출, 글자가 없으면 스캔본 안내 (코드) ③ 전화번호·이메일·학번 형태를 가리고 가린 개수 표시 (코드) | 가린 글 미리보기 | `/profile/portfolio` | P2 | 구현 (브라우저 안, 원본 저장 안 함) | main `frontend/lib/features/profile/portfolio_page.dart`, `pdf_text_extractor.dart`, `pii_masker.dart`, `masked_preview.dart`. 같은 목적의 파이썬판 main `backend/app/ai/mask.py` |
+| F-14 | AI 이력 추출·검토 | 학생 (선택 동의) | F-13의 가린 글 | ① 기술·태그·프로젝트·수상·활동 추출 (AI) ② 근거 없는 항목과 목록 밖 태그 버림, 30자 미만이면 AI를 부르지 않고 `no_text` (코드) ③ 검토 화면에서 체크한 항목만 기기에 저장 (코드) | 내 이력 칸 채움 | `/profile/portfolio/review`. `POST /api/profile/analyze` 는 서버에 없음 | P2 | 부분 (화면은 `profile_api.dart` 의 예시 결과를 받는다) | AI 함수 main `backend/app/ai/profile.py`, `prompts/profile.md`. 화면 main `frontend/lib/features/profile/portfolio_review_page.dart`, `profile_analysis.dart`, `frontend/lib/shared/api/profile_api.dart` |
+| F-15 | 나의 상황 브리핑 | 학생 | 학과, 학년, 신분, 졸업 예정 여부, 관심 분류 (저장 안 함) | ① 대상·마감·할 일 여부는 F-03에서 뽑아 둔 값 (AI) ② done, 할 일 있음, 마감 안 지남, 대상 조건 일치, 관심 분류 또는 필수 분류(학사·생활, 졸업)를 모두 만족하는 글만 (코드) ③ 마감 임박 순, 출처만 다른 같은 공지 합치기, 이유 문구 (코드) | 글 목록, 이유, 남은 날 | `POST /api/briefing` (화면에서 부르지 않음) | P1 | 부분 | 백엔드 브랜치 `backend/app/features/briefing/`(`router.py`, `service.py`, `matching.py`, `dedupe.py`) |
+| F-16 | 태그 맞춤 추천 순서 | 학생 | 공지의 AI 결과, 내 학과·학년·분야·태그 | ① 겹친 태그×3, 분야 일치 2, 학년 일치 2, 전공 일치 2, 학년 불일치 -20 (코드) ② 마감 지난 글 제외, 동점은 마감·게시일·id 순 (코드) ③ 추천 이유 문구 (코드) | id·점수·이유 목록 | 없음 (피드의 추천 순은 최신순) | P1 | 부분 | main `backend/app/ai/recommend.py`, `backend/app/ai/config/recommend.json` |
+| F-17 | 알림 발송 | 학생 | 구독 분야, 새 공지 | 없음 | 없음 | 없음 | P0 (계획) | 다음 단계 | 코드 없음 |
+| F-18 | 외부 플랫폼 수집 | 학생 | 외부 공모전·대외활동 사이트 | 없음 | 없음 | 없음 | 로드맵 (6절, 8절) | 다음 단계 | 코드 없음 |
+
+상태별 개수: 구현 8개(F-01, 02, 03, 05, 06, 07, 09, 13), 부분 8개(F-04, 08, 10, 11, 12, 14, 15, 16), 다음 단계 2개(F-17, 18).
+
+### 주요 기능 상세
+
+#### F-01 공지 수집
+
+- **정상 흐름**
+  1. 서버가 켜지면 스케줄러가 `POLL_INTERVAL_MIN`(기본 10분)마다 한 바퀴를 돈다. 운영자는 `POST /api/admin/poll-now` 로 바로 돌릴 수 있다.
+  2. 출처 6곳의 목록을 순서대로 읽는다. 요청 사이는 1초 띄우고, 수집기 이름을 User-Agent에 밝힌다.
+  3. 이미 저장한 글을 빼고, 출처마다 새 글을 최대 `NEW_PER_SOURCE`(기본 8)건 고른다.
+  4. 상세 본문과 첨부 글자를 모아(F-02) DB에 pending으로 저장한 뒤 요약(F-03)으로 넘긴다.
+- **예외 처리**
+  - 한 바퀴가 도는 중에 다시 부르면 건너뛴다(잠금). 스케줄러와 수동 수집이 겹치지 않는다.
+  - 목록이나 상세를 못 받으면 그 출처나 그 글만 건너뛰고 `poll-status` 의 errors에 남긴다. 이전에 저장한 데이터는 그대로 둔다.
+  - 첨부 하나를 못 받아도 글 전체를 버리지 않고 그 첨부에 「다운로드 실패」 사유를 붙인다.
+- **수용 기준**
+  - `POST /api/admin/poll-now` 다음에 `GET /api/admin/poll-status` 의 저장 글 수가 늘고, `GET /api/sources` 가 6개를 돌려준다.
+  - 백엔드 브랜치에는 수집기 자동 테스트가 없다. 위 기준은 손으로 확인한다.
+
+#### F-03 AI 요약·분류·마감 (근거 검사)
+
+- **정상 흐름**
+  1. 본문과 첨부 글(파일당 12,000자)을 한 입력으로 묶고, 학번 형태를 `[학번]` 으로 가린 뒤 3만 자로 자른다.
+  2. 프롬프트 파일과 JSON 스키마로 LLM을 부른다(서버는 `llm.py` 한 곳에서 호출하고 180초 제한을 둔다).
+  3. 코드가 결과를 검사한다. 핵심·준비물·마감·마지막 날짜는 근거 문장이 입력 글에 있어야 남는다(공백·문장부호만 다른 것은 통과). 날짜는 ISO 형식이어야 하고, 분류는 고정 6개 안에서 2개까지 남긴다.
+  4. 통과한 결과를 `digest.status="done"` 으로 저장한다.
+- **예외 처리**
+  - 호출 실패나 형식 오류는 1회 다시 부른다. 그래도 실패하면 `status="failed"` 와 오류 문구를 저장하고, 분류는 출처 기본값을 쓴다. 화면은 「AI 분석을 완료하지 못했어요」를 띄운다.
+  - 근거가 없는 마감은 null이 되고, 화면은 「원문 확인」으로 표시한다.
+  - 프롬프트를 바꾸면 `POST /api/admin/redigest` 로 저장된 글을 다시 요약한다.
+  - AI 모듈(main `enrich.py`)은 키(`KMU_AI_API_KEY`)가 없으면 LLM을 만들 때 오류로 멈춘다. 평가 스크립트는 `--yes` 가 없으면 호출 수만 알리고 멈춘다.
+- **수용 기준**
+  - main `backend/app/ai/tests/test_enrich.py` 의 `test_evidence_not_in_text_is_dropped`, `test_two_bad_answers_fail_with_board_default` 가 통과한다. AI 모듈 테스트 전체는 150개 통과, 17개 건너뜀이다(2026-10-03, LLM 없이 실행). 건너뛴 17개는 공지 본문 캐시(`eval/.cache`, 커밋 안 함)가 있어야 도는 테스트이고, `fetch_bodies` 로 캐시를 받으면 167개가 모두 통과한다.
+  - 실측(AI 모듈, 표본 20건): 본문 공지 14건에서 AI 14/14, LLM 없는 기준선 4/14다. 포스터 공지까지 합쳐 실제 마감이 있는 16건은 AI 16/16, 기준선 4/16이다. 정답은 사람이 확인하기 전 초안이고 프롬프트를 이 표본으로 썼으므로 표본 안 점수다. 자세한 값은 `backend/app/ai/README.md`.
+  - 서버의 `verify.py` 에는 자동 테스트가 없다.
+
+#### F-05·F-06 분야 대시보드, 다중 선택, 검색
+
+- **정상 흐름**
+  1. `/feed` 에 들어가면 `GET /api/feed?sort=recommend` 로 전체 목록을 한 번 받는다.
+  2. 글마다 분류·출처·제목 키워드로 분야 6개 중 하나 이상에 배정하고, 타일에 개수와 미리보기를 보여 준다.
+  3. 타일을 여러 개 고르면 고른 분야 중 하나라도 맞는 글이 보인다. 검색어·출처·정렬은 이 목록 위에서 화면이 거른다.
+  4. 정렬을 바꾸면 서버에서 다시 받는다. 마감 임박 순은 마감 모르는 글을 뒤로 보낸다.
+- **예외 처리**
+  - 서버 응답이 없거나 20초를 넘기면 「공고를 불러오지 못했어요. 연결을 확인해 주세요.」를 띄운다. 정렬을 빨리 바꿔도 늦게 온 이전 응답은 버린다.
+  - 어느 분야에도 안 맞는 글은 「기타」로 간다.
+  - 추천 순에서는 마감이 지난 글을 숨긴다. 개인 맞춤 점수(F-16)는 아직 연결하지 않아 서버 순서는 최신순이다.
+- **수용 기준**
+  - 검색어 「SW사업단 장학」은 출처 별칭과 분류가 모두 들어 있는 글만 남긴다(`notice_search.dart` 의 단어별 AND 규칙).
+  - 피드·검색에는 Flutter 자동 테스트가 없다. `?demo=1` 데이터로 손으로 확인한다.
+
+#### F-08 지원 준비 패널
+
+- **정상 흐름**
+  1. 공지 상세 아래에서 그 공지의 필요 항목을 불러온다.
+  2. AI가 공고 문장에서 필요 항목과 서류를 고르고, 항목 키는 고정 12개(`name`, `phone`, `email` 등) 안에서만 쓴다.
+  3. 코드가 근거 문장이 원문에 없는 항목과 목록 밖 키를 버린다.
+  4. 화면이 기기에 저장된 내 값(F-09)을 항목 옆에 놓고 복사 버튼을 준다. 제출은 사용자가 원래 사이트에서 직접 한다.
+- **예외 처리**
+  - 불러오기에 실패하면 「준비 목록을 불러오지 못했어요. 원문에서 확인해 주세요.」를 띄우고, 다음에 다시 부를 수 있게 캐시를 지운다.
+  - 남은 항목이 없으면 「근거가 있는 준비 목록이 없어요. 원문을 확인해 주세요.」를 띄운다.
+  - AI가 두 번 다 실패하면 `status="failed"` 와 빈 목록을 돌려준다.
+  - 클립보드 복사가 실패하면 직접 선택하라고 안내한다.
+- **수용 기준**
+  - main `backend/app/ai/tests/test_requirements.py` 의 `test_evidence_not_in_text_drops_only_that_item`, `test_unknown_key_drops_only_that_item` 이 통과한다.
+  - 서버에 `GET /api/notices/{id}/requirements` 가 없어서 지금은 `?demo=1` 데이터로만 화면이 채워진다.
+
+#### F-10·F-11 가입·동의·온보딩
+
+- **정상 흐름**
+  1. 닉네임과 비밀번호로 가입한다. 비밀번호는 8자 이상이고 영문과 숫자를 모두 넣어야 가입 버튼이 켜진다.
+  2. 필수 동의(목적, 항목, 보유 기간, 거부 권리)를 받는다.
+  3. 학과·학년을 고르고, 관심 분야를 고르거나 자연어 한 줄로 적는다.
+  4. 내 이력 화면으로 넘어가 저장한다.
+- **예외 처리**
+  - 이미 있는 닉네임은 409로 거절한다. 가입하지 않은 계정은 로그인되지 않는다.
+  - 탈퇴하면 서버 탈퇴 요청과 함께 기기의 이력·지원 정보를 지운다.
+  - 지금은 `USE_MOCK=true` 라 계정·구독·자연어 해석이 앱 안의 mock으로 처리된다.
+- **수용 기준**
+  - `frontend/test/auth_test.dart`(비밀번호 규칙, 닉네임 중복, 로그인), `frontend/test/onboarding_flow_test.dart`(가입부터 이력 저장까지), `frontend/test/profile_pages_test.dart`(탈퇴 시 기기 데이터 삭제)가 통과한다(main).
+
+#### F-13·F-14 포트폴리오 PDF 분석
+
+- **정상 흐름**
+  1. 선택 동의에 체크해야 PDF를 고를 수 있다.
+  2. 브라우저 안에서 PDF 글자를 뽑는다. 원본은 저장하지 않는다.
+  3. 전화번호·이메일·학번 형태를 가리고, 무엇을 몇 개 가렸는지 보여 준다.
+  4. 가린 글만 분석으로 보내고, AI가 기술·태그·프로젝트·수상·활동을 근거와 함께 뽑는다.
+  5. 검토 화면에서 사용자가 체크한 항목만 기기의 내 이력에 저장한다.
+- **예외 처리**
+  - 글자가 없는 PDF(스캔본)는 「글자를 읽을 수 없는 PDF예요」로 안내하고 직접 입력으로 보낸다. AI 함수도 30자 미만이면 부르지 않고 `no_text` 를 돌려준다.
+  - 근거가 원문에 없는 항목과 태그 목록 밖의 태그는 버린다.
+  - 이름과 생년월일은 자동으로 가리지 못한다. 올리기 전 화면에서 안내한다.
+- **수용 기준**
+  - `frontend/test/pii_masker_test.dart`, `pdf_extract_test.dart`, `profile_analysis_test.dart`, `profile_pages_test.dart`(체크를 끈 항목은 저장 안 함)가 통과한다(main).
+  - main `backend/app/ai/tests/test_profile.py`, `test_mask.py` 가 통과한다.
+  - 서버에 `POST /api/profile/analyze` 가 없어서 지금 화면의 분석 결과는 예시값이다. 가리기(3번)까지는 실제로 동작한다.
+
+#### F-15 나의 상황 브리핑
+
+- **정상 흐름**
+  1. 학과·학년·신분·졸업 예정 여부·관심 분류를 보낸다. 서버는 이 값을 저장하지 않고, 이름·학번·연락처는 받지 않는다.
+  2. 요약이 끝난 글 중에서 할 일이 있고, 마감이 안 지났고, 대상 조건이 맞고, 관심 분류나 필수 분류(학사·생활, 졸업)인 글만 고른다.
+  3. 마감 임박 순으로 놓고, 출처만 다른 같은 공지는 하나로 합친다.
+  4. 글마다 「마감 D-3」 같은 이유를 코드가 붙인다.
+- **예외 처리**
+  - 마감을 모르면 마지막 관련 날짜로 판단하고, 그것도 없으면 최근 30일 안에 올라온 글만 남긴다.
+  - 대상 조건이 비어 있으면 모두 대상으로 본다.
+  - 요약이 failed이거나 pending인 글은 넣지 않는다.
+- **수용 기준**
+  - 같은 상황과 같은 DB에서 `POST /api/briefing` 을 두 번 부르면 같은 순서가 나온다(AI를 부르지 않는 코드 규칙).
+  - 자동 테스트는 없다. 화면에서 아직 부르지 않으므로 상태는 「부분」이다.
+
+### 담당
+
+백엔드 서버(수집·첨부·요약·API, 백엔드 브랜치 `backend/`)는 해서, 가입·온보딩·내 이력·지원 정보 화면(`frontend/lib/features/auth/`, `onboarding/`, `profile/`)은 택준, 피드·상세·지원 준비 화면(`frontend/lib/features/feed/`, `notice/`, `apply_helper/`)은 민섭, AI 모듈(main `backend/app/ai/`)과 문서(`docs/`)는 현찬이 맡는다.
 
 ---
 
@@ -54,8 +225,8 @@
 
 1. **가입·동의.** 닉네임과 비밀번호로 가입하고, 필수 동의를 받는다.
 2. **온보딩.** 학과와 학년을 고르고 관심 분야 칩을 고른다. 자연어 입력칸도 있다. 내 이력은 직접 입력하거나, 포트폴리오 PDF를 올리면 AI가 채운 결과를 검토해서 저장한다.
-3. **내 피드.** 고른 분야의 글만 나온다. 추천 순과 마감 임박 순을 바꿀 수 있다. 카드마다 AI 요약 3줄, 마감 배지, 추천 이유가 붙는다.
-4. **알림.** 새 글이 감지되면 휴대폰으로 알림이 온다(채널은 9절에서 결정).
+3. **내 피드.** 고른 분야의 글만 나온다(구현: 대시보드에서 직접 고르기. 추천 순은 다음 단계). 추천 순과 마감 임박 순을 바꿀 수 있다. 카드마다 AI 요약 3줄, 마감 배지, 추천 이유가 붙는다.
+4. **알림 (다음 단계, 이번에 만들지 않음).** 새 글이 감지되면 휴대폰으로 알림이 온다(채널은 9절에서 결정).
 5. **상세.** 요약, 마감일과 그 근거 문장, 신청 방법, 원문 링크를 보여 준다.
 6. **지원 준비.** 상세 화면 안에 이 공고에 내야 할 정보·서류 목록이 나온다. 내 정보가 채워진 칸마다 복사 버튼이 있고, 빠진 정보는 따로 표시한다.
 
@@ -67,7 +238,7 @@
 
 **오늘 만드는 것**
 
-- 본부 공지 게시판 5개: 학사(4), 특강(6), 장학(7), 공모·행사(9), 교외채용(11). 괄호 안은 게시판 번호다.
+- 본부 공지 게시판 5개: 학사(4), 특강(6), 장학(7), 공모·행사(9), 교외채용(11). 괄호 안은 게시판 번호다. (실제 서버 수집은 학사(4)와 SW사업단, 소프트웨어융합대학 RSS다. AI 정확도 표본은 5개 게시판에서 받았다)
 - 단과대 1곳: 소프트웨어융합대학 RSS. 여유가 있으면 1곳을 더한다.
 - AI 분류·요약·마감 추출, 관심 분야 구독, 피드, 상세, 알림 채널 1개.
 - 6-1절 P1~P3를 우선순위대로, 시간 안에 되는 데까지 만든다.
@@ -77,7 +248,7 @@
 - 이메일 인증, 비밀번호 찾기, 소셜 로그인. 닉네임 가입이라 비밀번호를 잊으면 복구할 수 없다.
 - 외부 사이트 지원서에 자동 입력하거나 대신 제출하기.
 - 전 단과대 수집, 네이티브 앱.
-- 첨부파일(hwp, pdf) 본문 분석.
+- 첨부파일(hwp, pdf) 본문 분석. (서버가 실제로는 만들었다. 0절)
 - 외부 플랫폼 자동 수집 (8절에서 A안이나 B안을 고를 경우). 이유는 7·8절에 있다.
 
 ## 6-1. 추가 기능: 가입·동의·내 이력·맞춤 추천·지원 정보 채우기 (v0.2)
@@ -191,7 +362,7 @@
 
 **추천 순서 (코드)**
 
-점수는 겹치는 태그 수, 관심 분야 일치, 대상 학년·전공 일치를 더해서 낸다. 마감이 지난 글은 뺀다. 카드에는 "내 태그 「AI·데이터」와 겹침"처럼 추천 이유를 코드로 붙인다. 가중치는 현찬이 정하고 표본으로 확인한다.
+점수는 겹치는 태그 수, 관심 분야 일치, 대상 학년·전공 일치를 더해서 낸다. 마감이 지난 글은 뺀다. 카드에는 "내 태그 「AI·데이터」와 겹침"처럼 추천 이유를 코드로 붙인다. 가중치는 현찬이 정하고 표본으로 확인한다. (규칙은 `backend/app/ai/recommend.py`에 구현했고, 피드 연결은 다음 단계다)
 
 **우선순위**
 
@@ -249,7 +420,7 @@
 
 ## 10. 데이터 모델과 API 계약 (프론트·백엔드 병렬 작업용)
 
-**백엔드는 첫 30분 안에 이 계약을 확정하고 `mock/notices.json`(실제 공지 20건으로 만든 것)을 올린다.** 프론트는 그걸로 바로 화면 작업을 시작한다.
+**백엔드는 첫 30분 안에 이 계약을 확정하고 `mock/notices.json`을 올린다. (계획은 실제 공지 20건이었고, 실제로는 가상 공고가 올라갔다. AI 정확도는 실제 공지 20건으로 따로 쟀다)** 프론트는 그걸로 바로 화면 작업을 시작한다.
 
 ### 공지 (Notice)
 
@@ -284,9 +455,11 @@
 
 ### 분야 (categories, 고정 목록)
 
-`학사` `장학` `공모전·행사` `채용·인턴` `특강·교육` `국제교류` `봉사` `생활·시설` `시스템` `기타`
+서비스 분류는 `학사·생활` `졸업` `장학` `취업` `행사·대외활동` `기타` 6개다. 서버(`backend/app/core/config.py`)와 화면(`frontend/lib/shared/lib/feed_config.dart`)이 같은 목록을 쓴다.
 
-게시판별 기본값은 학사(4)→학사, 장학(7)→장학, 공모·행사(9)→공모전·행사, 교외채용(11)→채용·인턴, 특강(6)→특강·교육이다. AI가 여기에 태그를 더한다.
+AI 모듈(`backend/app/ai/config/categories.json`)은 처음 계획한 10개(`학사` `장학` `공모전·행사` `채용·인턴` `특강·교육` `국제교류` `봉사` `생활·시설` `시스템` `기타`)로 정확도를 쟀다. 서비스 6개로 바꾸는 매핑은 다음 단계다.
+
+AI 모듈의 게시판별 기본값은 학사(4)→학사, 장학(7)→장학, 공모·행사(9)→공모전·행사, 교외채용(11)→채용·인턴, 특강(6)→특강·교육이다. AI가 여기에 태그를 더한다.
 
 ### 사용자 (User, 서버 저장)
 
@@ -347,26 +520,31 @@
 
 ### 엔드포인트
 
-| 메서드 | 경로 | 설명 |
-|---|---|---|
-| GET | `/api/sources` | 수집 출처 목록 |
-| GET | `/api/notices?category=&source=&q=&deadlineBefore=&cursor=` | 전체 공지 |
-| GET | `/api/notices/{id}` | 공지 상세 |
-| GET | `/api/feed?userId=&sort=` | 구독 조건을 적용한 피드. `sort`는 `recommend`(추천 순) 또는 `deadline`(마감 임박 순). 추천 이유 포함 |
-| POST / GET / PUT | `/api/subscriptions` | 구독 저장, 조회, 수정 |
-| POST | `/api/subscriptions/parse` | `{ "text": "..." }` → 구독 필터 JSON (AI) |
-| POST | `/api/push/register` | 알림 채널 등록 |
-| POST | `/api/admin/poll-now` | 데모용. 실제 수집을 즉시 1회 돌린다 |
-| POST | `/api/auth/signup` | 닉네임, 비밀번호로 가입 (P1) |
-| POST | `/api/auth/login`, `/api/auth/logout` | 로그인, 로그아웃 (P1) |
-| POST | `/api/consent` | 필수·선택 동의의 버전과 시각 기록 (P1, P2) |
-| DELETE | `/api/me` | 탈퇴. 그 사용자의 서버 데이터를 지운다 (P1) |
-| POST | `/api/profile/analyze` | 가린 글을 받아 AI로 이력을 뽑아 돌려준다. 저장하지 않고 요청 본문을 로그에 남기지 않는다. 선택 동의가 없으면 거부 (P2) |
-| GET | `/api/notices/{id}/requirements` | 지원 준비 목록. 공고 본문만 쓰고 결과를 캐시한다 (P3) |
+| 메서드 | 경로 | 설명 | 상태 (제출 기준) |
+|---|---|---|---|
+| GET | `/api/sources` | 수집 출처 목록 | 구현 |
+| GET | `/api/notices?category=&source=&q=&deadlineBefore=&cursor=` | 전체 공지 | 구현 (최신순 20건씩) |
+| GET | `/api/notices/{id}` | 공지 상세 | 구현 |
+| GET | `/api/feed?userId=&sort=` | 구독 조건을 적용한 피드. `sort`는 `recommend`(추천 순) 또는 `deadline`(마감 임박 순). 추천 이유 포함 | 구현. 구독 조건과 추천 순은 다음 단계 (지금은 최신순 전체) |
+| POST / GET / PUT | `/api/subscriptions` | 구독 저장, 조회, 수정 | 다음 단계 |
+| POST | `/api/subscriptions/parse` | `{ "text": "..." }` → 구독 필터 JSON (AI) | 다음 단계 |
+| POST | `/api/push/register` | 알림 채널 등록 | 다음 단계 |
+| POST | `/api/admin/poll-now` | 데모용. 실제 수집을 즉시 1회 돌린다 | 구현 |
+| POST | `/api/auth/signup` | 닉네임, 비밀번호로 가입 (P1) | 다음 단계 (화면은 기기 안에서만) |
+| POST | `/api/auth/login`, `/api/auth/logout` | 로그인, 로그아웃 (P1) | 다음 단계 |
+| POST | `/api/consent` | 필수·선택 동의의 버전과 시각 기록 (P1, P2) | 다음 단계 (동의 화면은 구현) |
+| DELETE | `/api/me` | 탈퇴. 그 사용자의 서버 데이터를 지운다 (P1) | 다음 단계 |
+| POST | `/api/profile/analyze` | 가린 글을 받아 AI로 이력을 뽑아 돌려준다. 저장하지 않고 요청 본문을 로그에 남기지 않는다. 선택 동의가 없으면 거부 (P2) | 다음 단계 (AI 함수 `profile.py`는 구현) |
+| GET | `/api/notices/{id}/requirements` | 지원 준비 목록. 공고 본문만 쓰고 결과를 캐시한다 (P3) | 다음 단계 (AI 함수 `requirements.py`는 구현) |
+| POST | `/api/briefing` | 나의 상황(학과·학년·재학 상태·관심 분야)에서 꼭 봐야 할 글을 골라 준다. 저장하지 않는다 (계획에 없던 것) | 구현 |
+| GET | `/api/categories` | 서비스 분류 6개 | 구현 |
+| POST / GET | `/api/admin/redigest`, `/api/admin/poll-status` | 다시 요약, 수집 상태 | 구현 |
+
+서버의 공지 JSON은 `originalTitle`, `digest`로 온다. 화면(`frontend/lib/shared/lib/notice_view.dart`)이 이것을 위 `title`, `ai` 모양으로 바꿔 쓴다.
 
 ## 11. AI 처리 규칙
 
-- **입력**은 제목과 상세 페이지 본문 텍스트다. 첨부파일은 넣지 않는다.
+- **입력**은 제목과 상세 페이지 본문 텍스트다. 첨부파일은 넣지 않는다. (서버 구현은 첨부 pdf·hwp 글자도 넣는다. 본문이 포스터 이미지뿐이면 AI 모듈이 이미지 글자를 먼저 읽는다)
 - **출력**은 10절 `ai` 객체 스키마로 고정한다. 스키마에 맞지 않으면 1회 재시도하고, 그래도 안 되면 `failed`로 둔다.
 - **같은 글은 다시 처리하지 않는다.** 결과를 캐시해서 비용을 막는다.
 - **개인정보 값은 프롬프트에 넣지 않는다.** 예외는 선택 동의를 받은 포트폴리오 분석 하나다. 이때도 전화번호·이메일·학번 형태는 브라우저에서 가린 뒤 보내고, 서버는 요청 본문을 저장하거나 로그에 남기지 않는다. 머지 전에 AI 호출 코드에 프로필 값이 들어가지 않는지 확인한다.
@@ -409,9 +587,9 @@
 ## 14. 성공 기준 (검증 방법까지)
 
 - [ ] **수집:** 게시판 5개와 소융 RSS에서 최근 글을 수집한다. 샘플 10건의 제목과 날짜가 원문과 일치한다.
-- [ ] **AI 추출:** 정답을 먼저 적어 둔 20건으로 마감일 추출 정확도를 숫자로 낸다.
+- [x] **AI 추출:** 실제 공지 20건 중 실제 마감이 있는 16건에서 AI 16/16, 제목 규칙만 4/16. 정답은 Claude 초안이라 사람 확인 전이다 (`backend/app/ai/README.md`).
 - [ ] **필터:** 고르지 않은 분야의 글이 피드와 알림에 0건 나온다.
-- [ ] **알림:** 새 글 감지부터 휴대폰 도착까지 걸린 시간을 잰다.
+- [ ] **알림 (다음 단계):** 새 글 감지부터 휴대폰 도착까지 걸린 시간을 잰다.
 - [ ] **추천 (P1):** 가상 인물 3명의 추천 상위 5건을 팀원이 직접 보고 "이 사람에게 맞다"고 판단한 비율을 잰다.
 - [ ] **이력 정리 (P2):** 가상 포트폴리오 PDF 3개로 추출 결과를 사람이 만든 정답과 대조한다. 근거 구절이 없는 항목이 0건이다.
 - [ ] **가리기 (P2):** PDF 분석 요청 본문에 전화번호·이메일·학번 형태가 0건이다.
@@ -419,7 +597,7 @@
 - [ ] **비밀번호 (P1):** DB에는 해시만 있고, 평문 비밀번호로 검색하면 0건이다.
 - [ ] **탈퇴 (P1):** 탈퇴하면 그 사용자의 서버 데이터가 0건이 된다.
 - [ ] **지원 준비 (P3):** 정답을 먼저 적어 둔 공고 10건으로 필요 항목 추출 정확도를 숫자로 낸다.
-- [ ] **보안:** 제출 전 저장소에 키나 토큰이 없다. `.gitignore`에 `.env`가 있고, `.venv/`와 `.next/`를 추가해야 한다(지금은 빠져 있음).
+- [ ] **보안:** 제출 전 저장소에 키나 토큰이 없다. `.gitignore`에 `.env`, `.venv/`, `.next/`가 있다.
 
 ## 15. 위험과 대응
 
@@ -443,7 +621,7 @@
 
 ## 16. 팀이 정할 것
 
-- [ ] 마감 시각, 제출물(코드, 배포 URL, 영상, 발표자료), 심사 기준 세부 → 확인되면 13절 일정을 다시 짠다
+- [x] 제출물: 발표자료, 소스코드, 배포 URL
 - [ ] 스택 (프론트 프레임워크, 백엔드 언어, DB)
 - [ ] 「실시간」의 기준 (폴링 간격 몇 분)
 - [ ] 알림 채널 하나
@@ -456,4 +634,4 @@
 - [ ] 태그 목록 확정
 - [ ] 지원 정보 저장 위치. 기기에만(제안) 또는 서버 암호화 저장
 - [ ] 동의 문구 최종본, 보유 기간, 외부 AI 서비스 이용 고지 문구
-- [ ] 서비스 이름
+- [x] 서비스 이름: 크노
