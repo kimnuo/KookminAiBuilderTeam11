@@ -21,12 +21,14 @@ from jsonschema import Draft202012Validator
 
 from app.ai import cleaning
 from app.ai.dates import find_dates, normalize, parse_posted, resolve
+from app.ai.deadline_label import is_other_period
 from app.ai.text import is_short_body, title_deadline
 
 AI_DIR = Path(__file__).parent
 _CAT = json.loads((AI_DIR / "config" / "categories.json").read_text(encoding="utf-8"))
 CATEGORIES = _CAT["categories"]
 BOARD_DEFAULT = _CAT["boardDefault"]
+SERVICE_MAP = _CAT["serviceMap"]   # AI 분류 10개 → 서비스(서버·화면) 분류 6개
 TAGS = json.loads((AI_DIR / "config" / "tags.json").read_text(encoding="utf-8"))["tags"]
 PROMPT = (AI_DIR / "prompts" / "enrich.md").read_text(encoding="utf-8")
 VALIDATOR = Draft202012Validator(
@@ -95,10 +97,11 @@ def _evidence_supports(dl: dict, text: str, posted: date | None = None) -> bool:
         if t.is_range_start:
             continue
         if t.year is None and posted is None:
-            if (t.month, t.day) == (target.month, target.day):
-                return True
-        elif resolve(t, posted) == target:
-            return True
+            hit = (t.month, t.day) == (target.month, target.day)
+        else:
+            hit = resolve(t, posted) == target
+        if hit:   # 날짜 앞 항목 이름이 수강·교육·행사 기간이면 마감이 아니다 (deadline_label.py)
+            return not is_other_period(text, _squash(ev), _squash(normalize(ev)[:t.start]))
     return False
 
 
@@ -143,10 +146,18 @@ def _deadline(ai_deadline, notice: dict):
     return {**fallback, "source": "title"} if fallback else None
 
 
+def service_categories(categories: list[str], title: str) -> list[str]:
+    """서비스 분류 6개로 옮긴다. 「졸업」은 AI 분류에 없어서 제목에 졸업이 있으면 코드가 붙인다."""
+    out = ["졸업"] if "졸업" in (title or "") else []
+    return out + [s for s in dict.fromkeys(SERVICE_MAP[c] for c in categories) if s not in out]
+
+
 def clean(data: dict, notice: dict) -> dict:
+    cats = cleaning.pick(data.get("categories"), CATEGORIES) or [_default_category(notice)]
     return {
         "status": "done",
-        "categories": cleaning.pick(data.get("categories"), CATEGORIES) or [_default_category(notice)],
+        "categories": cats,
+        "serviceCategories": service_categories(cats, notice.get("title")),
         "tags": cleaning.pick(data.get("tags"), TAGS),
         "summary": cleaning.summary(data.get("summary")),
         "deadline": _deadline(data.get("deadline"), notice),
@@ -159,6 +170,7 @@ def failed(notice: dict) -> dict:
     return {
         "status": "failed",
         "categories": [_default_category(notice)],
+        "serviceCategories": service_categories([_default_category(notice)], notice.get("title")),
         "tags": [],
         "summary": None,
         "deadline": _deadline(None, notice),
