@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:kmu_notice/shared/api/auth_api.dart';
 import 'package:kmu_notice/shared/lib/routes.dart';
 
 import 'kno_home_button.dart';
@@ -25,6 +26,16 @@ class DashboardHeader extends StatelessWidget {
         ),
       ],
       const Spacer(),
+      // 로그인 전에도 공지는 다 보인다. 가입·로그인 입구만 여기 둔다.
+      ValueListenableBuilder<bool>(
+        valueListenable: AuthApi.loggedIn,
+        builder: (context, loggedIn, _) => loggedIn
+            ? const SizedBox.shrink()
+            : TextButton(
+                onPressed: () => context.push(Routes.welcome),
+                child: const Text('로그인'),
+              ),
+      ),
       IconButton(
         tooltip: '내 지원 정보',
         icon: const Icon(Icons.person_outline_rounded),

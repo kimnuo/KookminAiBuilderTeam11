@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kmu_notice/app/router.dart';
 import 'package:kmu_notice/features/profile/profile_analysis.dart';
 import 'package:kmu_notice/features/profile/profile_store.dart';
+import 'package:kmu_notice/shared/api/auth_api.dart';
 import 'package:kmu_notice/shared/lib/applicant_store.dart';
 import 'package:kmu_notice/shared/lib/routes.dart';
 import 'test_helpers.dart';
@@ -52,6 +53,8 @@ void main() {
     await ProfileStore.save(ProfileHistory(tags: ['개발']));
     await ApplicantStore.save(ApplicantInfo({'name': '김예시'}));
 
+    AuthApi.loggedIn.value = true;
+    addTearDown(() => AuthApi.loggedIn.value = false);
     appRouter.push(Routes.settings);
     await tester.pumpAndSettle();
     await tapText(tester, '탈퇴하기');

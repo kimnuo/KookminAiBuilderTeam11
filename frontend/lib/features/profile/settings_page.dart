@@ -71,12 +71,18 @@ class SettingsPage extends StatelessWidget {
             onTap: () => context.push(Routes.applicantInfo),
           ),
           const Divider(height: 32, thickness: 8, color: AppColors.surface),
-          SettingsTile(label: '로그아웃', onTap: () => _logout(context)),
-          SettingsTile(
-            label: '탈퇴하기',
-            danger: true,
-            onTap: () => _withdraw(context),
-          ),
+          if (AuthApi.isLoggedIn) ...[
+            SettingsTile(label: '로그아웃', onTap: () => _logout(context)),
+            SettingsTile(
+              label: '탈퇴하기',
+              danger: true,
+              onTap: () => _withdraw(context),
+            ),
+          ] else
+            SettingsTile(
+              label: '로그인 / 가입',
+              onTap: () => context.push(Routes.welcome),
+            ),
         ],
       ),
     );
